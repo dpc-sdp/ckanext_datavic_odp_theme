@@ -33,7 +33,7 @@ def format_list(limit=100):
                 func.lower(model.Resource.format)
             ))
         resource_formats = [resource.format for resource in query if not resource.format == '']
-    except Exception, e:
+    except Exception as e:
         log.error(e.message)
 
     return resource_formats
