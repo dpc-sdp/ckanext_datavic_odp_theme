@@ -2,14 +2,14 @@
 
 {% block primary_content_inner %}
 
-  <h1>{{ c.group_dict['display_name'] }}</h1>
+  <h1>{{ group_dict['display_name'] }}</h1>
 
   {% set facets = {
-    'fields': c.fields_grouped,
-    'search': c.search_facets,
-    'titles': c.facet_titles,
-    'translated_fields': c.translated_fields,
-    'remove_field': c.remove_field }
+    'fields': fields_grouped,
+    'search': search_facets,
+    'titles': facet_titles,
+    'translated_fields': translated_fields,
+    'remove_field': remove_field }
   %}
   {% set sorting = [
     (_('Relevance'), 'score desc, metadata_modified desc'),
@@ -18,7 +18,7 @@
     (_('Last Modified'), 'metadata_modified desc'),
     (_('Popular'), 'views_recent desc') if g.tracking_enabled else (false, false) ]
   %}
-  {% snippet 'snippets/search_form.html', form_id='organization-datasets-search-form', type='dataset', query=c.q, sorting=sorting, sorting_selected=c.sort_by_selected, count=c.page.item_count, facets=facets, placeholder=_('Search datasets...'), show_empty=request.params, fields=c.fields, form_classes='organisation-search-form' %}
+  {% snippet 'snippets/search_form.html', form_id='organization-datasets-search-form', type='dataset', query=q, sorting=sorting, sorting_selected=sort_by_selected, count=page.item_count, facets=facets, placeholder=_('Search datasets...'), show_empty=request.params, fields=fields, form_classes='organisation-search-form' %}
 
   {% block packages_list %}
     {{ super() }}
