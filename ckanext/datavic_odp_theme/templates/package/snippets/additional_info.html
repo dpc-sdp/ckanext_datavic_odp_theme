@@ -112,20 +112,6 @@
           {% endif %}
         {% endif %}
 
-        {% if pkg_dict.access %}
-          <tr>
-            <th scope="row" class="dataset-label">{{ _('Access') }}</th>
-            <td class="dataset-details">{{h.get_option_label('dataset', 'access', pkg_dict.access)}}</td>
-          </tr>
-        {% endif %}
-
-        {% if pkg_dict.protective_marking %}
-          <tr>
-            <th scope="row" class="dataset-label">{{ _('Protective marking') }}</th>
-            <td class="dataset-details>"{{ pkg_dict.protective_marking }}</td>
-          </tr>
-        {% endif %}
-
         {% set range = h.historical_resources_range(pkg_dict.resources) %}
         {% if range %}
           <tr>
