@@ -1,0 +1,20 @@
+datavic_odp_theme-css:
+  contents:
+    - datavic_odp_theme.css
+  output: datavic_odp_theme/%(version)s_datavic_odp_theme.css
+  
+
+datavic_odp_theme-js:
+  output: datavic_odp_theme/%(version)s_datavic_odp_theme.js
+  contents:
+    - datavic_odp_theme.js
+  extra:
+    preload:
+      - base/main
+  filters: rjsmin
+
+datavic-odp-resources-js:
+  output: datavic_odp_resources_js/%(version)s_datavic_odp_resources.js
+  contents:
+    - datavic_odp_resources.js
+  filters: rjsmin
