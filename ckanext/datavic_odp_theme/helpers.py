@@ -64,7 +64,7 @@ def get_ga_tracking_id():
 
 
 def get_ga_site():
-    from urlparse import urlparse
+    from urlparse.parse import urlparse
     site_url = config.get('ckan.site_url', None)
     o = urlparse(site_url)
     return o.hostname
