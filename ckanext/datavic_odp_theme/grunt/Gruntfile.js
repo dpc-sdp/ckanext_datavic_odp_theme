@@ -10,7 +10,7 @@ module.exports = function(grunt) {
           sourcemap: false
         },
         files: {
-          '../fanstatic/datavic_odp_theme.css': [
+          '../webassets/datavic_odp_theme.css': [
             'sass/styles.scss'
           ]
         }
