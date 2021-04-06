@@ -1,3 +1,7 @@
+html {
+  font-size: 100%;
+}
+
 body {
   background-color: white;
   background-image: none;
@@ -36,4 +40,55 @@ body {
 
 .search-form .search-input.search-giant button {
   margin-top: -14px;
+}
+
+.primary {
+  &.span12 {
+    .control-group {
+      margin-bottom: 20px;
+    }
+    form {
+      .controls {
+        margin-left: 130px;
+      }
+      .control-group {
+        &:after,
+        &:before {
+          display: table;
+          content: "";
+          line-height: 0;
+          clear: both;
+        }
+      }
+      .control-label {
+        float: left;
+        width: 120px;
+        padding-top: 0.5rem;
+        text-align: right;
+      }
+      .info-block {
+        position: relative;
+        display: block;
+        font-size: 11px;
+        color: #aaa;
+        line-height: 1.3;
+        margin-top: 6px;
+      }
+    }
+  }
+}
+
+.control-large {
+  input,
+  .control-label {
+    font-size: 17px;
+    line-height: 30px;
+  }
+}
+
+.dataset-heading {
+  .label {
+    font-size: .75rem;
+    padding: 2px 4px;
+  }
 }

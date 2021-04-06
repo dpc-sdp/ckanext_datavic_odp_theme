@@ -68,6 +68,7 @@ $rpl-checklist-dropdown-max-height: (rem(38px) * 10);
       background-color: $rpl-form-element-bg-color;
       border: $rpl-checklist-expanded-border;
       border-top: 0;
+      box-sizing: content-box;
       position: absolute;
       z-index: 1;
       left: -1px;
