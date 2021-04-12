@@ -12,6 +12,10 @@ body {
   }
 }
 
+legend {
+  line-height: 2.5rem;
+}
+
 [role="main"] {
   background: none;
   padding-top: 0;
@@ -44,6 +48,7 @@ body {
 
 .primary {
   &.span12 {
+  }
     .control-group {
       margin-bottom: 20px;
     }
@@ -62,7 +67,7 @@ body {
       }
       .control-label {
         float: left;
-        width: 120px;
+        width: 7.5rem;
         padding-top: 0.5rem;
         text-align: right;
       }
@@ -75,15 +80,18 @@ body {
         margin-top: 6px;
       }
     }
-  }
 }
 
 .control-large {
   input,
   .control-label {
-    font-size: 17px;
+    font-size: 1.0625rem;
     line-height: 30px;
   }
+}
+
+.control-medium input, .control-medium select, .control-medium textarea {
+  width: 20rem;
 }
 
 .dataset-heading {
@@ -91,4 +99,52 @@ body {
     font-size: .75rem;
     padding: 2px 4px;
   }
+}
+
+.span3 {
+  width: 13.75rem;
+}
+
+.span12 {
+  width: 58.75rem;
+}
+
+[role="main"] .container {
+  padding-left: 0;
+  padding-right: 0;
+  width: 940px;
+  .primary {
+    float: right;
+  }
+  .secondary {
+    float: left;
+  }
+  .row {
+    margin-left: 0;
+    margin-right: 0;
+    .primary {
+      &.span9 {
+        width: 700px;
+        .page-header {
+          margin-left: -17px;
+        }
+        div.module-content {
+          padding-left: 10px;
+        }
+      }
+    }
+    .primary,
+    .secondary {
+      margin-left: 0;
+    }
+  }
+}
+
+.unstyled {
+  margin: 0;
+}
+
+.module-content:first-child {
+  margin-top: 0;
+  padding-top: 20px;
 }
