@@ -1,7 +1,7 @@
 {% set url_action = 'edit' if url_is_edit and can_edit else 'read' %}
 {% set url = h.url_for(controller='dataset_resource', action=url_action, id=pkg.name, resource_id=res.id) %}
 
-<li class="resource-item {% if res.public_order_url %}has-wms-buttons{% endif %}" data-id="{{ res.id }}">
+<li class="resource-item {% if res.public_order_url or res.wms_url %}has-wms-buttons{% endif %}" data-id="{{ res.id }}">
 
     {% if res.public_order_url %}
      <div id='orderEmail'>
@@ -55,7 +55,7 @@
   {% if not url_is_edit %}
 
     {# SDM harvested datasets have a `public_order_url` assigned to their resources #}
-    {% if res.public_order_url %}
+    {% if res.public_order_url or res.wms_url %}
 </li>
 <li class="resource-item wms-buttons {% if res.format not in ['wms', 'WMS'] %}no-wms-url{% endif %}">
       {% if res.wms_url and res.format in ["wms", "WMS"] %}
@@ -72,6 +72,7 @@
             </li>
         </ul>
       {% endif %}
+      {% if res.public_order_url %}
         <ul class="btn-holder">
             <li>
                 {% set sdm_url = res.url | replace("https://sdm.iar.data.vic.gov.au/vicgislite/sdmAccess.jsp", h.current_url() + '/order') %}
@@ -90,6 +91,7 @@
                 </form>
             </li>
         </ul>
+      {% endif %}
     {% else %}
 
         <div class="dropdown btn-group">
