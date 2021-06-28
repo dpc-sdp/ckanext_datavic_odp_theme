@@ -11,7 +11,13 @@ log = logging.getLogger(__name__)
 
 
 def organization_list():
-    return toolkit.get_action('organization_list')({}, {'all_fields': True})
+    org_list = toolkit.get_action('organization_list')({}, {})
+    organizations = []
+    for org in org_list:
+        org_dict = toolkit.get_action('organization_show')({}, {'id': org})
+        organizations.append(org_dict)
+
+    return organizations
 
 
 def group_list():

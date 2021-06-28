@@ -20,6 +20,10 @@
     border: none;
     box-shadow: none;
     margin-bottom: 0;
+
+    &:focus-visible {
+      outline: none;
+    }
   }
 }
 
