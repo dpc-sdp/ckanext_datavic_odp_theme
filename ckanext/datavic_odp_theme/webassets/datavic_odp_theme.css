@@ -838,7 +838,7 @@ nav {
       padding-right: 0 !important; } }
   @media screen and (min-width: 992px) {
     .rpl-site-footer__bottom {
-      width: 100%;
+      width: 99.99%;
       flex-wrap: nowrap; } }
   @media screen and (min-width: 992px) {
     .rpl-site-footer__bottom {
@@ -1303,7 +1303,7 @@ nav {
     .rpl-menu--horizontal .rpl-menu--horizontal-floating-wrapper > .rpl-menu__inner > .rpl-menu__inner_root {
       margin-left: -0.75rem;
       margin-right: -0.75rem;
-      width: calc(100% + 0.75rem * 2); }
+      width: calc(99.99% + 0.75rem * 2); }
       @media screen {
         .rpl-menu--horizontal .rpl-menu--horizontal-floating-wrapper > .rpl-menu__inner > .rpl-menu__inner_root {
           box-sizing: border-box;
@@ -2099,6 +2099,8 @@ nav {
   border: none;
   box-shadow: none;
   margin-bottom: 0; }
+  .rpl-search-form__field input[type="text"]:focus-visible {
+    outline: none; }
 
 .rpl-search-form {
   padding-left: 1.25rem;

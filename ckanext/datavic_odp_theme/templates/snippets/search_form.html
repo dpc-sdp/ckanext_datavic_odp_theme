@@ -70,13 +70,15 @@
 {% endif %}
 
 
-{% if show_empty and count == 0 and not error %}
+{% if count == 0 and not error %}
+  <br/>
   {% trans %}
     <p class="extra">Try a different search term, or adjust your search filters.</p>
   {% endtrans %}
 {% endif %}
 
 {% if error %}
+  <br/>
   {% trans %}
     <p id="search-error"><strong>There was an error while searching.</strong> Please try again.</p>
   {% endtrans %}
