@@ -133,19 +133,6 @@
           </tr>
         {% endif %}
 
-      {% block extras scoped %}
-        {% set hidden = ['harvest_url', 'spatial', 'full_metadata_url'] %}
-        {% for extra in h.sorted_extras(pkg_dict.extras) %}
-          {% set key, value = extra %}
-          {% if key not in hidden %}
-            <tr rel="dc:relation" resource="_:extra{{ i }}">
-              <th scope="row" class="dataset-label" property="rdfs:label">{{ _(key) }}</th>
-              <td class="dataset-details" property="rdf:value">{{ value }}</td>
-            </tr>
-          {% endif %}
-        {% endfor %}
-      {% endblock %}
-
       {% endblock %}
     </tbody>
   </table>
