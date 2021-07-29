@@ -3,9 +3,6 @@
 // Functions
 @import '../ripple/packages/components/Atoms/Global/scss/settings/functions';
 
-//  CKAN RESET
-@import 'ckan_reset';
-
 // Settings
 @import '../ripple/packages/components/Atoms/Global/scss/settings/breakpoints';
 @import '../ripple/packages/components/Atoms/Global/scss/settings/color';
@@ -28,6 +25,9 @@
 
 @import '../ripple/packages/components/Atoms/Global/scss/components/button';
 @import "../ripple/packages/components/Organisms/SiteHeader/scss/site_header";
+
+//  CKAN RESET
+@import 'ckan_reset';
 
 //  DATA.VIC RIPPLE IMPLEMENTATIONS
 @import 'common';
