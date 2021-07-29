@@ -21,13 +21,6 @@
           </tr>
         {% endif %}
 
-        {% if pkg_dict.version %}
-          <tr>
-            <th scope="row" class="dataset-label">{{ _("Version") }}</th>
-            <td class="dataset-details">{{ pkg_dict.version }}</td>
-          </tr>
-        {% endif %}
-
         {% if h.check_access('package_update',{'id':pkg_dict.id}) %}
           <tr>
             <th scope="row" class="dataset-label">{{ _("State") }}</th>
@@ -35,15 +28,17 @@
           </tr>
         {% endif %}
 
-        {% if pkg_dict.date_created_data_asset %}
-          {% set date_created_data_asset = pkg_dict.date_created_data_asset.split("T")[0] %}
-          <tr>
-            <th scope="row" class="dataset-label">{{ _("Created (Data Asset)") }}</th>
-            <td class="dataset-details" property="dct:issued">
-              {{ date_created_data_asset[8:] + '/' + date_created_data_asset[5:7] + '/' + date_created_data_asset[:4] }}
-            </td>
-          </tr>
-        {% endif %}
+        {% for extra in pkg_dict.extras %}
+          {% if extra.key == 'date_created_data_asset' and extra.value %}
+            {% set date_created_data_asset = extra.value.split("T")[0] %}
+            <tr>
+              <th scope="row" class="dataset-label">{{ _("Created (Data Asset)") }}</th>
+              <td class="dataset-details" property="dct:issued">
+                {{ date_created_data_asset[8:] + '/' + date_created_data_asset[5:7] + '/' + date_created_data_asset[:4] }}
+              </td>
+            </tr>
+          {% endif %}
+        {% endfor %}
 
         {% if pkg_dict.metadata_created %}
           {% set release_date = h.release_date(pkg_dict) %}
@@ -54,6 +49,7 @@
             </td>
           </tr>
         {% endif %}
+
         {% if pkg_dict.metadata_modified %}
           {% set metadata_modified = pkg_dict.metadata_modified.split("T")[0] %}
           <tr>
@@ -120,18 +116,20 @@
           </tr>
         {% endif %}
 
-        {% if pkg_dict.full_metadata_url %}
-          <tr>
-            <th scope="row" class="dataset-label">{{ _('Full metadata URL') }}</th>
-            <td class="dataset-details">
-            {% if pkg_dict.full_metadata_url.startswith('http') %}
-              <a href="{{ pkg_dict.full_metadata_url }}" target="_blank" rel="nofollow">{{ pkg_dict.full_metadata_url }}</a>
-            {% else %}
-              {{ pkg_dict.full_metadata_url }}
-            {% endif %}
-            </td>
-          </tr>
-        {% endif %}
+        {% for extra in pkg_dict.extras %}
+          {% if extra.key == 'full_metadata_url' and extra.value %}
+            <tr>
+              <th scope="row" class="dataset-label">{{ _('Full metadata URL') }}</th>
+              <td class="dataset-details">
+              {% if extra.value.startswith('http') %}
+                <a href="{{ extra.value }}" target="_blank" rel="nofollow">{{ extra.value }}</a>
+              {% else %}
+                {{ extra.value }}
+              {% endif %}
+              </td>
+            </tr>
+          {% endif %}
+        {% endfor %}
 
       {% endblock %}
     </tbody>

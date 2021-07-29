@@ -102,22 +102,33 @@ legend {
 }
 
 .span3 {
-  width: 13.75rem;
+  @include rpl_breakpoint(l) {
+    width: 13.75rem;
+  }
 }
 
 .span12 {
-  width: 58.75rem;
+  @include rpl_breakpoint(l) {
+    width: 58.75rem;
+  }
 }
 
 [role="main"] .container {
   padding-left: 0;
   padding-right: 0;
-  width: 940px;
+
+  @include rpl_breakpoint(l) {
+    width: 940px;
+  }
   .primary {
-    float: right;
+    @include rpl_breakpoint(l) {
+      float: right;
+    }
   }
   .secondary {
-    float: left;
+    @include rpl_breakpoint(l) {
+      float: left;
+    }
   }
   .row {
     margin-left: 0;
