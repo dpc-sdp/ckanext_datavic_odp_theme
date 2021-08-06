@@ -36,10 +36,10 @@ Or... Restart Nginx & Apache:
 
 ### Trackers
 
-#### Google Analytics
+#### Google Tag Manager
 
-        googleanalytics.id = UA-...
-
+        ckan.google_tag_manager.gtm_container_id = GTM-...
+        Or using lagoon environment files eg .lagoon.env.develop, .lagoon.env.master
 #### Hotjar
 
         ckan.tracking.hotjar_enabled = true
