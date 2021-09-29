@@ -1573,17 +1573,6 @@ nav {
   align-items: flex-start; }
   .resource-list .resource-item:hover {
     background-color: transparent; }
-  .resource-list .resource-item.has-wms-buttons {
-    border-bottom: none;
-    padding-bottom: 0; }
-    .resource-list .resource-item.has-wms-buttons p {
-      margin-bottom: 0; }
-  .resource-list .resource-item.wms-buttons {
-    justify-content: flex-end; }
-    .resource-list .resource-item.wms-buttons ul:first-child {
-      margin-right: 1.25rem; }
-    .resource-list .resource-item.wms-buttons.no-wms-url ul:first-child {
-      margin-right: 0; }
   .resource-list .resource-item .btn-group {
     display: inline-block; }
 
@@ -2347,9 +2336,6 @@ ul.btn-holder {
   border: 1px solid #008fff;
   border-width: 0 1px 1px;
   z-index: 10; }
-
-.sdm-resource {
-  display: block; }
 
 .custom-check {
   vertical-align: middle;

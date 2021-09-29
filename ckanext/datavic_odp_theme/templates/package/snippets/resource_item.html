@@ -1,26 +1,8 @@
 {% set url_action = 'edit' if url_is_edit and can_edit else 'read' %}
 {% set url = h.url_for(controller='dataset_resource', action=url_action, id=pkg.name, resource_id=res.id) %}
 
-<li class="resource-item {% if res.public_order_url or res.wms_url %}has-wms-buttons{% endif %}" data-id="{{ res.id }}">
-
-    {% if res.public_order_url %}
-     <div id='orderEmail'>
-        <div id='orderEmailForm'>
-            <p>Use Order Resources to get access to spatial data in various formats and extents. </p>
-
-            <p>You are being asked to supply a valid email address, so we can notify you via email when your data is ready to download.</p>
-            <div>
-             <input id="order-email" type="text" placeholder="Email" onkeyup='document.querySelector("#orderEmail input").setAttribute("class", "")'>
-            </div>
-            <div id='orderEmailButtons'>
-                <button class="btn btn-primary" onclick='checkOrder()'>Continue Order</button>
-                <button class="btn btn-primary" onclick='document.querySelector("#orderEmail").setAttribute("class", "")'>Cancel</button>
-            </div>
-        </div>
-     </div>
-    {% endif %}
-
-  {% block resource_item_title %}
+<li class="resource-item" data-id="{{ res.id }}">
+    {% block resource_item_title %}
     <div class="resource-icon">
         <span class="format-label" property="dc:format" data-format="{{ res.format.lower() or 'data' }}">{{ h.get_translated(res, 'format') }}</span>
     </div>
@@ -30,71 +12,26 @@
                 Edit "<a href="{{ url }}">{{ h.resource_display_name(res) }} </a>"<br/>
             {% else %}
               {{ h.resource_display_name(res)}}<br/>
-            {%endif%}
-            {% if historical or url_is_edit %}
+            {% endif %}
+            {% if h.is_historical() or url_is_edit %}
             <small>
                 {% if res.release_date and res.release_date != '' %}
-                    Release Date: {{res.release_date|truncate(10,end='')}}
+                    Release Date: {{ h.render_datetime(res.release_date, date_format='%d/%m/%Y') }} &nbsp;
                 {% endif %}
                 {% if res.period_start and res.period_start != '' %}
-                &nbsp; Period: {{res.period_start|truncate(10,end='')}} &raquo; {{res.period_end|truncate(10,end='')}}
+                    Period: {{ h.render_datetime(res.period_start, date_format='%d/%m/%Y') }} &raquo; {{ h.render_datetime(res.period_end, date_format='%d/%m/%Y') }}
                 {% endif %}
             </small>
             {% endif %}
         </p>
-        {#% if not url_is_edit %}
-            <span class="format" property="dc:format" data-format="{{ res.format.lower() or 'data' }}">x {{ h.get_translated(res, 'format') }}<span class='sr-only'> format</span></span>
-        {% endif %#}
     </div>
-  {% endblock %}
+    {% endblock %}
 
   {% block resource_item_description %}
   {% endblock %}
-
   {% block resource_item_explore %}
   {% if not url_is_edit %}
-
-    {# SDM harvested datasets have a `public_order_url` assigned to their resources #}
-    {% if res.public_order_url or res.wms_url %}
-</li>
-<li class="resource-item wms-buttons {% if res.format not in ['wms', 'WMS'] %}no-wms-url{% endif %}">
-      {% if res.wms_url and res.format in ["wms", "WMS"] %}
-        <ul class="btn-holder">
-            <li>
-            <a class='btn btn-primary resource-download' href="{{ res.wms_url }}" onclick='return checkTerms(event)'>
-                 {{ _('WMS URL') }}
-                <i class="icon-arrow-down"></i>
-            </a>
-            <form class="drop">
-                <label class="custom-label"><input title="checkbox" type="checkbox" class="jcf-hidden" style="position: absolute; left: -9999px;"><span class="custom-check" onclick='checkboxClick(event)' ></span></label>
-                <p>Please check this box to confirm you accept and agree to comply with our <a class="terms-link" href="https://data.vic.gov.au/copyright" target="_blank">Terms of Use and Copyright and Attribution</a> requirements including any attribution specified on this page. You must comply with the relevant Licence requirements for each dataset.</p>
-            </form>
-            </li>
-        </ul>
-      {% endif %}
-      {% if res.public_order_url %}
-        <ul class="btn-holder">
-            <li>
-                {% set sdm_url = res.url | replace("https://sdm.iar.data.vic.gov.au/vicgislite/sdmAccess.jsp", h.current_url() + '/order') %}
-                <a class='btn btn-primary resource-download sdm-resource' href='{{ sdm_url }}' onclick='return checkTerms(event)'>
-                    {# @Todo: Change this to res.public_order_url #}
-                    {% if res.url %}
-                    {{ _('Order Resource') }}
-                    {% else %}
-                    {{ _('Download') }}
-                    {% endif %}
-                    <i class="icon-arrow-down"></i>
-                </a>
-                <form class="drop">
-                    <label class="custom-label"><input title="checkbox" type="checkbox" class="jcf-hidden" style="position: absolute; left: -9999px;" ><span class="custom-check" onclick='checkboxClick(event)'></span></label>
-                    <p>Please check this box to confirm you accept and agree to comply with our <a class="terms-link" href="https://data.vic.gov.au/copyright" target="_blank">Terms of Use and Copyright and Attribution</a> requirements including any attribution specified on this page. You must comply with the relevant Licence requirements for each dataset.</p>
-                </form>
-            </li>
-        </ul>
-      {% endif %}
-    {% else %}
-
-        <div class="dropdown btn-group">
+  <div class="dropdown btn-group">
     <a href="#" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
       <i class="fa fa-share"></i>
       {{ _('Explore') }}
@@ -132,9 +69,6 @@
       {% endblock %}
     </ul>
   </div>
-
-    {% endif %}
-
   {% endif %}
   {% endblock %}
 </li>
