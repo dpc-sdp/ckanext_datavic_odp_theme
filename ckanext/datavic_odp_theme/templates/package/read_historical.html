@@ -5,7 +5,7 @@
 {% block package_description %}
   {{ super() }}
 
-  {% for field_id, field_attributes in h.dataset_extra_fields %}
+  {% for field_id, field_attributes in h.dataset_fields %}
     {% if pkg.get(field_id) %}
       <section id="dataset-{{ field_id }}" class="resources module-content">
         <p><strong>{{ _( field_attributes['label'] ) }}</strong>: {{ pkg.get(field_id) }}</p>
