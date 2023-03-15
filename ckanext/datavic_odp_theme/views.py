@@ -102,7 +102,7 @@ def dtv_config(encoded: str, embedded: bool):
         config.update(
             {
                 "elements": {
-                    # "map-navigation": {"disabled": embedded},
+                    "map-navigation": {"disabled": embedded},
                     "menu-bar": {"disabled": embedded},
                     "bottom-dock": {"disabled": embedded},
                     "map-data-count": {"disabled": embedded},
