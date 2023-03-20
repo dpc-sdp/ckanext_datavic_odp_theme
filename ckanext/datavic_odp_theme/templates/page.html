@@ -14,66 +14,64 @@
 {% endblock %}
 
 {%- block content %}
-  <main>
-    {% if self.breadcrumb_content() | trim %}
-    <div id="breadcrumbs" class="rpl-breadcrumbs" role="breadcrumbs">
-        <nav aria-label="breadcrumbs">
-            <ul class="rpl-breadcrumbs__items">
-                <li class="rpl-breadcrumbs__item"><a href="https://www.data.vic.gov.au" class="rpl-link rpl-breadcrumbs__link">Home</a></li>
-                {% block breadcrumb_content %}{% endblock %}
-            </ul>
-        </nav>
-    </div>
-    {% endif %}
+  {% if self.breadcrumb_content() | trim %}
+  <div id="breadcrumbs" class="rpl-breadcrumbs" role="breadcrumbs">
+      <nav aria-label="breadcrumbs">
+          <ul class="rpl-breadcrumbs__items">
+              <li class="rpl-breadcrumbs__item"><a href="https://www.data.vic.gov.au" class="rpl-link rpl-breadcrumbs__link">Home</a></li>
+              {% block breadcrumb_content %}{% endblock %}
+          </ul>
+      </nav>
+  </div>
+  {% endif %}
 
-    {% block maintag %}<div id="main-content" role="main">{% endblock %}
-      <div id="content" class="container">
-        {% block main_content %}
-          {% block flash %}
-            <div class="flash-messages">
-              {% block flash_inner %}
-                {% for message in h.flash.pop_messages() | list %}
-                  <div class="alert fade in {{ message.category }}">
-                    {{ h.literal(message) }}
-                  </div>
-                {% endfor %}
-              {% endblock %}
-            </div>
-          {% endblock %}
-
-          {% block toolbar %}
-            <div class="toolbar">
-              {% block breadcrumb %}
-              {% endblock %}
-            </div>
-          {% endblock %}
-
-          <div class="row {% block wrapper_class %}{% endblock %}{% if self.secondary()|trim == '' %} no-nav{% endif %}">
-            {% block pre_primary %}
-            {% endblock %}
-
-            {% block primary %}
-              {% set span = 9 if g.controller in ['user', 'admin', 'ckanext.harvest.controllers.view:ViewController'] else 12 %}
-              <div class="primary span{{ span }}">
-                {% block primary_content %}
-                  {{ super() }}
-                {% endblock %}
-              </div>
-            {% endblock %}
-
-            {% block secondary %}
-              {% set span = 9 if g.controller in ['user', 'admin', 'ckanext.harvest.controllers.view:ViewController'] else 12 %}
-              {% if span != 12 %}
-                  <aside class="secondary span3">
-                    {% block secondary_content %}{% endblock %}
-                  </aside>
-              {% endif %}
+  {% block maintag %}<div id="main-content" role="main">{% endblock %}
+    <div id="content" class="container">
+      {% block main_content %}
+        {% block flash %}
+          <div class="flash-messages">
+            {% block flash_inner %}
+              {% for message in h.flash.pop_messages() | list %}
+                <div class="alert fade in {{ message.category }}">
+                  {{ h.literal(message) }}
+                </div>
+              {% endfor %}
             {% endblock %}
           </div>
         {% endblock %}
-      </div>
+
+        {% block toolbar %}
+          <div class="toolbar">
+            {% block breadcrumb %}
+            {% endblock %}
+          </div>
+        {% endblock %}
+
+        <div class="row {% block wrapper_class %}{% endblock %}{% if self.secondary()|trim == '' %} no-nav{% endif %}">
+          {% block pre_primary %}
+          {% endblock %}
+
+          {% block primary %}
+            {% set span = 9 if g.controller in ['user', 'admin', 'ckanext.harvest.controllers.view:ViewController'] else 12 %}
+            <div class="primary span{{ span }}">
+              {% block primary_content %}
+                {{ super() }}
+              {% endblock %}
+            </div>
+          {% endblock %}
+
+          {% block secondary %}
+            {% set span = 9 if g.controller in ['user', 'admin', 'ckanext.harvest.controllers.view:ViewController'] else 12 %}
+            {% if span != 12 %}
+                <aside class="secondary span3">
+                  {% block secondary_content %}{% endblock %}
+                </aside>
+            {% endif %}
+          {% endblock %}
+        </div>
+      {% endblock %}
     </div>
-  </main>
+  </div>
 {% endblock -%}
 
 
