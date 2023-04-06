@@ -1,5 +1,16 @@
 {% ckan_extends %}
 
+{% block htmltag %}
+
+  {% set lang = h.lang() %}
+
+  {% if lang == 'en_AU' %}
+    {% set lang = 'en-au' %}
+  {% endif %}
+
+  <!--[if IE 9]> <html lang="en-au" class="ie9"> <![endif]-->
+  <!--[if gt IE 8]><!--> <html lang="{{ lang }}"> <!--<![endif]-->
+{% endblock %}
 
 {% block head_extras %}
   {{ super() }}
@@ -30,8 +41,3 @@
   {{ super() }}
   {% asset 'datavic_odp_theme/datavic_odp_theme-js' %}
 {% endblock %}
-
-{%- block htmltag -%}
-  <!--[if IE 9]> <html lang="en_AU" class="ie9"> <![endif]-->
-  <!--[if gt IE 8]><!--> <html lang="en_AU"> <!--<![endif]-->
-{%- endblock -%}
