@@ -46,7 +46,7 @@ def redirect_read(id: str):
 
     try:
         pkg_dict = tk.get_action("package_show")({}, {"id": id})
-    except tk.ObjectNotFound:
+    except (tk.ObjectNotFound, tk.NotAuthorized):
         return dataset.read("dataset", id)
 
     should_redirect = int(random.random() < const.PERCENTAGE_OF_CHANCE)
