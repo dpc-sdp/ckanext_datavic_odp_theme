@@ -55,28 +55,14 @@ def redirect_read(id:str):
 
     no_preview = request.params.get("no_preview")
 
-<<<<<<< HEAD
-    if pkg_dict.get("nominated_view_resource") not in ["", None]:
-
-        if no_preview is None and preview_enabled:
-            return tk.h.redirect_to(
-                f"/dataset/{id}?no_preview={preview_enabled}")
-=======
     if has_dtv_resources or has_nominated_view:
         if no_preview is None and should_redirect:
             return toolkit.h.redirect_to(
                 f"/dataset/{id}?no_preview={should_redirect}")
->>>>>>> origin/SXDEDPCXZIC-105_DATAVIC-499
 
     return dataset.read("dataset", id)
 
 
-<<<<<<< HEAD
-vic_odp.add_url_rule(u"/dataset/groups/<id>", view_func=vic_groups_list)
-vic_odp.add_url_rule(
-    "/organization/activity/<id>/<int:offset>", view_func=vic_organization_activity
-)
-=======
 def dtv_config(encoded: str, embedded: bool):
     try:
         ids: list[str] = json.loads(base64.urlsafe_b64decode(encoded))
@@ -153,4 +139,3 @@ vic_odp.add_url_rule("/dataset/groups/<id>", view_func=vic_groups_list)
 vic_odp.add_url_rule( u'/dataset/groups/<id>', view_func=vic_groups_list)
 vic_odp.add_url_rule('/dtv_config/<encoded>/config.json', view_func=dtv_config, defaults={"embedded": False})
 vic_odp.add_url_rule('/dtv_config/<encoded>/embedded/config.json', view_func=dtv_config, defaults={"embedded": True})
->>>>>>> origin/SXDEDPCXZIC-105_DATAVIC-499
