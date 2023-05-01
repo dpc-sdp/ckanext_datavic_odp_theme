@@ -1,0 +1,18 @@
+{% set dtv_resources = h.get_digital_twin_resources(pkg.id)|map(attribute="id")|list %}
+
+{% if dtv_resources and request.args.no_preview != "1" %}
+    <section class="datapreview">
+        <h3>{{ _('Map preview') }}</h3>
+        <div class="resource-view dtv-resource-view">
+            <iframe frameborder="0"
+                    src="https://vic.digitaltwin.terria.io/#{{ h.url_for_dtv_config(dtv_resources) }}&hideWorkbench=1"
+                    height="600px" width="100%"></iframe>
+            <a href="https://vic.digitaltwin.terria.io/#{{ h.url_for_dtv_config(dtv_resources, false) }}" target="_blank" class="btn btn-primary dtv-external-link">
+                {{ _("See this dataset in the Digital Twin Victoria") }}
+            </a>
+
+        </div>
+
+    </section>
+
+{% endif %}

@@ -1649,6 +1649,13 @@ nav {
 .datapreview .resource-view .resource-view .actions {
   position: relative; }
 
+.dtv-resource-view {
+  position: relative; }
+  .dtv-resource-view .dtv-external-link {
+    position: absolute;
+    right: 0.625rem;
+    top: 0.625rem; }
+
 .dataset-resources {
   margin-top: 0.75rem;
   padding-left: 0; }
