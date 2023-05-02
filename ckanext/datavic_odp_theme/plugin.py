@@ -56,6 +56,11 @@ class DatavicODPTheme(plugins.SingletonPlugin):
     def get_auth_functions(self):
         return auth_functions()
 
+    # IActions
+
+    def get_actions(self):
+        return actions()
+
     # IBlueprint
     def get_blueprint(self):
         # Check feature preview is enabled or not
