@@ -109,8 +109,10 @@ $primary-color: #0052C2;
 .dtv-resource-view {
     position: relative;
     .dtv-external-link {
-        position: absolute;
-        right: rem(10px);
-        top: rem(10px);
+        margin-left: auto;
+        width: fit-content;
+        display: block;
+        white-space: inherit;
+        line-height: 1.5em;
     }
 }
