@@ -18,6 +18,8 @@
   {% else %}
       {% snippet "package/snippets/resources_list.html", pkg=pkg, resources=pkg.resources %}
   {% endif %}
+
+  {% snippet "package/snippets/datavic_dtv.html", pkg=pkg %}
 {% endblock %}
 
   {% block featured_resource_content %}
