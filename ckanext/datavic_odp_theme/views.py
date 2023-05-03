@@ -36,8 +36,8 @@ def vic_organization_activity(id: str, offset: int = 0):
         return group.activity(
             id, offset=offset, group_type="organization", is_organization=True
         )
-    except tk.NotAuthorized:
-        tk.abort(FORBIDDEN_ACCESS, tk._("Unauthorized Access"))
+    except toolkit.NotAuthorized:
+        toolkit.abort(FORBIDDEN_ACCESS, toolkit._("Unauthorized Access"))
 
 
 def redirect_read(id:str):
@@ -45,7 +45,7 @@ def redirect_read(id:str):
     redirect randomly if no_preview not provided
     """
     try:
-        pkg_dict = tk.get_action("package_show")({}, {"id": id})
+        pkg_dict = toolkit.get_action("package_show")({}, {"id": id})
     except (NotFound):
         return dataset.read("dataset", id)
 
