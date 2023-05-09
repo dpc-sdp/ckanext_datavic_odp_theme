@@ -41,8 +41,10 @@ class DatavicODPTheme(plugins.SingletonPlugin):
             'get_parent_site_url': helpers.get_parent_site_url,
             'release_date': helpers.release_date,
             'get_gtm_code': helpers.get_gtm_code,
+            'get_digital_twin_resources': helpers.get_digital_twin_resources,
+            'url_for_dtv_config': helpers.url_for_dtv_config,
             'get_google_optimize_id': helpers.get_google_optimize_id,
-            'featured_resource_preview': helpers.featured_resource_preview
+            'featured_resource_preview': helpers.featured_resource_preview,
         }
 
     # IMiddleware
@@ -64,7 +66,7 @@ class DatavicODPTheme(plugins.SingletonPlugin):
         # Check feature preview is enabled or not
         # If enabled add the redirect view for read pkg
         preview_redirect_enabled = toolkit.asbool(
-            config.get('ckan.dataset.preview_redirect', None)
+            config.get('ckan.dataset.preview_redirect', 1)
             )
         if preview_redirect_enabled:
             vic_odp.add_url_rule( u'/dataset/<id>', view_func=redirect_read)
