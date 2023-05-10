@@ -2,6 +2,8 @@ import ckan.plugins as plugins
 import ckan.plugins.toolkit as toolkit
 from ckan.common import config
 
+from ckanext.xloader.plugin import xloaderPlugin
+
 from ckanext.datavic_odp_theme import helpers
 from ckanext.datavic_odp_theme.logic import auth_functions, actions
 from ckanext.datavic_odp_theme.views import vic_odp, redirect_read
@@ -86,3 +88,31 @@ class AuthMiddleware(object):
             start_response(status, headers)
             return []
         return self.app(environ, start_response)
+
+
+class DatavicXLoaderPlugin(xloaderPlugin):
+    plugins.implements(plugins.IPackageController, inherit=True)
+
+    # IPackageController
+
+    def after_dataset_create(self, context, pkg_dict):
+        """Dataset syndication doesn't trigger the `after_resource_create` method.
+        So here we want to run submit for each resource after dataset creation.
+        """
+        for resource in pkg_dict.get("resources"):
+            self._submit_to_xloader(resource)
+
+    def _submit_to_xloader(self, resource_dict):
+        """The original method doesn't check if `url_type` is here. Seems like
+        it's not here if we are calling it from the `after_dataset_create`.
+        Just set a default url_type and delete after to be sure, that it doesn't break
+        some core logic.
+
+        Do not touch proper values, because it will definitely break something."""
+
+        resource_dict.setdefault("url_type", "datavic_xloader")
+
+        super()._submit_to_xloader(resource_dict)
+
+        if resource_dict["url_type"] == "datavic_xloader":
+            resource_dict.pop("url_type")

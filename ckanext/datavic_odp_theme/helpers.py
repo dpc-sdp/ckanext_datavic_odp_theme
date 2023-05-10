@@ -110,25 +110,29 @@ def get_gtm_code():
 
 
 def featured_resource_preview(package):
-    # To get a featured preview for the dataset
-    featured_preview = None
-    if package.get('nominated_view_resource',None):
-        try:
-            resource_view = toolkit.get_action('resource_view_list')(
-                {}, {'id': package['nominated_view_resource']})[0]
-            resource = toolkit.get_action('resource_show')(
-                {}, {'id': resource_view['resource_id']})
-            featured_preview = {
-                            'preview':resource_view,
-                            'resource':resource
-                            }
-        except NotFound:
-            pass
-    return featured_preview
+    """Return a featured resource preview if exists for a specific dataset"""
+    if not package.get('nominated_view_resource'):
+        return
+
+    try:
+        views_list = toolkit.get_action("resource_view_list")(
+            {}, {"id": package["nominated_view_resource"]}
+        )
+
+        if not views_list:
+            return
+
+        resource = toolkit.get_action("resource_show")(
+            {}, {"id": package["nominated_view_resource"]}
+        )
+    except toolkit.ObjectNotFound:
+        pass
+    else:
+        return {"preview": views_list[0], "resource": resource}
+
 
 def get_google_optimize_id():
     return config.get('ckan.google_optimize.id', None)
-
 
 def get_digital_twin_resources(pkg_id: str) -> list[dict[str, Any]]:
     """Select resource suitable for DTV(Digital Twin Visualization).
