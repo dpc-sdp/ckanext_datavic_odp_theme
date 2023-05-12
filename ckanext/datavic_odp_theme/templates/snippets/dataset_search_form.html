@@ -243,7 +243,7 @@
   {% endblock %}
 
   {% block search_sortby %}
-    {% if c.controller == 'organization' and c.action == 'index' %}
+    {% if request.endpoint == 'organization.index' %}
     {% else %}
         {% if sorting %}
           <div class="rpl-search-form__filters order-by">

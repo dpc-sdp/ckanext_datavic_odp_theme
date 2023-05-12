@@ -14,8 +14,7 @@ import ckan.views.group as group
 
 from ckanext.datavic_odp_theme import config as conf, const
 
-
-vic_odp = Blueprint("vic_odp", __name__)
+PERCENTAGE_OF_CHANCE = 0.5
 
 vic_odp = Blueprint("vic_odp", __name__)
 
@@ -34,17 +33,20 @@ def vic_organization_activity(id: str, offset: int = 0):
         return group.activity(
             id, offset=offset, group_type="organization", is_organization=True
         )
-    except toolkit.NotAuthorized:
-        toolkit.abort(FORBIDDEN_ACCESS, toolkit._("Unauthorized Access"))
+    except tk.NotAuthorized:
+        tk.abort(const.FORBIDDEN_ACCESS, tk._("Unauthorized Access"))
 
 
-def redirect_read(id:str):
+def redirect_read(id: str):
     """
     redirect randomly if no_preview not provided
     """
+    if id == "new":
+        return dataset.CreateView.as_view("new")("dataset")
+
     try:
-        pkg_dict = toolkit.get_action("package_show")({}, {"id": id})
-    except toolkit.ObjectNotFound:
+        pkg_dict = tk.get_action("package_show")({}, {"id": id})
+    except (tk.ObjectNotFound, tk.NotAuthorized):
         return dataset.read("dataset", id)
 
     should_redirect = int(random.random() < const.PERCENTAGE_OF_CHANCE)
@@ -114,22 +116,15 @@ def dtv_config(encoded: str, embedded: bool):
         )
     return jsonify(config)
 
-
 vic_odp.add_url_rule("/dataset/groups/<id>", view_func=vic_groups_list)
-vic_odp.add_url_rule(
-    "/dtv_config/<encoded>/config.json",
-    view_func=dtv_config,
-    defaults={"embedded": False},
-)
-vic_odp.add_url_rule(
-    "/dtv_config/<encoded>/embedded/config.json",
-    view_func=dtv_config,
-    defaults={"embedded": True},
-)
+
+vic_odp.add_url_rule('/dtv_config/<encoded>/config.json', view_func=dtv_config, defaults={"embedded": False})
+vic_odp.add_url_rule('/dtv_config/<encoded>/embedded/config.json', view_func=dtv_config, defaults={"embedded": True})
+
+vic_odp.add_url_rule(u"/dataset/groups/<id>", view_func=vic_groups_list)
 vic_odp.add_url_rule(
     "/organization/activity/<id>/<int:offset>", view_func=vic_organization_activity
 )
-
 
 def get_blueprints():
     # Check feature preview is enabled or not

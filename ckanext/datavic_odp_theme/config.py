@@ -26,7 +26,7 @@ DEFAULT_DTV_FQ = [
 ]
 
 CONFIG_PARENT_SITE_URL = "ckan.parent_site_url"
-DEFAULT_PARENT_SITE_URL = "https://www.data.vic.gov.au/"
+DEFAULT_PARENT_SITE_URL = "https://www.data.vic.gov.au"
 
 CONFIG_HOTJAR_ENABLED = "ckan.tracking.hotjar_enabled"
 CONFIG_MONSIDO_TRACKING_ENABLED = "ckan.tracking.monsido_enabled"
@@ -56,7 +56,7 @@ def get_dtv_supported_formats() -> set[str]:
 
 
 def get_parent_site_url() -> str:
-    return tk.config.get(CONFIG_PARENT_SITE_URL, DEFAULT_PARENT_SITE_URL)
+    return tk.config.get(CONFIG_PARENT_SITE_URL, DEFAULT_PARENT_SITE_URL).rstrip("/")
 
 
 def hotjar_tracking_enabled() -> bool:

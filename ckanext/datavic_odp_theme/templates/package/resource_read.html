@@ -4,6 +4,8 @@
 <!-- Remove resource download buttons -->
 {% endblock %}
 
+{% block wrapper_class %}resource-read{% endblock %}
+
 {% block resource_content %}
   {% block package_archive_notice %}
     {% if is_activity_archive %}
@@ -36,69 +38,4 @@
   </div>
 {% endblock %}
 
-{% block primary_content %}
-  {% block resource_additional_information %}
-    {% if res %}
-      <section class="module">
-        {% block resource_additional_information_inner %}
-        <div class="module-content">
-          <h2>{{ _('Additional Information') }}</h2>
-          <table class="table table-striped table-bordered table-condensed" data-module="table-toggle-more">
-            <thead>
-              <tr>
-                <th scope="col">{{ _('Field') }}</th>
-                <th scope="col">{{ _('Value') }}</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <th scope="row">{{ _('Format') }}</th>
-                <td>{{ res.mimetype_inner or res.mimetype or res.format or _('unknown') }}</td>
-              </tr>
-              {% if res.filesize %}
-              <tr>
-                <th scope="row">{{ _('Filesize') }}</th>
-                <td>{{res.filesize}}</td>
-              </tr>
-              {% endif %}
-              {% if res.release_date %}
-              <tr>
-                <th scope="row">{{ _('Release Date') }}</th>
-                <td>{{ h.render_datetime(res.release_date) }}</td>
-              </tr>
-              {% endif %}
-              {% if res.period_start %}
-              <tr>
-                <th scope="row">{{ _('Temporal Coverage Start') }}</th>
-                <td>{{ h.render_datetime(res.period_start) }}</td>
-              </tr>
-              {% endif %}
-              {% if res.period_end %}
-              <tr>
-                <th scope="row">{{ _('Temporal Coverage End') }}</th>
-                <td>{{ h.render_datetime(res.period_end) }}</td>
-              </tr>
-              {% endif %}
-              {% if res.data_quality %}
-              <tr>
-                <th scope="row">{{ _('Data Quality Statement') }}</th>
-                <td>{{ res.data_quality }}</td>
-              </tr>
-              {% endif %}
-              {% if res.attribution %}
-              <tr>
-                <th scope="row">{{ _('Attribution Statement') }}</th>
-                <td>{{ res.attribution }}</td>
-              </tr>
-              {% endif %}
-            </tbody>
-          </table>
-        </div>
-        {% endblock %}
-      </section>
-    {% endif %}
-  {% endblock %}
-{% endblock %}
-
-  {% block resource_license %}
-  {% endblock %}
+{% block resource_license %}{% endblock %}

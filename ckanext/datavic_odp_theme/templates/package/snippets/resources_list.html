@@ -1,4 +1,4 @@
-{# 
+{#
 Renders a list of resources with icons and view links.
 
 resources - A list of resources to render
@@ -23,7 +23,7 @@ Example:
       </ul>
     {% else %}
       {% if h.check_access('resource_create', pkg) %}
-          {% trans url=h.url_for(controller='dataset', action='new_resource', id=pkg.name) %}
+          {% trans url=h.url_for(controller='resource', action='new', id=pkg.name) %}
             <p class="empty">This dataset has no data, <a href="{{ url }}">why not add some?</a></p>
           {% endtrans %}
       {% else %}
@@ -33,5 +33,3 @@ Example:
 
   {% endblock %}
 </section>
-
-

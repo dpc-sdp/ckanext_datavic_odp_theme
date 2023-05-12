@@ -109,6 +109,8 @@ $gutterless-grid: (
   &__heading {
     @include rpl_typography('heading_xs');
 
+    margin-top: 1.5rem;
+
     .rpl-icon {
       float: right;
       height: 1rem !important;

@@ -104,19 +104,24 @@ def get_package_release_date(pkg_dict: dict[str, Any]) -> str:
 @helper
 def featured_resource_preview(package: dict[str, Any]) -> Optional[dict[str, Any]]:
     """Return a featured resource preview if exists for a specific dataset"""
-    featured_preview = None
-    if package.get("nominated_view_resource"):
-        try:
-            resource_view = toolkit.get_action("resource_view_list")(
-                {}, {"id": package["nominated_view_resource"]}
-            )[0]
-            resource = toolkit.get_action("resource_show")(
-                {}, {"id": resource_view["resource_id"]}
-            )
-            featured_preview = {"preview": resource_view, "resource": resource}
-        except toolkit.ObjectNotFound:
-            pass
-    return featured_preview
+    if not package.get('nominated_view_resource'):
+        return
+
+    try:
+        views_list = toolkit.get_action("resource_view_list")(
+            {}, {"id": package["nominated_view_resource"]}
+        )
+
+        if not views_list:
+            return
+
+        resource = toolkit.get_action("resource_show")(
+            {}, {"id": package["nominated_view_resource"]}
+        )
+    except toolkit.ObjectNotFound:
+        pass
+    else:
+        return {"preview": views_list[0], "resource": resource}
 
 
 @helper
