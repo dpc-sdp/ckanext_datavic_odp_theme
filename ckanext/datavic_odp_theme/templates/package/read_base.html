@@ -5,7 +5,10 @@
   {% if h.check_access('package_activity_list', {'id':pkg.id}) %}
     {{ h.build_nav_icon('dataset.activity', _('Activity Stream'), id=pkg.name, icon=None) }}
   {% endif %}
-  {% if h.historical_resources_list(pkg.resources)[1] and h.historical_resources_list(pkg.resources)[1]['period_start'] and h.historical_resources_list(pkg.resources)[1]['period_start'] != 'None' and  h.historical_resources_list(pkg.resources)[1]['period_start'] != ""%}
+
+  {% set historical_resources = h.historical_resources_list(pkg.resources) %}
+
+  {% if historical_resources[1] and historical_resources[1]['period_start'] %}
     {{ h.build_nav_icon('odp_dataset.historical', _('Historical Data and Resources'), id=pkg.name, icon=None) }}
   {% endif %}
 {% endblock %}
