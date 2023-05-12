@@ -10,11 +10,7 @@ Example:
 
 #}
 <section id="dataset-resources" class="resources">
-  {% if historical %}
-    <h2>{{ _('Historical Data and Resources') }}</h2>
-  {% else %}
-    <h2>{{ _('Data and Resources') }}</h2>
-  {% endif %}
+  <h2>{{ _('Data and Resources') }}</h2>
   {% block resource_list %}
     {% if resources %}
       <ul class="{% block resource_list_class %}resource-list{% endblock %}">

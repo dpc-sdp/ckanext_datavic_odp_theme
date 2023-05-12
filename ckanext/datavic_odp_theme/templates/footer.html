@@ -19,35 +19,36 @@
         </li>
       </ul>
       <div class="rpl-acknowledgement rpl-site-footer__acknowledgement">
-        <img class="rpl-acknowledgement__flag" src="/assets/images/aboriginal-flag.png" alt="Aboriginal flag" />
-        <img class="rpl-acknowledgement__flag" src="/assets/images/torres-strait-islander-flag.png" alt="Torres Strait Islander flag" />
-        <div class="rpl-acknowledgement__text">The Victorian Government acknowledges Aboriginal Traditional Owners of Country throughout Victoria and pays respect to their cultures and Elders past, present and emerging.</div>
+        <img class="rpl-acknowledgement__flag" src="/images/aboriginal-flag.png" alt="Aboriginal flag" />
+        <img class="rpl-acknowledgement__flag" src="/images/torres-strait-islander-flag.png" alt="Torres Strait Islander flag" />
+        <div class="rpl-acknowledgement__text">{{ _('The Victorian Government acknowledges Aboriginal Traditional Owners of Country throughout Victoria and pays respect to their cultures and Elders past, present and emerging.') }}</div>
       </div>
     </div>
     <div class="rpl-site-footer__bottom">
       <div class="rpl-site-footer__bottom-main">
         <div class="rpl-links-and-copyright">
           <ul class="rpl-links-and-copyright__links"><!-- {# The comments here are intentional - to remove whitespace between inline block elements #}
-            --><li><a href="{{ h.get_parent_site_url() }}/privacy-vicgovau">Privacy</a></li><!--
-            --><li><a href="{{ h.get_parent_site_url() }}/disclaimer">Disclaimer</a></li><!--
-            --><li><a href="{{ h.get_parent_site_url() }}/copyright">Copyright</a></li><!--
-            --><li><a href="{{ h.get_parent_site_url() }}/accessibility">Accessibility</a></li><!--
-            --><li><a href="/sitemap.xml">Sitemap</a></li><!--
-            --><li><a href="{{ h.get_parent_site_url() }}/contact-us">Contact us</a></li><!--
+            --><li><a href="{{ h.get_parent_site_url() }}/privacy-vicgovau">{{ _('Privacy') }}</a></li><!--
+            --><li><a href="{{ h.get_parent_site_url() }}/disclaimer">{{ _('Disclaimer') }}</a></li><!--
+            --><li><a href="{{ h.get_parent_site_url() }}/copyright">{{ _('Copyright') }}</a></li><!--
+            --><li><a href="{{ h.get_parent_site_url() }}/accessibility">{{ _('Accessibility') }}</a></li><!--
+            --><li><a href="{{ h.url_for('sitemap.index') }}">{{ _('Sitemap') }}</a></li><!--
+            --><li><a href="{{ h.get_parent_site_url() }}/contact-us">{{ _('Contact us') }}</a></li><!--
           --></ul>
           <div class="rpl-links-and-copyright__copyright">© Copyright State Government of Victoria</div>
         </div>
       </div>
       <div class="rpl-site-footer__logos">
         <a href="https://vic.gov.au" target="_blank" class="rpl-link rpl-site-footer__logo">
-          <img src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4KPHN2ZyB3aWR0aD0iNzZweCIgaGVpZ2h0PSI0M3B4IiB2aWV3Qm94PSIwIDAgNzYgNDMiIHZlcnNpb249IjEuMSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayI+CiAgICA8IS0tIEdlbmVyYXRvcjogU2tldGNoIDUwLjIgKDU1MDQ3KSAtIGh0dHA6Ly93d3cuYm9oZW1pYW5jb2RpbmcuY29tL3NrZXRjaCAtLT4KICAgIDx0aXRsZT5WSUMgR09WIEZVTEwgTE9HTzwvdGl0bGU+CiAgICA8ZGVzYz5DcmVhdGVkIHdpdGggU2tldGNoLjwvZGVzYz4KICAgIDxkZWZzPjwvZGVmcz4KICAgIDxnIGlkPSJTeW1ib2xzIiBzdHJva2U9Im5vbmUiIHN0cm9rZS13aWR0aD0iMSIgZmlsbD0ibm9uZSIgZmlsbC1ydWxlPSJldmVub2RkIj4KICAgICAgICA8ZyBpZD0iVklDLUdPVi1Mb2dvIiB0cmFuc2Zvcm09InRyYW5zbGF0ZSgwLjAwMDAwMCwgLTYuMDAwMDAwKSIgZmlsbD0iI0ZGRkZGRiI+CiAgICAgICAgICAgIDxnIGlkPSJWSUMtR09WLUZVTEwtTE9HTyIgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoMC4wMDAwMDAsIDYuMDAwMDAwKSI+CiAgICAgICAgICAgICAgICA8cGF0aCBkPSJNNDUuNjM1NzM1MSwxNS43NTc1IEM0Ni45NzQ1NDMsMTUuNzU3NSA0OC4wNzk4MTQ2LDE2Ljg0NDUgNDguMDc5ODE0NiwxOC4xNjEgQzQ4LjA3OTgxNDYsMTkuNDc3NSA0Ni45NzQ1NDMsMjAuNTY0NSA0NS42MzU3MzUxLDIwLjU2NDUgQzQ0LjI5NjkyNzIsMjAuNTY0NSA0My4xOTE2NTU2LDE5LjQ3NzUgNDMuMTkxNjU1NiwxOC4xNjEgQzQzLjE5MTY1NTYsMTYuODQ0NSA0NC4yOTY5MjcyLDE1Ljc1NzUgNDUuNjM1NzM1MSwxNS43NTc1IFogTTQ1LjYzNTczNTEsMjMuMTcyNSBDNDguNTM0ODA3OSwyMy4xNzI1IDUwLjg2MTYxNTksMjEuMDEyIDUwLjg2MTYxNTksMTguMTYxIEM1MC44NjE2MTU5LDE1LjMxIDQ4LjUzNDgwNzksMTMuMTUgNDUuNjM1NzM1MSwxMy4xNSBDNDIuNzM2NjYyMywxMy4xNSA0MC40MDk4NTQzLDE1LjMxIDQwLjQwOTg1NDMsMTguMTYxIEM0MC40MDk4NTQzLDIxLjAxMiA0Mi43MzY2NjIzLDIzLjE3MjUgNDUuNjM1NzM1MSwyMy4xNzI1IFoiIGlkPSJGaWxsLTEiPjwvcGF0aD4KICAgICAgICAgICAgICAgIDxwYXRoIGQ9Ik01Ni42MDM4OTQsMTcuOTgyIEw1NC44MjI2NzU1LDE3Ljk4MiBMNTQuODIyNjc1NSwxNS43MTkgTDU2LjYwMzg5NCwxNS43MTkgQzU3LjIwMTMyNDUsMTUuNzE5IDU3LjU5MTg5NCwxNi4zODQgNTcuNTkxODk0LDE2Ljg1NyBDNTcuNTkxODk0LDE3LjMzIDU3LjIwMTMyNDUsMTcuOTgyIDU2LjYwMzg5NCwxNy45ODIgWiBNNTguNjA1NTYyOSwxOS43MzM1IEM1OS41NDE3MjE5LDE5LjA5NDUgNjAuMjgyNTk2LDE4LjE0ODUgNjAuMjgyNTk2LDE2Ljg1NyBDNjAuMjgyNTk2LDE0Ljg1IDU4LjY1NzkwNzMsMTMuMzY3IDU2LjYwMzg5NCwxMy4zNjcgTDUyLjE3MDcyODUsMTMuMzY3IEw1Mi4xNzA3Mjg1LDIyLjk1NSBMNTQuODIyNjc1NSwyMi45NTUgTDU0LjgyMjY3NTUsMjAuMzQ3IEw1Ni4wNzA4ODc0LDIwLjM0NyBMNTcuMjc5ODQxMSwyMi45NTUgTDYwLjI1NjkyNzIsMjIuOTU1IEw1OC42MDU1NjI5LDE5LjczMzUgWiIgaWQ9IkZpbGwtMiI+PC9wYXRoPgogICAgICAgICAgICAgICAgPHBhdGggZD0iTTE3LjczMTE1MjMsMjIuODcwNSBMMjAuNDM4OTY2OSwyMi44NzA1IEwyMC40Mzg5NjY5LDEzLjQ1MzUgTDE3LjczMTE1MjMsMTMuNDUzNSBMMTcuNzMxMTUyMywyMi44NzA1IFogTTI2LjcyNTgyNzgsMTUuNzkzIEMyNS40MTE2ODIxLDE1Ljc5MyAyNC4zNDk2OTU0LDE2Ljg2MDUgMjQuMzQ5Njk1NCwxOC4xNTM1IEMyNC4zNDk2OTU0LDE5LjQ0NjUgMjUuNDExNjgyMSwyMC41MTQ1IDI2LjcyNTgyNzgsMjAuNTE0NSBDMjcuNTg1NDgzNCwyMC41MTQ1IDI4LjM0MzQ3MDIsMjAuMDQ5NSAyOC43NjA3MTUyLDE5LjM1OSBMMzAuMjE3ODAxMywyMC4yMjc1IEwzMi4zMjA2MzU4LDE1LjcxOTUgTDM0LjUyMDEwNiwxNS43MTk1IEwzNC41MjAxMDYsMjIuOTU1IEwzNy4xNzIwNTMsMjIuOTU1IEwzNy4xNzIwNTMsMTUuNzE5NSBMMzkuODM3MDg2MSwxNS43MTk1IEwzOS44MzcwODYxLDEzLjM2NyBMMzMuNDE3ODU0MywxMy4zNjcgTDM5LjY1Mjg3NDIsMCBMMCwwIEw2LjI3NTI4NDc3LDEzLjQ1MzUgTDkuMjAxMDMzMTEsMTMuNDUzNSBMMTEuNjAxODI3OCwxOC42MDA1IEwxNC4wMDI2MjI1LDEzLjQ1MzUgTDE2LjkzNDQxMDYsMTMuNDUzNSBMMTIuNTQxNTA5OSwyMi44NzA1IEwxMC42NjgxODU0LDIyLjg3MDUgTDE5LjgyNjQzNzEsNDIuNTA0NSBMMjkuMTk1NTc2MiwyMi40MTggQzI4LjQ2OTI5OCwyMi44MzU1IDI3LjYyNTc0ODMsMjMuMDc2IDI2LjcyNTgyNzgsMjMuMDc2IEMyMy44OTQ3MDIsMjMuMDc2IDIxLjY0NTQwNCwyMC45NTQgMjEuNjQ1NDA0LDE4LjE1MzUgQzIxLjY0NTQwNCwxNS4zNTM1IDIzLjg5NDcwMiwxMy4yMzE1IDI2LjcyNTgyNzgsMTMuMjMxNSBDMjguNTMzMjE4NSwxMy4yMzE1IDMwLjExMzExMjYsMTQuMTk4NSAzMC45NzIyNjQ5LDE1LjYzIEwyOC43NjA3MTUyLDE2Ljk0ODUgQzI4LjM0MzQ3MDIsMTYuMjcxIDI3LjU4NTQ4MzQsMTUuNzkzIDI2LjcyNTgyNzgsMTUuNzkzIFoiIGlkPSJGaWxsLTUiPjwvcGF0aD4KICAgICAgICAgICAgICAgIDxwb2x5Z29uIGlkPSJGaWxsLTMiIHBvaW50cz0iNjEuODkyMTg1NCAyMi45NTUgNjQuNTQ0MTMyNSAyMi45NTUgNjQuNTQ0MTMyNSAxMy4zNjcgNjEuODkyMTg1NCAxMy4zNjciPjwvcG9seWdvbj4KICAgICAgICAgICAgICAgIDxwYXRoIGQ9Ik02OS43MDMwNzI4LDE5LjU5MiBMNzAuNTI1NDgzNCwxNy43MjU1IEw3MC41ODAzNDQ0LDE3LjcyNTUgTDcxLjQwMjc1NSwxOS41OTIgTDY5LjcwMzA3MjgsMTkuNTkyIFogTTcwLjA1NTg5NCwxMy4zNjYgTDY1LjU4NDk4MDEsMjIuOTU0NSBMNjguNDI4MTg1NCwyMi45NTQ1IEw2OC44OTQyNTE3LDIxLjg2ODUgTDcyLjIxMjA3OTUsMjEuODY4NSBMNzIuNjc3NjQyNCwyMi45NTQ1IEw3NS41MjEzNTEsMjIuOTU0NSBMNzEuMDUwNDM3MSwxMy4zNjYgTDcwLjA1NTg5NCwxMy4zNjYgWiIgaWQ9IkZpbGwtNCI+PC9wYXRoPgogICAgICAgICAgICA8L2c+CiAgICAgICAgPC9nPgogICAgPC9nPgo8L3N2Zz4=" alt="Victoria Government Website">
+          <img src="/images/vic-footer-logo.svg" alt="Victoria Government Website">
         </a>
       </div>
     </div>
   </div>
 </footer>
-  {% block footer_debug %}
+
+{% block footer_debug %}
     {% if g.debug %}
-      {% include 'snippets/debug.html' %}
+        {% include 'snippets/debug.html' %}
     {% endif %}
-  {% endblock %}
+{% endblock %}

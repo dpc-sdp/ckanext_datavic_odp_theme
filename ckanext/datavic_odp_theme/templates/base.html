@@ -14,17 +14,22 @@
 
 {% block head_extras %}
   {{ super() }}
-  {% if h.get_gtm_code() %}
+
+  {% if h.get_gtm_container_id() %}
     {% snippet "snippets/gtm_include.html" %}
   {% endif %}
-  {% if h.hotjar_tracking_enabled() == true %}
+
+  {% if h.hotjar_tracking_enabled() %}
     {% snippet "snippets/hotjar.html" %}
   {% endif %}
-  {% if h.monsido_tracking_enabled() == true %}
+
+  {% if h.monsido_tracking_enabled() %}
     {% snippet "snippets/monsido.html" %}
   {% endif %}
 
-  {% snippet "snippets/google_optimize.html" %}
+  {% if h.get_google_optimize_id() %}
+    {% snippet "snippets/google_optimize.html" %}
+  {% endif %}
 {% endblock %}
 
 {% block styles %}

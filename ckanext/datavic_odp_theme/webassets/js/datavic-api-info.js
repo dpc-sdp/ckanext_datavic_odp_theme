@@ -8,27 +8,27 @@
  *   <a data-module="api-info" data-module-template="http://example.com/path/to/template">API</a>
  *
  */
-this.ckan.module('datavic-api-info', function (jQuery) {
+this.ckan.module('datavic-odp-api-info', function ($) {
     return {
-  
+
       /* holds the loaded lightbox */
       modal: null,
-  
+
       options: {
         template: null
       },
-  
+
       /* Sets up the API info module.
        *
        * Returns nothing.
        */
       initialize: function () {
-        jQuery.proxyAll(this, /_on/);
-  
+        $.proxyAll(this, /_on/);
+
         this.el.on('click', this._onClick);
         this.el.button();
       },
-  
+
       /* Displays a loading message in the button. If false is provided as an
        * argument the message is reset.
        *
@@ -44,7 +44,7 @@ this.ckan.module('datavic-api-info', function (jQuery) {
       loading: function (loading) {
         this.el.button(loading !== false ? 'loading' : 'reset');
       },
-  
+
       /* Displays the API info box.
        *
        * Examples
@@ -56,11 +56,11 @@ this.ckan.module('datavic-api-info', function (jQuery) {
       show: function () {
         var sandbox = this.sandbox,
             module = this;
-  
+
         if (this.modal) {
           return this.modal.modal('show');
         }
-  
+
         this.loadTemplate().done(function (html) {
           module.modal = jQuery(html);
           module.modal.find('.modal-header :header').append('<button class="close" data-dismiss="modal">×</button>');
@@ -74,7 +74,7 @@ this.ckan.module('datavic-api-info', function (jQuery) {
           })
         });
       },
-  
+
       /* Hides the modal.
        *
        * Examples
@@ -88,7 +88,7 @@ this.ckan.module('datavic-api-info', function (jQuery) {
           this.modal.modal('hide');
         }
       },
-  
+
       /* Loads the template and returns a promise that on complete will
        * receive the html content for the modal.
        *
@@ -103,28 +103,28 @@ this.ckan.module('datavic-api-info', function (jQuery) {
           this.sandbox.notify(this._('There is no API data to load for this resource'));
           return jQuery.Deferred().reject().promise();
         }
-  
+
         if (!this.promise) {
           this.loading();
-  
+
           // This should use sandbox.client!
           this.promise = jQuery.get(this.options.template);
           this.promise.then(this._onTemplateSuccess, this._onTemplateError);
         }
         return this.promise;
       },
-  
+
       /* Event handler for clicking on the element */
       _onClick: function (event) {
         event.preventDefault();
         this.show();
       },
-  
+
       /* Success handler for when the template is loaded */
       _onTemplateSuccess: function () {
         this.loading(false);
       },
-  
+
       /* error handler when the template fails to load */
       _onTemplateError: function () {
         this.loading(false);
@@ -132,4 +132,3 @@ this.ckan.module('datavic-api-info', function (jQuery) {
       }
     };
   });
-  
