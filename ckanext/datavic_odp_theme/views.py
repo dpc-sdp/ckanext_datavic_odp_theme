@@ -118,9 +118,9 @@ def dtv_config(encoded: str, embedded: bool):
 
 vic_odp.add_url_rule("/dataset/groups/<id>", view_func=vic_groups_list)
 
-vic_odp.add_url_rule( u'/dataset/groups/<id>', view_func=vic_groups_list)
 vic_odp.add_url_rule('/dtv_config/<encoded>/config.json', view_func=dtv_config, defaults={"embedded": False})
 vic_odp.add_url_rule('/dtv_config/<encoded>/embedded/config.json', view_func=dtv_config, defaults={"embedded": True})
+
 vic_odp.add_url_rule(u"/dataset/groups/<id>", view_func=vic_groups_list)
 vic_odp.add_url_rule(
     "/organization/activity/<id>/<int:offset>", view_func=vic_organization_activity
