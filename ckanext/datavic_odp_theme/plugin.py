@@ -1,5 +1,5 @@
 import ckan.plugins as p
-import ckan.plugins.toolkit as toolkit
+import ckan.plugins.toolkit as tk
 
 from ckanext.xloader.plugin import xloaderPlugin
 
@@ -17,9 +17,9 @@ class DatavicODPTheme(p.SingletonPlugin):
     # IConfigurer
 
     def update_config(self, config_):
-        toolkit.add_template_directory(config_, "templates")
-        toolkit.add_public_directory(config_, "public")
-        toolkit.add_resource("webassets", "datavic_odp_theme")
+        tk.add_template_directory(config_, "templates")
+        tk.add_public_directory(config_, "public")
+        tk.add_resource("webassets", "datavic_odp_theme")
 
     # ITemplateHelpers
 

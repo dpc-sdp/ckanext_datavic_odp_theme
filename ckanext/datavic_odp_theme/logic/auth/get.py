@@ -2,7 +2,7 @@ from __future__ import annotations
 from typing import Any
 
 import ckan.authz as authz
-import ckan.plugins.toolkit as toolkit
+import ckan.plugins.toolkit as tk
 
 
 @tk.chained_auth_function

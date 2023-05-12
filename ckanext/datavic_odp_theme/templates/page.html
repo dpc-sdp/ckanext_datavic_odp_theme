@@ -70,42 +70,7 @@
             {% endblock %}
           </div>
         {% endblock %}
-
-        {% block toolbar %}
-          <div class="toolbar">
-            {% block breadcrumb %}
-            {% endblock %}
-          </div>
-        {% endblock %}
-
-        <div class="row {% block wrapper_class %}{% endblock %}{% if self.secondary()|trim == '' %} no-nav{% endif %}">
-
-          {#
-          The pre_primary block can be used to add content to before the
-          rendering of the main content columns of the page.
-          #}
-          {% block pre_primary %}
-          {% endblock %}
-
-          {% block primary %}
-            {% set span = 9 if g.controller in ['user', 'admin', 'ckanext.harvest.controllers.view:ViewController'] else 12 %}
-            <div class="primary span{{ span }}">
-              {% block primary_content %}
-                {{ super() }}
-              {% endblock %}
-            </div>
-          {% endblock %}
-
-          {% block secondary %}
-            {% set span = 9 if g.controller in ['user', 'admin', 'ckanext.harvest.controllers.view:ViewController'] else 12 %}
-            {% if span != 12 %}
-                <aside class="secondary span3">
-                  {% block secondary_content %}{% endblock %}
-                </aside>
-            {% endif %}
-          {% endblock %}
-        </div>
-      {% endblock %}
+      </div>
     </div>
   </div>
 {% endblock -%}

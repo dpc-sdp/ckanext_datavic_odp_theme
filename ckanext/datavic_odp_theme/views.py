@@ -17,7 +17,7 @@ from ckanext.datavic_odp_theme import config as conf, const
 PERCENTAGE_OF_CHANCE = 0.5
 
 vic_odp = Blueprint("vic_odp", __name__)
-
+tk = toolkit
 
 def vic_groups_list(id):
     return h.redirect_to("dataset.read", id=id)
