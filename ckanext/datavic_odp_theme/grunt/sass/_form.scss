@@ -114,3 +114,11 @@ $rpl-form-textarea-height-m: rem(75px) !default;
         color: #000;
     }
 }
+
+.form-actions {
+    overflow: hidden;
+}
+
+select.form-control {
+    appearance: auto;
+}

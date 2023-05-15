@@ -1,6 +1,6 @@
 $rpl-footer-breakpoint: 'l' !default;
 $rpl-footer-bg-color: rpl-color('dark_primary') !default;
-$rpl-footer-bg-image: url('/assets/images/footer-shape.png') !default;
+$rpl-footer-bg-image: url('/images/footer-shape.png') !default;
 $rpl-footer-bottom-bg-color: transparent !default;
 $rpl-footer-text-color: rpl-color('white') !default;
 $rpl-footer-border-width: $rpl-border-width !default;
@@ -108,6 +108,8 @@ $gutterless-grid: (
 
   &__heading {
     @include rpl_typography('heading_xs');
+
+    margin-top: 1.5rem;
 
     .rpl-icon {
       float: right;
