@@ -60,7 +60,7 @@ class DatavicXLoaderPlugin(xloaderPlugin):
         """Dataset syndication doesn't trigger the `after_resource_create` method.
         So here we want to run submit for each resource after dataset creation.
         """
-        for resource in pkg_dict.get("resources"):
+        for resource in pkg_dict.get("resources", []):
             self._submit_to_xloader(resource)
 
     def _submit_to_xloader(self, resource_dict):
