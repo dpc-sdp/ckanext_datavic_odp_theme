@@ -6,8 +6,6 @@
         {{ super() }}
     {% endblock %}
 
-    {% block package_tags %}{% endblock %}
-
     {% block package_resources %}
         {% set historical_resources_list = h.historical_resources_list(pkg.resources) %}
 
@@ -21,7 +19,9 @@
     {% endblock %}
 
     {% block featured_resource_content %}
-        {% snippet 'package/snippets/featured_resource.html', pkg=pkg %}
+        {% snippet 'package/snippets/featured_resource.html',
+        pkg=pkg
+        %}
     {% endblock %}
 
     {% block package_additional_info %}
