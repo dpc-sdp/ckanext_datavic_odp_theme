@@ -127,6 +127,12 @@ $primary-color: #0052C2;
     .table.table-striped {
         thead {
             display: none;
+            &.data-dictionary {
+                display: table-header-group;
+            }
+        }
+        p {
+            margin-bottom: 0;
         }
     }
 }
