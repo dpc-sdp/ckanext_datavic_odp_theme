@@ -1,0 +1,31 @@
+.dataTables_wrapper {
+    .resourceinfo {
+        display: none;
+    }
+    .dataTables_filter {
+        label {
+            &:after {
+                content: unset;
+            }
+        }
+    }
+    & i.fa-info-circle {
+        color: #0052c2 !important;
+    }
+    .dataTables_scroll 
+        .dtr-control:before {
+            background-color: #0052c2 !important;
+        }
+    #dtprv_paginate {
+        margin-top: -1.5em;
+        ul {
+            li {
+                &.active {
+                    a {
+                        background-color: #0052c2 !important;
+                    }
+                }
+            }
+        }
+    }
+}
