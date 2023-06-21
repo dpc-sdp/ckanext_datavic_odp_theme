@@ -7,7 +7,7 @@
 {% set form_id = form_id if form_id else false %}
 {% set form_classes = form_classes if form_classes else 'search-form' %}
 
-{% if c.controller in ['package', 'dataset'] and c.action == 'search' %}
+{% if request.endpoint == 'dataset.search' %}
 
   {% snippet 'snippets/dataset_search_form.html', query=query, count=count, type=type, facets=facets, placeholder=placeholder, sorting=sorting, form_id=form_id, sorting_selected=sorting_selected %}
 
@@ -15,7 +15,7 @@
 
   <form {% if form_id %}id="{{ form_id }}" {% endif %}class="{{ form_classes }}{% if no_bottom_border %} no-bottom-border{% endif %}" method="get" data-module="select-switch">
 
-    {% if not (c.controller in ['organization'] and c.action == 'read') %}
+    {% if request.endpoint != 'organization.read' %}
     {% block search_input %}
       <div class="search-input control-group {{ search_class }}">
         <input type="text" class="search" name="q" value="{{ query }}" autocomplete="off" placeholder="{{ placeholder }}">
@@ -37,7 +37,7 @@
 
     {% block search_sortby %}
       {% if sorting %}
-        <div class="form-select control-group control-order-by">
+        <div class="control-group control-order-by">
           <label for="field-order-by">{{ _('Order by') }}</label>
           <select id="field-order-by" name="sort">
             {% for label, value in sorting %}

@@ -17,9 +17,14 @@ $primary-color: #0052C2;
 
     .resource-icon {
         max-width: rem(45px);
+        display: flex;
         .format-label {
             position: initial;
-            margin-right: 10px;
+            padding: 0px 5px;
+            color: transparent;
+            display: inline-block;
+            width: 60px;
+            height: 60px;
         }
     }
 }
@@ -114,5 +119,20 @@ $primary-color: #0052C2;
         display: block;
         white-space: inherit;
         line-height: 1.5em;
+
+    }
+}
+
+.resource-read {
+    .table.table-striped {
+        thead {
+            display: none;
+            &.data-dictionary {
+                display: table-header-group;
+            }
+        }
+        p {
+            margin-bottom: 0;
+        }
     }
 }

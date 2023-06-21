@@ -9,17 +9,17 @@
     <div class="resource-summary">
         <p>
             {% if url_is_edit %}
-                Edit "<a href="{{ url }}">{{ h.resource_display_name(res) }} </a>"<br/>
+                {{ _('Edit') }} "<a href="{{ url }}">{{ h.resource_display_name(res) }} </a>"<br/>
             {% else %}
               {{ h.resource_display_name(res)}}<br/>
             {% endif %}
             {% if h.is_historical() or url_is_edit %}
             <small>
                 {% if res.release_date and res.release_date != '' %}
-                    Release Date: {{ h.render_datetime(res.release_date, date_format='%d/%m/%Y') }} &nbsp;
+                    {{ _('Release Date:') }} {{ h.render_datetime(res.release_date, date_format='%d/%m/%Y') }} &nbsp;
                 {% endif %}
                 {% if res.period_start and res.period_start != '' %}
-                    Period: {{ h.render_datetime(res.period_start, date_format='%d/%m/%Y') }} &raquo; {{ h.render_datetime(res.period_end, date_format='%d/%m/%Y') }}
+                    {{ _('Period:') }} {{ h.render_datetime(res.period_start, date_format='%d/%m/%Y') }} &raquo; {{ h.render_datetime(res.period_end, date_format='%d/%m/%Y') }}
                 {% endif %}
             </small>
             {% endif %}
@@ -32,23 +32,23 @@
   {% block resource_item_explore %}
   {% if not url_is_edit %}
   <div class="dropdown btn-group">
-    <a href="#" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
+    <a href="#" class="btn btn-primary dropdown-toggle" id="dropdownExplorer" data-bs-toggle="dropdown" aria-expanded="false">
       <i class="fa fa-share"></i>
       {{ _('Explore') }}
       <span class="caret"></span>
     </a>
-    <ul class="dropdown-menu">
+    <ul class="dropdown-menu" aria-labelledby="dropdownExplorer">
       {% block resource_item_explore_links %}
       <li>
-        <a href="{{ url }}">
+        <a class="dropdown-item" href="{{ url }}">
           <i class="fa fa-info-circle"></i>
           {{ _('More information') }}
         </a>
       </li>
       {% if res.url and h.is_url(res.url) %}
       <li>
-        <a href="{{ res.url }}" class="resource-url-analytics" target="_blank">
-          {% if res.has_views or res.url_type == 'upload' or res.format|upper not in ['API', 'API/TOOL', 'DATA TOOL', 'HTML', 'WMS', 'WFS', 'GeoJSON', 'GPX', 'KML', 'KMZ', 'SHP', 'SHP-ZIP', 'MIF-ZIP', 'TAB-ZIP', 'DXF-ZIP'] %}
+        <a href="{{ res.url }}" class="dropdown-item resource-url-analytics" target="_blank">
+          {% if h.is_resource_downloadable(res) %}
             <i class="fa fa-arrow-circle-o-down"></i>
             {{ _('Download') }}
           {% else %}
@@ -60,7 +60,7 @@
       {% endif %}
       {% if can_edit %}
       <li>
-        <a href="{{ h.url_for(controller='dataset_resource', action='edit', id=pkg.name, resource_id=res.id) }}">
+        <a class="dropdown-item" href="{{ h.url_for(controller='dataset_resource', action='edit', id=pkg.name, resource_id=res.id) }}">
           <i class="fa fa-pencil-square-o"></i>
           {{ _('Edit') }}
         </a>

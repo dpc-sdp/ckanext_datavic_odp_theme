@@ -1,19 +1,13 @@
-{% extends "package/read_base_historical.html" %}
+{% extends "package/read_base.html" %}
 
-{# Note: The parent template has aliased c.pkg_dict as pkg #}
+{% block subtitle %}{{ h.dataset_display_name(pkg) }} - {{ super() }}{% endblock %}
 
-{% block package_description %}
+{% block head_extras -%}
   {{ super() }}
-
-  {% for field_id, field_attributes in h.dataset_fields %}
-    {% if pkg.get(field_id) %}
-      <section id="dataset-{{ field_id }}" class="resources module-content">
-        <p><strong>{{ _( field_attributes['label'] ) }}</strong>: {{ pkg.get(field_id) }}</p>
-      </section>
-    {% endif %}
-  {% endfor %}
-
-{% endblock %}
+  {% set description = h.markdown_extract(pkg.notes, extract_length=200)|forceescape %}
+  <meta property="og:title" content="{{ h.dataset_display_name(pkg) }} - {{ g.site_title }}">
+  <meta property="og:description" content="{{ description|forceescape|trim }}">
+{% endblock -%}
 
 {% block primary_content_inner %}
   {% block package_resources %}
@@ -22,4 +16,3 @@
 
   {% endblock %}
 {% endblock %}
-

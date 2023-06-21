@@ -1,14 +1,16 @@
 datavic_odp_theme-css:
-  contents:
-    - datavic_odp_theme.css
+  filter: cssrewrite
   output: datavic_odp_theme/%(version)s_datavic_odp_theme.css
-  
+  contents:
+    - css/datavic_odp_theme.css
 
 datavic_odp_theme-js:
   output: datavic_odp_theme/%(version)s_datavic_odp_theme.js
   contents:
-    - datavic_odp_theme.js
-    - datavic-api-info.js
+    - js/datavic-header.js
+    - js/datavic-breadcrumb.js
+    - js/datavic-advanced-search.js
+    - js/datavic-api-info.js
   extra:
     preload:
       - base/main
@@ -18,4 +20,4 @@ datavic_recline_patch_css:
   filter: cssrewrite
   output: datavic_odp_theme/%(version)s-datavic-recline.css
   contents:
-    - datavic_recline.css
+    - css/datavic_recline.css

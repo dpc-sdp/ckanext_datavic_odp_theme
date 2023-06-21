@@ -10,7 +10,7 @@ module.exports = function(grunt) {
           sourcemap: false
         },
         files: {
-          '../webassets/datavic_odp_theme.css': [
+          '../webassets/css/datavic_odp_theme.css': [
             'sass/styles.scss'
           ]
         }
@@ -23,17 +23,25 @@ module.exports = function(grunt) {
         ],
         tasks: ['sass']
       }
+    },
+    cssmin: {
+        css: {
+            src: '../webassets/css/datavic_odp_theme.css',
+            dest: '../webassets/css/datavic_odp_theme.css'
+        }
     }
   });
 
   // Load tasks
   grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-sass');
+  grunt.loadNpmTasks('grunt-contrib-cssmin');
 
-  // Register tasks
   grunt.registerTask('default', [
-    'sass'
+    'sass',
+    'cssmin'
   ]);
+
   grunt.registerTask('dev', [
     'watch'
   ]);
