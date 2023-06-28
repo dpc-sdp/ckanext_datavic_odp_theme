@@ -1,145 +1,137 @@
 from __future__ import annotations
 
+import logging
 import json
 import base64
+from typing import Any, Optional
 
-from typing import Any
+from sqlalchemy import func
+
 import ckan.plugins.toolkit as toolkit
-import ckan.logic           as logic
 import ckan.model as model
-import logging
 
-from sqlalchemy import and_ as _and_
-from sqlalchemy.sql import func
-from ckan.common import config, request
+from ckanext.toolbelt.decorators import Collector
 
-NotFound = toolkit.ObjectNotFound
+from ckanext.datavic_odp_theme import config as conf, const
+
+
 log = logging.getLogger(__name__)
+helper, get_helpers = Collector().split()
 
-CONFIG_DTV_FQ = "ckanext.datavicmain.dtv.supported_formats"
-DEFAULT_DTV_FQ = [
-    "wms", "shapefile", "zip (shp)", "shp", "kmz",
-    "geojson", "csv-geo-au", "aus-geo-csv"
-]
 
+@helper
 def organization_list():
-    org_list = toolkit.get_action('organization_list')({}, {})
+    org_list = toolkit.get_action("organization_list")({}, {})
     organizations = []
     for org in org_list:
-        org_dict = toolkit.get_action('organization_show')({}, {'id': org})
+        org_dict = toolkit.get_action("organization_show")({}, {"id": org})
         organizations.append(org_dict)
 
     return organizations
 
 
+@helper
 def group_list():
-    return toolkit.get_action('group_list')({}, {'all_fields': True})
+    return toolkit.get_action("group_list")({}, {"all_fields": True})
 
 
-def format_list(limit=100):
-    resource_formats = []
+@helper
+def format_list() -> list[str]:
+    """Return a list of all available resources on portal"""
+
+    query = (
+        model.Session.query(model.Resource.format)
+        .filter(model.Resource.state == model.State.ACTIVE)
+        .group_by(model.Resource.format)
+        .order_by(func.lower(model.Resource.format))
+    )
+
+    return [resource.format for resource in query if resource.format]
+
+
+@helper
+def hotjar_tracking_enabled() -> bool:
+    return conf.hotjar_tracking_enabled()
+
+
+@helper
+def monsido_tracking_enabled() -> bool:
+    return conf.monsido_tracking_enabled()
+
+
+@helper
+def get_hotjar_hsid() -> Optional[str]:
+    return conf.get_hotjar_hsid()
+
+
+@helper
+def get_hotjar_hjsv() -> Optional[str]:
+    return conf.get_hotjar_hjsv()
+
+
+@helper
+def get_monsido_domain_token() -> Optional[str]:
+    return conf.get_monsido_domain_token()
+
+
+@helper
+def get_gtm_container_id() -> Optional[str]:
+    return conf.get_gtm_container_id()
+
+
+@helper
+def get_google_optimize_id() -> Optional[str]:
+    return conf.get_google_optimize_id()
+
+
+@helper
+def get_parent_site_url() -> str:
+    return conf.get_parent_site_url()
+
+
+@helper
+def get_package_release_date(pkg_dict: dict[str, Any]) -> str:
+    """Get release_date from resource or use metadata_created as a default"""
+    dates: list[str] = [pkg_dict["metadata_created"]]
+
+    for resource in pkg_dict["resources"]:
+        if resource.get("release_date") and resource["release_date"] != "1970-01-01":
+            dates.append(resource["release_date"])
+
+    return sorted(dates)[0].split("T")[0]
+
+
+@helper
+def featured_resource_preview(package: dict[str, Any]) -> Optional[dict[str, Any]]:
+    """Return a featured resource preview if exists for a specific dataset"""
+    if not package.get('nominated_view_resource'):
+        return
+
     try:
-        session = model.Session
+        views_list = toolkit.get_action("resource_view_list")(
+            {}, {"id": package["nominated_view_resource"]}
+        )
 
-        query = (session.query(
-            model.Resource.format,)
-            .filter(_and_(
-                model.Resource.state == 'active',
-            ))
-            .group_by(model.Resource.format)
-            .order_by(
-                func.lower(model.Resource.format)
-            ))
-        resource_formats = [resource.format for resource in query if not resource.format == '']
-    except Exception as e:
-        log.error(e.message)
+        if not views_list:
+            return
 
-    return resource_formats
+        resource = toolkit.get_action("resource_show")(
+            {}, {"id": package["nominated_view_resource"]}
+        )
+    except toolkit.ObjectNotFound:
+        pass
+    else:
+        return {"preview": views_list[0], "resource": resource}
 
 
-def hotjar_tracking_enabled():
-    return toolkit.asbool(config.get('ckan.tracking.hotjar_enabled', False))
-
-
-def monsido_tracking_enabled():
-    return toolkit.asbool(config.get('ckan.tracking.monsido_enabled', False))
-
-
-def get_hotjar_hsid():
-    return config.get('ckan.tracking.hotjar.hjid', None)
-
-
-def get_hotjar_hjsv():
-    return config.get('ckan.tracking.hotjar.hjsv', None)
-
-
-def get_monsido_domain_token():
-    return config.get('ckan.tracking.monsido.domain_token', None)
-
-
-def get_ga_site():
-    from urlparse.parse import urlparse
-    site_url = config.get('ckan.site_url', None)
-    o = urlparse(site_url)
-    return o.hostname
-
-
-def get_parent_site_url():
-    return config.get('ckan.parent_site_url', 'https://www.data.vic.gov.au/')
-
-
-def release_date(pkg_dict):
-    """
-    Copied from https://github.com/salsadigitalauorg/datavic_ckan_2.2/blob/develop/iar/src/ckanext-datavic/ckanext/datavic/plugin.py#L296
-    :param pkg_dict:
-    :return:
-    """
-    dates = []
-    dates.append(pkg_dict['metadata_created'])
-    for resource in pkg_dict['resources']:
-        if 'release_date' in resource and resource['release_date'] != '' and resource['release_date'] != '1970-01-01':
-            dates.append(resource['release_date'])
-    dates.sort()
-    return dates[0].split("T")[0]
-
-
-def get_gtm_code():
-    # To get Google Tag Manager Code
-    gtm_code = config.get('ckan.google_tag_manager.gtm_container_id', False)
-    return str(gtm_code)
-
-
-def featured_resource_preview(package):
-    # To get a featured preview for the dataset
-    featured_preview = None
-    if package.get('nominated_view_resource',None):
-        try:
-            resource_view = toolkit.get_action('resource_view_list')(
-                {}, {'id': package['nominated_view_resource']})[0]
-            resource = toolkit.get_action('resource_show')(
-                {}, {'id': resource_view['resource_id']})
-            featured_preview = {
-                            'preview':resource_view,
-                            'resource':resource
-                            }
-        except NotFound:
-            pass
-    return featured_preview
-
-def get_google_optimize_id():
-    return config.get('ckan.google_optimize.id', None)
-
-
+@helper
 def get_digital_twin_resources(pkg_id: str) -> list[dict[str, Any]]:
     """Select resource suitable for DTV(Digital Twin Visualization).
 
     Additional info:
     https://gist.github.com/steve9164/b9781b517c99486624c02fdc7af0f186
     """
-    supported_formats = {
-        fmt.lower() for fmt in
-        toolkit.aslist(toolkit.config.get(CONFIG_DTV_FQ, DEFAULT_DTV_FQ))
-    }
+    supported_formats: set[str] = conf.get_dtv_supported_formats()
 
     try:
         pkg = toolkit.get_action("package_show")({}, {"id": pkg_id})
@@ -164,9 +156,10 @@ def get_digital_twin_resources(pkg_id: str) -> list[dict[str, Any]]:
             continue
 
         # Additional info #3
-        if fmt in {"kml", "kmz", "shp", "shapefile", "zip (shp)"} and len(
-                pkg["resources"]
-        ) > 1:
+        if (
+            fmt in {"kml", "kmz", "shp", "shapefile", "zip (shp)"}
+            and len(pkg["resources"]) > 1
+        ):
             continue
 
         # Additional info #3
@@ -183,14 +176,23 @@ def get_digital_twin_resources(pkg_id: str) -> list[dict[str, Any]]:
     return list(acceptable_resources.values())
 
 
+@helper
 def url_for_dtv_config(ids: list[str], embedded: bool = True) -> str:
-    """Build URL where DigitalTwin can get map configuration for the preview.
-
-    """
+    """Build URL where DigitalTwin can get map configuration for the preview."""
 
     encoded = base64.urlsafe_b64encode(bytes(json.dumps(ids), "utf8"))
     return toolkit.url_for(
-        "vic_odp.dtv_config",
-        encoded=encoded, embedded=embedded,
-        _external=True
+        "vic_odp.dtv_config", encoded=encoded, embedded=embedded, _external=True
     )
+
+
+@helper
+def is_resource_downloadable(resource: dict[str, Any]) -> bool:
+    if (
+        resource.get("has_views")
+        or resource.get("url_type") == "upload"
+        or resource["format"].upper() not in const.NOT_DOWNLOADABLE_FORMATS
+    ):
+        return True
+
+    return False

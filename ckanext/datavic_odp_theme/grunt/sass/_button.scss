@@ -1,48 +1,67 @@
-.btn-primary {
 
-    @include rpl_button;
-    @include rpl_button_primary;
-
-    &:hover,
-    &:focus {
-        text-decoration: none;
+.btn {
+    &.a {
+        color: #206b82;
     }
-}
 
-.btn-success {
-    color: #fff;
-    text-align: center;
-    display: inline-block;
-    margin: 0;
-      margin-left: 0px;
-    margin-left: 0px;
-    box-sizing: border-box;
-    text-decoration: none;
-    width: 100%;
-    padding: 1rem 3rem;
-    border: 1px solid transparent;
-    border-radius: 0.25rem;
-    cursor: pointer;
-    color: #fff;
-    line-height: 1rem;
-    font-size: 1rem;
-    font-family: "VIC-Bold", "Arial", "Helvetica", "sans-serif";
-    font-weight: initial;
-}
+    .fa {
+        margin-right: 4px;
+    }
 
-.btn-group.open .btn-primary.dropdown-toggle {
-    //background-color: $primary-color;
-}
+    &.btn-light,
+    &.btn-default {
+        color: #000;
+    }
 
-.btn-group {
-    &.open {
-        .btn-primary {
-            &.dropdown-toggle {
-                background-color: $rpl-button-primary-background-color;
-            }
+    &.btn-danger {
+        color: #fff;
+        &:hover, &:focus, &:active {
+            color: #fff;
         }
     }
-    > .btn {
-        font-size: initial;
+
+    &.btn-primary {
+
+        @include rpl_button;
+        @include rpl_button_primary;
+
+        &:hover,
+        &:focus {
+            text-decoration: none;
+        }
+    }
+
+    &.btn-success {
+        color: #fff;
+        text-align: center;
+        display: inline-block;
+        margin: 0;
+          margin-left: 0px;
+        margin-left: 0px;
+        box-sizing: border-box;
+        text-decoration: none;
+        width: 100%;
+        padding: 1rem 3rem;
+        border: 1px solid transparent;
+        border-radius: 0.25rem;
+        cursor: pointer;
+        color: #fff;
+        line-height: 1rem;
+        font-size: 1rem;
+        font-family: "VIC-Bold", "Arial", "Helvetica", "sans-serif";
+        font-weight: initial;
+    }
+
+    &.btn-group {
+        &.open {
+            .btn-primary {
+                &.dropdown-toggle {
+                    background-color: $rpl-button-primary-background-color;
+                }
+            }
+        }
+        > .btn {
+            font-size: initial;
+        }
     }
 }

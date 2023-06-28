@@ -46,6 +46,10 @@ legend {
   margin-top: -14px;
 }
 
+.module-content {
+    padding: 1.875rem;
+}
+
 .primary {
   &.span12 {
   }
@@ -65,7 +69,7 @@ legend {
           clear: both;
         }
       }
-      .control-label {
+      .form-label, .control-label {
         float: left;
         width: 7.5rem;
         padding-top: 0.5rem;
@@ -84,7 +88,7 @@ legend {
 
 .control-large {
   input,
-  .control-label {
+  .form-label, .control-label {
     font-size: 1.0625rem;
     line-height: 30px;
   }
@@ -133,6 +137,10 @@ legend {
   .row {
     margin-left: 0;
     margin-right: 0;
+    @include rpl_breakpoint(l) {
+      flex-direction: row-reverse;
+    }
+
     .primary {
       &.span9 {
         width: 700px;
@@ -164,4 +172,76 @@ legend {
   code {
     word-break: break-word;
   }
+}
+
+// some of these fixes might be temporal
+// because we are fixing regressions inside CKAN core
+.pull-right {
+    float: right !important;
+}
+
+.pull-left {
+    float: left !important;
+}
+
+.hide {
+    display: none !important;
+}
+
+.show {
+    display: block !important;
+}
+
+.invisible {
+    visibility: hidden;
+}
+
+.text-muted {
+    color: #555555 !important;
+}
+
+
+.module > .page-header {
+    margin-bottom: 15px;
+}
+
+hr {
+    color: #eeeeee;
+    opacity: 1;
+}
+
+.nav-tabs > li > a {
+    margin-right: 2px;
+}
+
+.table > :not(:first-child) {
+    border-top: 1px solid #ddd;
+}
+.table > thead {
+    border-bottom: 2px solid #ddd;
+}
+
+.table.table-striped {
+    table-layout: fixed;
+
+    th, td {
+        width: 50%;
+        word-wrap: break-word;
+    }
+}
+
+.table-condensed > :not(caption) > * > * {
+    padding: 0.25rem 0.25rem;
+}
+
+.table-striped > tbody > tr:nth-of-type(odd) {
+    background-color: #f9f9f9;
+}
+
+.table-striped > tbody > tr:nth-of-type(odd) > * {
+    --bs-table-accent-bg: transparent;
+}
+
+.table-striped tbody tr:nth-child(even) td, .table-striped tbody tr:nth-child(even) th {
+    background-color: #f2f2f2;
 }

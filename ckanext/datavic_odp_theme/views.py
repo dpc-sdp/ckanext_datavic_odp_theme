@@ -3,24 +3,21 @@ from __future__ import annotations
 import json
 import base64
 import random
+from typing import Any
 
 from flask import Blueprint, jsonify
 
 import ckan.lib.helpers as h
 import ckan.plugins.toolkit as toolkit
 import ckan.views.dataset as dataset
-from ckan.common import request
+import ckan.views.group as group
 
-vic_odp = Blueprint('vic_odp', __name__)
+from ckanext.datavic_odp_theme import config as conf, const
 
-CONFIG_BASE_MAP = "ckanext.datavicmain.dtv.base_map_id"
-DEFAULT_BASE_MAP = "basemap-vic-topographic"
-
-NotFound = toolkit.ObjectNotFound
 PERCENTAGE_OF_CHANCE = 0.5
 
 vic_odp = Blueprint("vic_odp", __name__)
-
+tk = toolkit
 
 def vic_groups_list(id):
     return h.redirect_to("dataset.read", id=id)
@@ -36,29 +33,31 @@ def vic_organization_activity(id: str, offset: int = 0):
         return group.activity(
             id, offset=offset, group_type="organization", is_organization=True
         )
-    except toolkit.NotAuthorized:
-        toolkit.abort(FORBIDDEN_ACCESS, toolkit._("Unauthorized Access"))
+    except tk.NotAuthorized:
+        tk.abort(const.FORBIDDEN_ACCESS, tk._("Unauthorized Access"))
 
 
-def redirect_read(id:str):
+def redirect_read(id: str):
     """
     redirect randomly if no_preview not provided
     """
+    if id == "new":
+        return dataset.CreateView.as_view("new")("dataset")
+
     try:
-        pkg_dict = toolkit.get_action("package_show")({}, {"id": id})
-    except (NotFound):
+        pkg_dict = tk.get_action("package_show")({}, {"id": id})
+    except (tk.ObjectNotFound, tk.NotAuthorized):
         return dataset.read("dataset", id)
 
-    should_redirect = int(random.random() < PERCENTAGE_OF_CHANCE)
+    should_redirect = int(random.random() < const.PERCENTAGE_OF_CHANCE)
     has_dtv_resources = toolkit.h.get_digital_twin_resources(id)
     has_nominated_view = pkg_dict.get("nominated_view_resource") not in ["", None]
 
-    no_preview = request.params.get("no_preview")
+    no_preview = toolkit.request.params.get("no_preview")
 
     if has_dtv_resources or has_nominated_view:
         if no_preview is None and should_redirect:
-            return toolkit.h.redirect_to(
-                f"/dataset/{id}?no_preview={should_redirect}")
+            return toolkit.h.redirect_to(f"/dataset/{id}?no_preview={should_redirect}")
 
     return dataset.read("dataset", id)
 
@@ -68,16 +67,12 @@ def dtv_config(encoded: str, embedded: bool):
         ids: list[str] = json.loads(base64.urlsafe_b64decode(encoded))
     except ValueError:
         return toolkit.abort(409)
-    base_url: str = (
-        toolkit.config.get("ckanext.datavicmain.odp.public_url")
-        or toolkit.config["ckan.site_url"]
-    )
 
-    catalog = []
-    pkg_cache = {}
+    base_url: str = conf.get_base_url()
+    catalog: list[dict[str, Any]] = []
+    pkg_cache: dict[str, Any] = {}
 
     for id_ in ids:
-
         try:
             resource = toolkit.get_action("resource_show")({}, {"id": id_})
             if resource["package_id"] not in pkg_cache:
@@ -89,53 +84,52 @@ def dtv_config(encoded: str, embedded: bool):
             continue
 
         pkg = pkg_cache[resource["package_id"]]
-        catalog.append({
-            "id": f"data-vic-embed-{id_}",
-            "name": "{}: {}".format(
-                pkg["title"],
-                resource["name"] or "Unnamed"
-            ),
-            "type": "ckan-item",
-            "url": base_url,
-            "resourceId": id_
-        })
+        catalog.append(
+            {
+                "id": f"data-vic-embed-{id_}",
+                "name": "{}: {}".format(pkg["title"], resource["name"] or "Unnamed"),
+                "type": "ckan-item",
+                "url": base_url,
+                "resourceId": id_,
+            }
+        )
 
-    base_map = toolkit.config.get(
-        CONFIG_BASE_MAP, DEFAULT_BASE_MAP
-    )
-    base_map = toolkit.request.args.get("__dtv_base_map", base_map)
+    base_map = toolkit.request.args.get("__dtv_base_map", conf.get_default_base_map())
 
     config = {
-        "baseMaps": {
-            "defaultBaseMapId": base_map,
-            "previewBaseMapId": base_map
-        },
+        "baseMaps": {"defaultBaseMapId": base_map, "previewBaseMapId": base_map},
         "catalog": catalog,
         "workbench": [item["id"] for item in catalog],
     }
 
     if embedded:
-        config.update({"elements": {
-            "map-navigation": {
-                "disabled": embedded
-            },
-            "menu-bar": {
-                "disabled": embedded
-            },
-            "bottom-dock": {
-                "disabled": embedded
-            },
-            "map-data-count": {
-                "disabled": embedded
-            },
-            "show-workbench": {
-                "disabled": embedded
+        config.update(
+            {
+                "elements": {
+                    "map-navigation": {"disabled": embedded},
+                    "menu-bar": {"disabled": embedded},
+                    "bottom-dock": {"disabled": embedded},
+                    "map-data-count": {"disabled": embedded},
+                    "show-workbench": {"disabled": embedded},
+                }
             }
-        }})
+        )
     return jsonify(config)
 
-
 vic_odp.add_url_rule("/dataset/groups/<id>", view_func=vic_groups_list)
-vic_odp.add_url_rule( u'/dataset/groups/<id>', view_func=vic_groups_list)
+
 vic_odp.add_url_rule('/dtv_config/<encoded>/config.json', view_func=dtv_config, defaults={"embedded": False})
 vic_odp.add_url_rule('/dtv_config/<encoded>/embedded/config.json', view_func=dtv_config, defaults={"embedded": True})
+
+vic_odp.add_url_rule(u"/dataset/groups/<id>", view_func=vic_groups_list)
+vic_odp.add_url_rule(
+    "/organization/activity/<id>/<int:offset>", view_func=vic_organization_activity
+)
+
+def get_blueprints():
+    # Check feature preview is enabled or not
+    # If enabled add the redirect view for read pkg
+    if conf.get_preview_redirect():
+        vic_odp.add_url_rule("/dataset/<id>", view_func=redirect_read)
+
+    return [vic_odp]

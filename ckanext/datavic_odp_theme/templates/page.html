@@ -1,33 +1,38 @@
 {% ckan_extends %}
 
 {% block skip %}
-  {% if h.get_gtm_code() %}
+  {% if h.get_gtm_container_id() %}
     {% snippet "snippets/gtm_include_noscript.html" %}
   {% endif %}
   {{ super() }}
 {% endblock %}
 
+{% block header %}
+  <header>
+    {{ super() }}
+  </header>
+{% endblock %}
+
 {%- block content %}
+  {% if self.breadcrumb_content() | trim %}
+  <div id="breadcrumbs" class="rpl-breadcrumbs" role="breadcrumbs">
+      <nav aria-label="breadcrumbs">
+          <ul class="rpl-breadcrumbs__items">
+              <li class="rpl-breadcrumbs__item"><a href="https://www.data.vic.gov.au" class="rpl-link rpl-breadcrumbs__link">Home</a></li>
+              {% block breadcrumb_content %}{% endblock %}
+          </ul>
+      </nav>
+  </div>
+  {% endif %}
 
-    {% if self.breadcrumb_content() | trim %}
-    <div class="rpl-breadcrumbs">
-        <nav aria-label="breadcrumbs">
-            <ul class="rpl-breadcrumbs__items">
-                <li class="rpl-breadcrumbs__item"><a href="https://www.data.vic.gov.au" class="rpl-link rpl-breadcrumbs__link">Home</a></li>
-                {% block breadcrumb_content %}{% endblock %}
-            </ul>
-        </nav>
-    </div>
-    {% endif %}
-
-    {% block maintag %}<div role="main">{% endblock %}
+    {% block maintag %}<div id="main-content" role="main">{% endblock %}
       <div id="content" class="container">
         {% block main_content %}
           {% block flash %}
             <div class="flash-messages">
               {% block flash_inner %}
-                {% for message in h.flash.pop_messages() | list %}
-                  <div class="alert fade in {{ message.category }}">
+                {% for message in h.get_flashed_messages() %}
+                  <div class="alert fade show in {{ message.category }}">
                     {{ h.literal(message) }}
                   </div>
                 {% endfor %}
@@ -43,16 +48,11 @@
           {% endblock %}
 
           <div class="row {% block wrapper_class %}{% endblock %}{% if self.secondary()|trim == '' %} no-nav{% endif %}">
-
-            {#
-            The pre_primary block can be used to add content to before the
-            rendering of the main content columns of the page.
-            #}
             {% block pre_primary %}
             {% endblock %}
 
             {% block primary %}
-              {% set span = 9 if g.controller in ['user', 'admin', 'ckanext.harvest.controllers.view:ViewController'] else 12 %}
+              {% set span = 9 if g.blueprint in ['user', 'admin', 'activity', 'ckanext.harvest.controllers.view:ViewController'] else 12 %}
               <div class="primary span{{ span }}">
                 {% block primary_content %}
                   {{ super() }}
@@ -61,7 +61,7 @@
             {% endblock %}
 
             {% block secondary %}
-              {% set span = 9 if g.controller in ['user', 'admin', 'ckanext.harvest.controllers.view:ViewController'] else 12 %}
+              {% set span = 9 if g.blueprint in ['user', 'admin', 'activity', 'ckanext.harvest.controllers.view:ViewController'] else 12 %}
               {% if span != 12 %}
                   <aside class="secondary span3">
                     {% block secondary_content %}{% endblock %}
@@ -72,18 +72,19 @@
         {% endblock %}
       </div>
     </div>
-  {% endblock -%}
+  </div>
+{% endblock -%}
 
 
-  {% block page_header %}
-      <div class="module-content page-header">
-          {% if self.content_action() | trim %}
-              <div class="content_action">
-                  {% block content_action %}{% endblock %}
-              </div>
-          {% endif %}
-          <ul class="nav nav-tabs">
-              {% block content_primary_nav %}{% endblock %}
-          </ul>
-      </div>
-  {% endblock %}
+{% block page_header %}
+    <div class="module-content page-header">
+        {% if self.content_action() | trim %}
+            <div class="content_action">
+                {% block content_action %}{% endblock %}
+            </div>
+        {% endif %}
+        <ul class="nav nav-tabs">
+            {% block content_primary_nav %}{% endblock %}
+        </ul>
+    </div>
+{% endblock %}
