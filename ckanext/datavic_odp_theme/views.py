@@ -73,6 +73,9 @@ def dtv_config(encoded: str, embedded: bool):
         "baseMaps": {"defaultBaseMapId": base_map, "previewBaseMapId": base_map},
         "catalog": catalog,
         "workbench": [item["id"] for item in catalog],
+        "initialCamera": {
+            "focusWorkbenchItems": true
+        },
     }
 
     if embedded:
