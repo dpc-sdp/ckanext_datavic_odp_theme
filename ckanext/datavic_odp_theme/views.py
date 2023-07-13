@@ -101,7 +101,7 @@ def dtv_config(encoded: str, embedded: bool):
         "catalog": catalog,
         "workbench": [item["id"] for item in catalog],
         "initialCamera": {
-            "focusWorkbenchItems": true
+            "focusWorkbenchItems": "true"
         },
     }
 
