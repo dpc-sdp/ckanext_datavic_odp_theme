@@ -167,9 +167,6 @@ def get_digital_twin_resources(pkg_id: str) -> list[dict[str, Any]]:
     except (toolkit.ObjectNotFound, toolkit.NotAuthorized):
         return []
 
-    if not pkg.get("enable_dtv", False):
-        return []
-
     # Additional info #2
     if pkg["state"] != "active":
         return []
