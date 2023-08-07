@@ -30,7 +30,6 @@ CONFIG_MONSIDO_TRACKING_ENABLED = "ckan.tracking.monsido_enabled"
 CONFIG_HOTJAR_HJID = "ckan.tracking.hotjar.hjid"
 CONFIG_HOTJAR_HJSV = "ckan.tracking.hotjar.hjsv"
 CONFIG_MONSIDO_DOMAIN_TOKEN = "ckan.tracking.monsido.domain_token"
-CONFIG_GTM_CONTAINER_ID = "ckan.google_tag_manager.gtm_container_id"
 CONFIG_GOOGLE_OPTIMIZE_ID = "ckan.google_optimize.id"
 
 
@@ -70,10 +69,6 @@ def get_hotjar_hjsv() -> Optional[str]:
 
 def get_monsido_domain_token() -> Optional[str]:
     return tk.config.get(CONFIG_MONSIDO_DOMAIN_TOKEN)
-
-
-def get_gtm_container_id() -> Optional[str]:
-    return tk.config.get(CONFIG_GTM_CONTAINER_ID)
 
 
 def get_google_optimize_id() -> Optional[str]:

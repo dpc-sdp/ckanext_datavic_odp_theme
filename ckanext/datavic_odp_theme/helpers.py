@@ -75,11 +75,6 @@ def get_monsido_domain_token() -> Optional[str]:
 
 
 @helper
-def get_gtm_container_id() -> Optional[str]:
-    return conf.get_gtm_container_id()
-
-
-@helper
 def get_google_optimize_id() -> Optional[str]:
     return conf.get_google_optimize_id()
 
