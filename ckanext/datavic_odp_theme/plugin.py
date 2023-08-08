@@ -1,3 +1,6 @@
+from __future__ import annotations
+from typing import Any
+
 import ckan.plugins as p
 import ckan.plugins.toolkit as tk
 
@@ -13,6 +16,7 @@ class DatavicODPTheme(p.SingletonPlugin):
     p.implements(p.ITemplateHelpers)
     p.implements(p.IActions)
     p.implements(p.IBlueprint)
+    p.implements(p.IPackageController, inherit=True)
 
     # IConfigurer
 
@@ -35,6 +39,15 @@ class DatavicODPTheme(p.SingletonPlugin):
 
     def get_blueprint(self):
         return get_blueprints()
+
+    # IPackageController
+
+    def before_dataset_index(self, pkg_dict: dict[str, Any]) -> dict[str, Any]:
+        if pkg_dict.get('res_format'):
+            pkg_dict['res_format'] = [
+                format.upper().split('.')[-1] for format in pkg_dict['res_format']
+            ]
+        return pkg_dict
 
 
 @tk.blanket.auth_functions(auth_functions)

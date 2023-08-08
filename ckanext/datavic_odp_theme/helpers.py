@@ -46,7 +46,12 @@ def format_list() -> list[str]:
         .order_by(func.lower(model.Resource.format))
     )
 
-    return [resource.format for resource in query if resource.format]
+    formats = [
+        resource.format.upper().split('.')[-1] for resource in query if resource.format
+    ]
+    unique_formats = set(formats)
+
+    return sorted(list(unique_formats))
 
 
 @helper
