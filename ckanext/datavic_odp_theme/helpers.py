@@ -75,11 +75,6 @@ def get_monsido_domain_token() -> Optional[str]:
 
 
 @helper
-def get_gtm_container_id() -> Optional[str]:
-    return conf.get_gtm_container_id()
-
-
-@helper
 def get_google_optimize_id() -> Optional[str]:
     return conf.get_google_optimize_id()
 
@@ -103,25 +98,54 @@ def get_package_release_date(pkg_dict: dict[str, Any]) -> str:
 
 @helper
 def featured_resource_preview(package: dict[str, Any]) -> Optional[dict[str, Any]]:
-    """Return a featured resource preview if exists for a specific dataset"""
-    if not package.get('nominated_view_resource'):
+    """Return a featured resource preview
+        - It takes only CSV resources with an existing preview
+        - Only resources uploaded to datastore
+        - Only not historical resources
+    """
+
+    featured_preview = None
+
+    historical_resouce: dict[str, Any] | None = _get_last_resource_if_historical(
+        package
+    )
+
+    resources: list[dict[str, Any]] = (
+        sorted(package.get("resources", []), key=lambda res: res["metadata_modified"])
+        if not historical_resouce
+        else [historical_resouce]
+    )
+
+    for resource in resources:
+        if resource.get("format", "").lower() != "csv":
+            continue
+
+        if not resource.get("datastore_active"):
+            continue
+
+        try:
+            resource_views = toolkit.get_action("resource_view_list")(
+                {}, {"id": resource["id"]}
+            )
+        except toolkit.ObjectNotFound:
+            pass
+        else:
+            featured_preview = {"preview": resource_views[0], "resource": resource}
+
+    return featured_preview
+
+
+def _get_last_resource_if_historical(package: dict[str, Any]) -> dict[str, Any] | None:
+    """If the dataset contains historical resources, return the most recent one"""
+    historical_resources = toolkit.h.historical_resources_list(package.get("resources", []))
+
+    if len(historical_resources) <= 1:
         return
 
-    try:
-        views_list = toolkit.get_action("resource_view_list")(
-            {}, {"id": package["nominated_view_resource"]}
-        )
+    if historical_resources[1].get("period_start"):
+        return historical_resources[0]
 
-        if not views_list:
-            return
-
-        resource = toolkit.get_action("resource_show")(
-            {}, {"id": package["nominated_view_resource"]}
-        )
-    except toolkit.ObjectNotFound:
-        pass
-    else:
-        return {"preview": views_list[0], "resource": resource}
+    return
 
 
 @helper

@@ -63,6 +63,8 @@ class DatavicXLoaderPlugin(xloaderPlugin):
         for resource in pkg_dict.get("resources", []):
             self._submit_to_xloader(resource)
 
+    after_dataset_update = after_dataset_create
+
     def _submit_to_xloader(self, resource_dict):
         """The original method doesn't check if `url_type` is here. Seems like
         it's not here if we are calling it from the `after_dataset_create`.
