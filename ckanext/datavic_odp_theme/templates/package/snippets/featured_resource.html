@@ -3,7 +3,7 @@
 #}
 {% set resource_view = h.featured_resource_preview(pkg) %}
 
-{% if request.args.get('no_preview') != '1' and resource_view %}
+{% if resource_view %}
   <section class="datapreview resource-preview">
     <div class="header-container">
       <h3>{{ _('Data preview') }} - {{ resource_view.resource.name }}</h3>
