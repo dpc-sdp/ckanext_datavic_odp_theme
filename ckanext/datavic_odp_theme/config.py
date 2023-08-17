@@ -10,9 +10,6 @@ DEFAULT_BASE_MAP = "basemap-vic-topographic"
 
 CONFIG_BASE_URL = "ckanext.datavicmain.odp.public_url"
 
-CONFIG_PREVIEW_REDIRECT = "ckan.dataset.preview_redirect"
-DEFAULT_PREVIEW_REDIRECT = False
-
 CONFIG_DTV_FQ = "ckanext.datavicmain.dtv.supported_formats"
 DEFAULT_DTV_FQ = [
     "wms",
@@ -33,7 +30,6 @@ CONFIG_MONSIDO_TRACKING_ENABLED = "ckan.tracking.monsido_enabled"
 CONFIG_HOTJAR_HJID = "ckan.tracking.hotjar.hjid"
 CONFIG_HOTJAR_HJSV = "ckan.tracking.hotjar.hjsv"
 CONFIG_MONSIDO_DOMAIN_TOKEN = "ckan.tracking.monsido.domain_token"
-CONFIG_GTM_CONTAINER_ID = "ckan.google_tag_manager.gtm_container_id"
 CONFIG_GOOGLE_OPTIMIZE_ID = "ckan.google_optimize.id"
 
 
@@ -43,10 +39,6 @@ def get_default_base_map() -> str:
 
 def get_base_url() -> str:
     return tk.config.get(CONFIG_BASE_URL) or tk.config["ckan.site_url"]
-
-
-def get_preview_redirect() -> bool:
-    return tk.asbool(tk.config.get(CONFIG_PREVIEW_REDIRECT, DEFAULT_PREVIEW_REDIRECT))
 
 
 def get_dtv_supported_formats() -> set[str]:
@@ -77,10 +69,6 @@ def get_hotjar_hjsv() -> Optional[str]:
 
 def get_monsido_domain_token() -> Optional[str]:
     return tk.config.get(CONFIG_MONSIDO_DOMAIN_TOKEN)
-
-
-def get_gtm_container_id() -> Optional[str]:
-    return tk.config.get(CONFIG_GTM_CONTAINER_ID)
 
 
 def get_google_optimize_id() -> Optional[str]:

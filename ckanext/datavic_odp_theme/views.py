@@ -2,14 +2,12 @@ from __future__ import annotations
 
 import json
 import base64
-import random
 from typing import Any
 
 from flask import Blueprint, jsonify
 
 import ckan.lib.helpers as h
 import ckan.plugins.toolkit as toolkit
-import ckan.views.dataset as dataset
 import ckan.views.group as group
 
 from ckanext.datavic_odp_theme import config as conf, const
@@ -35,31 +33,6 @@ def vic_organization_activity(id: str, offset: int = 0):
         )
     except tk.NotAuthorized:
         tk.abort(const.FORBIDDEN_ACCESS, tk._("Unauthorized Access"))
-
-
-def redirect_read(id: str):
-    """
-    redirect randomly if no_preview not provided
-    """
-    if id == "new":
-        return dataset.CreateView.as_view("new")("dataset")
-
-    try:
-        pkg_dict = tk.get_action("package_show")({}, {"id": id})
-    except (tk.ObjectNotFound, tk.NotAuthorized):
-        return dataset.read("dataset", id)
-
-    should_redirect = int(random.random() < const.PERCENTAGE_OF_CHANCE)
-    has_dtv_resources = toolkit.h.get_digital_twin_resources(id)
-    has_nominated_view = pkg_dict.get("nominated_view_resource") not in ["", None]
-
-    no_preview = toolkit.request.params.get("no_preview")
-
-    if has_dtv_resources or has_nominated_view:
-        if no_preview is None and should_redirect:
-            return toolkit.h.redirect_to(f"/dataset/{id}?no_preview={should_redirect}")
-
-    return dataset.read("dataset", id)
 
 
 def dtv_config(encoded: str, embedded: bool):
@@ -100,6 +73,9 @@ def dtv_config(encoded: str, embedded: bool):
         "baseMaps": {"defaultBaseMapId": base_map, "previewBaseMapId": base_map},
         "catalog": catalog,
         "workbench": [item["id"] for item in catalog],
+        "initialCamera": {
+            "focusWorkbenchItems": True
+        },
     }
 
     if embedded:
@@ -121,15 +97,9 @@ vic_odp.add_url_rule("/dataset/groups/<id>", view_func=vic_groups_list)
 vic_odp.add_url_rule('/dtv_config/<encoded>/config.json', view_func=dtv_config, defaults={"embedded": False})
 vic_odp.add_url_rule('/dtv_config/<encoded>/embedded/config.json', view_func=dtv_config, defaults={"embedded": True})
 
-vic_odp.add_url_rule(u"/dataset/groups/<id>", view_func=vic_groups_list)
 vic_odp.add_url_rule(
     "/organization/activity/<id>/<int:offset>", view_func=vic_organization_activity
 )
 
 def get_blueprints():
-    # Check feature preview is enabled or not
-    # If enabled add the redirect view for read pkg
-    if conf.get_preview_redirect():
-        vic_odp.add_url_rule("/dataset/<id>", view_func=redirect_read)
-
     return [vic_odp]
