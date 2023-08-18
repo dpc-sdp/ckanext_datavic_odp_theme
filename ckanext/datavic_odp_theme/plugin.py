@@ -87,6 +87,7 @@ class DatavicXLoaderPlugin(xloaderPlugin):
         Do not touch proper values, because it will definitely break something."""
 
         resource_dict.setdefault("url_type", "datavic_xloader")
+        resource_dict.setdefault("format", "")
 
         super()._submit_to_xloader(resource_dict)
 
