@@ -65,8 +65,6 @@ class DatavicXLoaderPlugin(xloaderPlugin):
                 if not resource["url_type"]:
                     url_without_params = resource["url"].split('?')[0]
                     resource["format"] = url_without_params.split('.')[-1].lower()
-                else:
-                    resource["format"] = ""
             self._submit_to_xloader(resource)
 
     after_dataset_update = after_dataset_create
@@ -80,6 +78,7 @@ class DatavicXLoaderPlugin(xloaderPlugin):
         Do not touch proper values, because it will definitely break something."""
 
         resource_dict.setdefault("url_type", "datavic_xloader")
+        resource_dict.setdefault("format", "")
 
         super()._submit_to_xloader(resource_dict)
 
