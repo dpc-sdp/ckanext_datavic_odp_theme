@@ -4,7 +4,7 @@ from typing import Any
 import ckan.plugins as p
 import ckan.plugins.toolkit as tk
 
-from ckanext.xloader.plugin import xloaderPlugin
+from ckanext.datapusher.plugin import DatapusherPlugin
 
 from ckanext.datavic_odp_theme.logic import auth_functions, actions
 from ckanext.datavic_odp_theme.views import get_blueprints
@@ -64,7 +64,7 @@ class DatavicODPThemeAuth(p.SingletonPlugin):
     pass
 
 
-class DatavicXLoaderPlugin(xloaderPlugin):
+class DatavicDatapusherPlugin(DatapusherPlugin):
     p.implements(p.IPackageController, inherit=True)
 
     # IPackageController
@@ -78,11 +78,12 @@ class DatavicXLoaderPlugin(xloaderPlugin):
                 if not resource["url_type"]:
                     url_without_params = resource["url"].split('?')[0]
                     resource["format"] = url_without_params.split('.')[-1].lower()
-            self._submit_to_xloader(resource)
+
+            self._submit_to_datapusher(resource)
 
     after_dataset_update = after_dataset_create
 
-    def _submit_to_xloader(self, resource_dict):
+    def _submit_to_datapusher(self, resource_dict):
         """The original method doesn't check if `url_type` is here. Seems like
         it's not here if we are calling it from the `after_dataset_create`.
         Just set a default url_type and delete after to be sure, that it doesn't break
@@ -90,10 +91,10 @@ class DatavicXLoaderPlugin(xloaderPlugin):
 
         Do not touch proper values, because it will definitely break something."""
 
-        resource_dict.setdefault("url_type", "datavic_xloader")
+        resource_dict.setdefault("url_type", "datavic_datapusher")
         resource_dict.setdefault("format", "")
 
-        super()._submit_to_xloader(resource_dict)
+        super()._submit_to_datapusher(resource_dict)
 
-        if resource_dict["url_type"] == "datavic_xloader":
+        if resource_dict["url_type"] == "datavic_datapusher":
             resource_dict.pop("url_type")
