@@ -36,7 +36,6 @@
         text-align: center;
         display: inline-block;
         margin: 0;
-          margin-left: 0px;
         margin-left: 0px;
         box-sizing: border-box;
         text-decoration: none;
@@ -45,7 +44,6 @@
         border: 1px solid transparent;
         border-radius: 0.25rem;
         cursor: pointer;
-        color: #fff;
         line-height: 1rem;
         font-size: 1rem;
         font-family: "VIC-Bold", "Arial", "Helvetica", "sans-serif";
@@ -63,5 +61,12 @@
         > .btn {
             font-size: initial;
         }
+    }
+}
+
+.dropdown-item {
+    &:hover,
+    &:focus {
+        color: #fff;
     }
 }
