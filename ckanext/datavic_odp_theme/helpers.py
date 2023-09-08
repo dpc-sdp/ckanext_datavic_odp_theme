@@ -135,6 +135,10 @@ def featured_resource_preview(package: dict[str, Any]) -> Optional[dict[str, Any
         except toolkit.ObjectNotFound:
             pass
         else:
+            # ensure there is actually previews as some resources are marked as datastore active but they don't have a preview and it breaks the page
+            if not len(resource_views) > 0:
+                continue
+            
             featured_preview = {"preview": resource_views[0], "resource": resource}
 
     return featured_preview
