@@ -50,7 +50,7 @@
 
               {% for section, label in suggestion_groups %}
                   <li data-section="{{ section }}" class="suggestion-section">
-                      <ul class="suggestions" data-label="{{ _(label) }}"></ul>
+                      <ul class="suggestions" data-label="{{ _(label) }}" role="list" aria-label="{{ _(label) }}"></ul>
                   </li>
               {% endfor %}
             </ul>
