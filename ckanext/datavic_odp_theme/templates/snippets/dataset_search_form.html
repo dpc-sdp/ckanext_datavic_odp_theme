@@ -28,7 +28,7 @@
         {% endif %}
         <form {% if form_id %}id="{{ form_id }}" {% endif %}class="rpl-form" action="{{ h.url_for('search') }}" method="get">
           <input type="hidden" id="field-order-by" name="sort" value="{{ sorting_selected }}" />
-          <div class="rpl-search-form__field">
+          <div class="rpl-search-form__field" data-module="datavic-search-autocomplete" data-module-suggestion-box="#search-autocomplete--suggestion-box" data-module-autocomplete-input="#search-query">
             <label for="search-query">
               <span class="rpl-search-form__label-text">{{ _('Search for') }}</span>
               <input id="search-query" type="text" name="q" value="{{ query }}" autocomplete="off" placeholder="{{ placeholder }}" class="rpl-search-form__input">
@@ -41,6 +41,19 @@
                   fill="inherit" />
               </svg>
             </button>
+            <ul id="search-autocomplete--suggestion-box" class="suggestion-box">
+              {% set suggestion_groups = [
+                  ('datasets', 'Relevant datasets'),
+                  ('categories','Browse filters')
+              ]
+              %}
+
+              {% for section, label in suggestion_groups %}
+                  <li data-section="{{ section }}" class="suggestion-section">
+                      <ul class="suggestions" data-label="{{ _(label) }}"></ul>
+                  </li>
+              {% endfor %}
+            </ul>
             {% endblock %}
           </div>
           {% if facets %}
