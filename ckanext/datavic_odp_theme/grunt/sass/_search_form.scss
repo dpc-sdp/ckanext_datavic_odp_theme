@@ -284,8 +284,6 @@ $rpl-search-form-search-text: $rpl-search-form-show-filters-ruleset !default;
   position: absolute;
   z-index: 1;
   width: auto;
-  max-height: $rpl-checklist-dropdown-max-height;
-  overflow: auto;
   left: -1px;
   right: -1px;
   margin: 0;
@@ -310,7 +308,7 @@ $rpl-search-form-search-text: $rpl-search-form-show-filters-ruleset !default;
       li {
         display: block;
         background-color: rpl-color('white');
-        padding: 10px 24px;
+        padding: 5px 24px 5px 24px;
         margin-top: 0;
         margin-left: -24px;
         margin-right: -24px;
@@ -319,9 +317,16 @@ $rpl-search-form-search-text: $rpl-search-form-show-filters-ruleset !default;
         }
         &.active, &:hover {
           background-color: rpl-color('primary');
-          padding: 10px 24px;
+          padding: 5px 24px 5px 24px;
           margin-left: -24px;
           margin-right: -24px;
+          a {
+            span {
+              .muted {
+                color: rpl-color('white');
+              }
+            }
+          }
         }
         a {
           &.selected, &:focus {
@@ -332,4 +337,14 @@ $rpl-search-form-search-text: $rpl-search-form-show-filters-ruleset !default;
       }
     }
   }
+}
+
+.pending-request {
+  position: absolute;
+  top: 50%;
+  margin-left: -15px;
+  display: none;
+  color: rpl-color('black');
+  transform: translateY(-50%);
+  transform-origin: 50%;
 }
