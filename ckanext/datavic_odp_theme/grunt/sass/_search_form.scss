@@ -276,3 +276,60 @@ $rpl-search-form-search-text: $rpl-search-form-show-filters-ruleset !default;
     }
   }
 }
+
+.suggestion-box {
+  background-color: rpl-color('white');
+  border: $rpl-checklist-expanded-border;
+  border-top: 0;
+  position: absolute;
+  z-index: 1;
+  width: auto;
+  max-height: $rpl-checklist-dropdown-max-height;
+  overflow: auto;
+  left: -1px;
+  right: -1px;
+  margin: 0;
+
+  .suggestion-section {
+    .suggestions:before {
+      display: block;
+      background-color: rpl-color('light_neutral');
+      padding: 10px 24px;
+      margin-left: -24px;
+      margin-right: -24px;
+      z-index: 2;
+      width: auto;
+      color: #001e73;
+      content: attr(data-label);
+      font-size: 16px;
+      font-weight: 700;
+      line-height: 22px;
+    }
+
+    .suggestions {
+      li {
+        display: block;
+        background-color: rpl-color('white');
+        padding: 10px 24px;
+        margin-top: 0;
+        margin-left: -24px;
+        margin-right: -24px;
+        &:first-child {
+          margin-top: 0;
+        }
+        &.active, &:hover {
+          background-color: rpl-color('primary');
+          padding: 10px 24px;
+          margin-left: -24px;
+          margin-right: -24px;
+        }
+        a {
+          &.selected, &:focus {
+            border: none;
+            text-decoration: unset;
+          }
+        }
+      }
+    }
+  }
+}
