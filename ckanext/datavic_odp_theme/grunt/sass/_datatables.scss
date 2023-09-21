@@ -1,0 +1,81 @@
+.dataTables_wrapper {
+    .dt-buttons {
+        .btn-secondary {
+            background-color: #f6f6f6;
+            padding: 16px 16px;
+        }
+
+        button[title="Table/List toggle"],
+        button[title="Toggle column visibility"],
+        button[title="Share current view"] {
+            display: none;
+            visibility: hidden;
+        }
+
+        button[title="Copy to clipboard"] {
+            border-top-left-radius: 0.25rem;
+            border-bottom-left-radius: 0.25rem;
+        }
+
+        button[title="Print"] {
+            border-top-right-radius: 0.25rem !important;
+            border-top-right-radius: 0.25rem !important;
+        }
+
+        .btn-secondary {
+            background-color: #f6f6f6;
+            border: #dee2e6 solid 1px;
+        }
+    }
+
+    #dtprv_filter {
+        display: block;
+        text-align: left;
+        margin-top: 0;
+        float: none;
+
+        #filterinfoicon {
+            display: none;
+        }
+
+        label {
+            display: flex;
+            align-items: center;
+
+            input {
+                width: 100%;
+            }
+
+            &::after {
+                content: "";
+            }
+        }
+
+    }
+
+    .sortinfo, .resourceinfo {
+        display: none;
+    }
+
+    .dataTables_scroll
+    .dtr-control:before {
+        background-color: #0052c2 !important;
+    }
+
+    #dtprv_paginate {
+        ul {
+            li {
+                &.active {
+                    a {
+                        background-color: #0052c2 !important;
+                    }
+                }
+            }
+        }
+    }
+
+        .pagination {
+        padding-top: 2.5rem;
+    }
+
+}

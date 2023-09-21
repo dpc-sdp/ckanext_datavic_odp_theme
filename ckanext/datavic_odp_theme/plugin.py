@@ -61,7 +61,13 @@ class DatavicXLoaderPlugin(xloaderPlugin):
         So here we want to run submit for each resource after dataset creation.
         """
         for resource in pkg_dict.get("resources", []):
+            if resource and not resource.get("format"):
+                if not resource["url_type"]:
+                    url_without_params = resource["url"].split('?')[0]
+                    resource["format"] = url_without_params.split('.')[-1].lower()
             self._submit_to_xloader(resource)
+
+    after_dataset_update = after_dataset_create
 
     def _submit_to_xloader(self, resource_dict):
         """The original method doesn't check if `url_type` is here. Seems like
@@ -72,6 +78,7 @@ class DatavicXLoaderPlugin(xloaderPlugin):
         Do not touch proper values, because it will definitely break something."""
 
         resource_dict.setdefault("url_type", "datavic_xloader")
+        resource_dict.setdefault("format", "")
 
         super()._submit_to_xloader(resource_dict)
 
