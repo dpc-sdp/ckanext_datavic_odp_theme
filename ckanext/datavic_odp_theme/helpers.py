@@ -46,7 +46,12 @@ def format_list() -> list[str]:
         .order_by(func.lower(model.Resource.format))
     )
 
-    return [resource.format for resource in query if resource.format]
+    formats = [
+        resource.format.upper().split('.')[-1] for resource in query if resource.format
+    ]
+    unique_formats = set(formats)
+
+    return sorted(list(unique_formats))
 
 
 @helper
@@ -126,8 +131,11 @@ def featured_resource_preview(package: dict[str, Any]) -> Optional[dict[str, Any
         except toolkit.ObjectNotFound:
             pass
         else:
-            if featured_preview:
-                featured_preview = {"preview": resource_views[0], "resource": resource}
+            # ensure there is actually previews as some resources are marked as datastore active but they don't have a preview and it breaks the page
+            if not len(resource_views) > 0:
+                continue
+            
+            featured_preview = {"preview": resource_views[0], "resource": resource}
 
     return featured_preview
 
@@ -144,9 +152,6 @@ def get_digital_twin_resources(pkg_id: str) -> list[dict[str, Any]]:
     try:
         pkg = toolkit.get_action("package_show")({}, {"id": pkg_id})
     except (toolkit.ObjectNotFound, toolkit.NotAuthorized):
-        return []
-
-    if not pkg.get("enable_dtv", False):
         return []
 
     # Additional info #2
