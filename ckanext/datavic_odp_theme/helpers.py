@@ -46,7 +46,12 @@ def format_list() -> list[str]:
         .order_by(func.lower(model.Resource.format))
     )
 
-    return [resource.format for resource in query if resource.format]
+    formats = [
+        resource.format.upper().split('.')[-1] for resource in query if resource.format
+    ]
+    unique_formats = set(formats)
+
+    return sorted(list(unique_formats))
 
 
 @helper
@@ -164,9 +169,6 @@ def get_digital_twin_resources(pkg_id: str) -> list[dict[str, Any]]:
     try:
         pkg = toolkit.get_action("package_show")({}, {"id": pkg_id})
     except (toolkit.ObjectNotFound, toolkit.NotAuthorized):
-        return []
-
-    if not pkg.get("enable_dtv", False):
         return []
 
     # Additional info #2
