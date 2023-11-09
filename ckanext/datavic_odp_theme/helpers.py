@@ -111,15 +111,11 @@ def featured_resource_preview(package: dict[str, Any]) -> Optional[dict[str, Any
 
     featured_preview = None
 
-    historical_resouce: dict[str, Any] | None = _get_last_resource_if_historical(
-        package
+    resource_groups: list[list[dict[str, Any]]] = toolkit.h.group_resources_by_temporal_range(
+        package.get("resources", [])
     )
 
-    resources: list[dict[str, Any]] = (
-        sorted(package.get("resources", []), key=lambda res: res["metadata_modified"])
-        if not historical_resouce
-        else [historical_resouce]
-    )
+    resources = resource_groups[0] if resource_groups else []
 
     for resource in resources:
         if resource.get("format", "").lower() != "csv":
@@ -135,26 +131,10 @@ def featured_resource_preview(package: dict[str, Any]) -> Optional[dict[str, Any
         except toolkit.ObjectNotFound:
             pass
         else:
-            # ensure there is actually previews as some resources are marked as datastore active but they don't have a preview and it breaks the page
-            if not len(resource_views) > 0:
-                continue
-            
-            featured_preview = {"preview": resource_views[0], "resource": resource}
+            if featured_preview:
+                featured_preview = {"preview": resource_views[0], "resource": resource}
 
     return featured_preview
-
-
-def _get_last_resource_if_historical(package: dict[str, Any]) -> dict[str, Any] | None:
-    """If the dataset contains historical resources, return the most recent one"""
-    historical_resources = toolkit.h.historical_resources_list(package.get("resources", []))
-
-    if len(historical_resources) <= 1:
-        return
-
-    if historical_resources[1].get("period_start"):
-        return historical_resources[0]
-
-    return
 
 
 @helper
