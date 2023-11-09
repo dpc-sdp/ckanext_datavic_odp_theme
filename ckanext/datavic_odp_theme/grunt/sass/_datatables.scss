@@ -62,6 +62,14 @@
         background-color: #0052c2 !important;
     }
 
+    .dataTables_scroll {
+        .dataTables_scrollBody {
+            table {
+                border-left: transparent !important;
+            }
+        }
+    }
+
     #dtprv_paginate {
         ul {
             li {

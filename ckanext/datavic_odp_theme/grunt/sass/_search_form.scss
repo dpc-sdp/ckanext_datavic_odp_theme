@@ -276,3 +276,86 @@ $rpl-search-form-search-text: $rpl-search-form-show-filters-ruleset !default;
     }
   }
 }
+
+.suggestion-box {
+  background-color: rpl-color('white');
+  border: $rpl-checklist-expanded-border;
+  border-top: 0;
+  position: absolute;
+  z-index: 1;
+  width: auto;
+  left: -1px;
+  right: -1px;
+  margin: 0;
+
+  .suggestion-section {
+    &:first-child {
+      border-top: rpl-color('mid_neutral_1') 1px solid;
+    }
+    .suggestions:before {
+      display: block;
+      background-color: rpl-color('light_neutral');
+      padding: 8px 20px 8px 20px;
+      margin-left: -24px;
+      margin-right: -24px;
+      z-index: 2;
+      width: auto;
+      color: rpl-color('black');
+      content: attr(data-label);
+      font-size: 16px;
+      font-weight: 700;
+      line-height: 22px;
+    }
+
+    .suggestions {
+      margin: 0px 24px 20px 24px;
+      li {
+        display: block;
+        background-color: rpl-color('white');
+        padding: 8px 20px 8px 20px;
+        margin-top: 0;
+        margin-left: -24px;
+        margin-right: -24px;
+        font-size: 16px;
+        line-height: 22px;
+        &:first-child {
+          margin-top: 0;
+        }
+        &.active, &:hover {
+          background-color: rpl-color('primary');
+          padding: 8px 20px 8px 20px;
+          margin-left: -24px;
+          margin-right: -24px;
+          a {
+            display: block;
+            color: rpl-color('white');
+            margin: -8px -20px -8px -20px;
+            padding: 8px 20px 8px 20px;
+            span {
+              .muted {
+                color: rpl-color('white');
+              }
+            }
+          }
+        }
+        a {
+          display: block;
+          &.selected, &:focus {
+            border: none;
+            text-decoration: unset;
+          }
+        }
+      }
+    }
+  }
+}
+
+.pending-request {
+  position: absolute;
+  top: 50%;
+  margin-left: -15px;
+  display: none;
+  color: rpl-color('black');
+  transform: translateY(-50%);
+  transform-origin: 50%;
+}
