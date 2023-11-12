@@ -131,7 +131,7 @@ def featured_resource_preview(package: dict[str, Any]) -> Optional[dict[str, Any
         except toolkit.ObjectNotFound:
             pass
         else:
-            if featured_preview:
+            if resource_views:
                 featured_preview = {"preview": resource_views[0], "resource": resource}
 
     return featured_preview
