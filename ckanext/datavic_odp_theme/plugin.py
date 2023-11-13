@@ -4,6 +4,7 @@ from typing import Any
 import ckan.plugins as p
 import ckan.plugins.toolkit as tk
 
+from ckanext.search_autocomplete.interfaces import ISearchAutocomplete
 from ckanext.xloader.plugin import xloaderPlugin
 
 from ckanext.datavic_odp_theme.logic import auth_functions, actions
@@ -17,6 +18,7 @@ class DatavicODPTheme(p.SingletonPlugin):
     p.implements(p.IActions)
     p.implements(p.IBlueprint)
     p.implements(p.IPackageController, inherit=True)
+    p.implements(ISearchAutocomplete)
 
     # IConfigurer
 
@@ -48,6 +50,15 @@ class DatavicODPTheme(p.SingletonPlugin):
                 format.upper().split('.')[-1] for format in pkg_dict['res_format']
             ]
         return pkg_dict
+
+    # ISearchAutocomplete
+
+    def get_categories(self):
+        return {
+            'organization': tk._('Organisations'),
+            'res_format': tk._('Formats'),
+            'groups': tk._('Categories'),
+        }
 
 
 @tk.blanket.auth_functions(auth_functions)

@@ -6,10 +6,8 @@
     {{ h.build_nav_icon('activity.package_activity', _('Activity Stream'), id=pkg.name, icon=None) }}
   {% endif %}
 
-  {% set historical_resources = h.historical_resources_list(pkg.resources) %}
-
-  {% if historical_resources[1] and historical_resources[1]['period_start'] %}
-    {{ h.build_nav_icon('odp_dataset.historical', _('Historical Data and Resources'), id=pkg.name, icon=None) }}
+  {% if h.group_resources_by_temporal_range(pkg.resources) | length > 1 %}
+    {{ h.build_nav_icon('odp_dataset.historical', _('Historical Data and Resources'), package_type=pkg.type, package_id=pkg.name, icon=None) }}
   {% endif %}
 {% endblock %}
 
