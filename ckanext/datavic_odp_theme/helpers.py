@@ -209,3 +209,12 @@ def is_resource_downloadable(resource: dict[str, Any]) -> bool:
         return True
 
     return False
+
+
+@helper
+def datastore_loaded_resources(pkg_dict: dict[str, Any]) -> list[str]:
+    """Return a list of the dataset resources that are loaded to the datastore"""
+    if not pkg_dict["resources"]:
+        return []
+    return [resource["id"] for resource in pkg_dict["resources"] if
+            resource["datastore_active"]]
