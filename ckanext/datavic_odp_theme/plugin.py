@@ -4,8 +4,8 @@ from typing import Any
 import ckan.plugins as p
 import ckan.plugins.toolkit as tk
 
-from ckanext.datapusher.plugin import DatapusherPlugin
 from ckanext.search_autocomplete.interfaces import ISearchAutocomplete
+from ckanext.xloader.plugin import xloaderPlugin
 
 from ckanext.datavic_odp_theme.logic import auth_functions, actions
 from ckanext.datavic_odp_theme.views import get_blueprints
@@ -45,11 +45,42 @@ class DatavicODPTheme(p.SingletonPlugin):
     # IPackageController
 
     def before_dataset_index(self, pkg_dict: dict[str, Any]) -> dict[str, Any]:
-        if pkg_dict.get('res_format'):
-            pkg_dict['res_format'] = [
-                format.upper().split('.')[-1] for format in pkg_dict['res_format']
+        if pkg_dict.get("res_format"):
+            pkg_dict["res_format"] = [
+                res_format.upper().split(".")[-1]
+                for res_format in pkg_dict["res_format"]
             ]
+
+        if pkg_dict.get("res_format") and self._is_all_api_format(pkg_dict):
+            pkg_dict.get("res_format").append("ALL_API")
         return pkg_dict
+
+    def _is_all_api_format(self, pkg_dict: dict[str, Any]) -> bool:
+        """Check if the dataset contains a resource in a format recognized as an API.
+        This involves determining if the format of the resource is CSV and if this resource exists in the datastore
+        or matches a format inside a predefined list.
+        """
+        for resource in tk.get_action("package_show")({"ignore_auth": True},
+                                                           {"id": pkg_dict["id"]}).get(
+                "resources", []):
+            if resource["format"].upper() == "CSV" and resource["datastore_active"]:
+                return True
+
+        if [
+            res_format
+            for res_format in pkg_dict["res_format"]
+            if res_format
+               in [
+                   "WMS",
+                   "WFS",
+                   "API",
+                   "ARCGIS GEOSERVICES REST API",
+                   "ESRI REST",
+                   "GEOJSON",
+               ]
+        ]:
+            return True
+        return False
 
     # ISearchAutocomplete
 
@@ -75,7 +106,7 @@ class DatavicODPThemeAuth(p.SingletonPlugin):
     pass
 
 
-class DatavicDatapusherPlugin(DatapusherPlugin):
+class DatavicXLoaderPlugin(xloaderPlugin):
     p.implements(p.IPackageController, inherit=True)
 
     # IPackageController
@@ -89,12 +120,11 @@ class DatavicDatapusherPlugin(DatapusherPlugin):
                 if not resource["url_type"]:
                     url_without_params = resource["url"].split('?')[0]
                     resource["format"] = url_without_params.split('.')[-1].lower()
-
-            self._submit_to_datapusher(resource)
+            self._submit_to_xloader(resource)
 
     after_dataset_update = after_dataset_create
 
-    def _submit_to_datapusher(self, resource_dict):
+    def _submit_to_xloader(self, resource_dict):
         """The original method doesn't check if `url_type` is here. Seems like
         it's not here if we are calling it from the `after_dataset_create`.
         Just set a default url_type and delete after to be sure, that it doesn't break
@@ -102,10 +132,10 @@ class DatavicDatapusherPlugin(DatapusherPlugin):
 
         Do not touch proper values, because it will definitely break something."""
 
-        resource_dict.setdefault("url_type", "datavic_datapusher")
+        resource_dict.setdefault("url_type", "datavic_xloader")
         resource_dict.setdefault("format", "")
 
-        super()._submit_to_datapusher(resource_dict)
+        super()._submit_to_xloader(resource_dict)
 
-        if resource_dict["url_type"] == "datavic_datapusher":
+        if resource_dict["url_type"] == "datavic_xloader":
             resource_dict.pop("url_type")

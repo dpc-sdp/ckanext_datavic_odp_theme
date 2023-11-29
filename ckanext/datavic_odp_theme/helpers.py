@@ -131,10 +131,10 @@ def featured_resource_preview(package: dict[str, Any]) -> Optional[dict[str, Any
         except toolkit.ObjectNotFound:
             pass
         else:
-            # ensure there is actually previews as some resources are marked as datastore active but they don't have a preview and it breaks the page
+            # ensure there are actually previews as some resources are marked as datastore active but they don't have a preview and it breaks the page
             if not len(resource_views) > 0:
                 continue
-            
+                
             featured_preview = {"preview": resource_views[0], "resource": resource}
 
     return featured_preview
@@ -209,3 +209,12 @@ def is_resource_downloadable(resource: dict[str, Any]) -> bool:
         return True
 
     return False
+
+
+@helper
+def datastore_loaded_resources(pkg_dict: dict[str, Any]) -> list[str]:
+    """Return a list of the dataset resources that are loaded to the datastore"""
+    if not pkg_dict["resources"]:
+        return []
+    return [resource["id"] for resource in pkg_dict["resources"] if
+            resource["datastore_active"]]
