@@ -80,11 +80,6 @@ def get_monsido_domain_token() -> Optional[str]:
 
 
 @helper
-def get_google_optimize_id() -> Optional[str]:
-    return conf.get_google_optimize_id()
-
-
-@helper
 def get_parent_site_url() -> str:
     return conf.get_parent_site_url()
 
