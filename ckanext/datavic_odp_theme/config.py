@@ -69,7 +69,3 @@ def get_hotjar_hjsv() -> Optional[str]:
 
 def get_monsido_domain_token() -> Optional[str]:
     return tk.config.get(CONFIG_MONSIDO_DOMAIN_TOKEN)
-
-
-def get_google_optimize_id() -> Optional[str]:
-    return tk.config.get(CONFIG_GOOGLE_OPTIMIZE_ID)
