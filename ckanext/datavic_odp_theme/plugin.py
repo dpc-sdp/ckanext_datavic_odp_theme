@@ -3,6 +3,7 @@ from typing import Any
 
 import ckan.plugins as p
 import ckan.plugins.toolkit as tk
+import ckan.model as model
 
 from ckanext.search_autocomplete.interfaces import ISearchAutocomplete
 from ckanext.xloader.plugin import xloaderPlugin
@@ -112,6 +113,28 @@ class DatavicXLoaderPlugin(xloaderPlugin):
     # IPackageController
 
     def after_dataset_create(self, context, pkg_dict):
+        self._trigger_after_resource_create(pkg_dict)
+
+        # Only add packages to groups when being created via the CKAN UI
+        # (i.e. not during harvesting)
+        if repr(tk.request) != '<LocalProxy unbound>' \
+            and tk.get_endpoint()[0] in ['dataset', 'package', "datavic_dataset"]:
+            # Add the package to the group ("category")
+            pkg_group = pkg_dict.get('category', None)
+            if pkg_group and pkg_dict.get('type', None) in ['dataset', 'package']:
+                group = model.Group.get(pkg_group)
+                group.add_package_by_name(pkg_dict.get('name', None))
+
+    def after_dataset_update(self, context, pkg_dict):
+        self._trigger_after_resource_create(pkg_dict)
+        group_id = pkg_dict.get('category', None)
+        if group_id:
+            group = model.Group.get(group_id)
+            groups = context.get('package').get_groups('group')
+            if group not in groups:
+                group.add_package_by_name(pkg_dict.get('name'))
+
+    def _trigger_after_resource_create(self, pkg_dict):
         """Dataset syndication doesn't trigger the `after_resource_create` method.
         So here we want to run submit for each resource after dataset creation.
         """
@@ -121,8 +144,6 @@ class DatavicXLoaderPlugin(xloaderPlugin):
                     url_without_params = resource["url"].split('?')[0]
                     resource["format"] = url_without_params.split('.')[-1].lower()
             self._submit_to_xloader(resource)
-
-    after_dataset_update = after_dataset_create
 
     def _submit_to_xloader(self, resource_dict):
         """The original method doesn't check if `url_type` is here. Seems like
