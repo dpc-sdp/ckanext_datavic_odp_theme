@@ -1,6 +1,11 @@
 from __future__ import annotations
 
+from typing import Any
+
+import ckan.lib.plugins as lib_plugins
 import ckan.plugins.toolkit as tk
+from ckan.types import Action, Context, DataDict
+from ckan.types.logic import ActionResult
 
 from ckanext.datavic_odp_theme import jobs
 
@@ -46,3 +51,57 @@ def _datastore_delete(resource_ids: list[str]):
             )
         except tk.ObjectNotFound:
             continue
+
+
+@tk.chained_action
+def resource_update(
+    next_: Action, context: Context, data_dict: DataDict
+) -> ActionResult.ResourceUpdate:
+    try:
+        result = next_(context, data_dict)
+        return result
+    except tk.ValidationError:
+        _show_errors_in_sibling_resources(context, data_dict)
+
+
+@tk.chained_action
+def resource_create(
+    next_: Action, context: Context, data_dict: DataDict
+) -> ActionResult.ResourceCreate:
+    try:
+        result = next_(context, data_dict)
+        return result
+    except tk.ValidationError:
+        _show_errors_in_sibling_resources(context, data_dict)
+
+
+def _show_errors_in_sibling_resources(context: Context, data_dict: DataDict) -> Any:
+    """Retrieves and raises validation errors for resources within the same package."""
+    pkg_dict = tk.get_action("package_show")(context, {"id": data_dict["package_id"]})
+
+    package_plugin = lib_plugins.lookup_package_plugin(pkg_dict["type"])
+
+    _, errors = lib_plugins.plugin_validate(
+        package_plugin,
+        context,
+        pkg_dict,
+        context.get("schema") or package_plugin.update_package_schema(),
+        "package_update",
+    )
+
+    resources_errors = errors["resources"]
+    del errors["resources"]
+
+    for i, resource_error in enumerate(resources_errors):
+        if not resource_error:
+            continue
+        errors.update(
+            {
+                f"Field '{field}' in the resource '{pkg_dict['resources'][i]['name']}'": (
+                    error
+                )
+                for field, error in resource_error.items()
+            }
+        )
+    if errors:
+        raise tk.ValidationError(errors)
