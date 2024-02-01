@@ -2,8 +2,11 @@ from __future__ import annotations
 
 from typing import Any
 
+from sqlalchemy import or_
+
 import ckan.lib.plugins as lib_plugins
 import ckan.plugins.toolkit as tk
+from ckan import model
 from ckan.types import Action, Context, DataDict
 from ckan.types.logic import ActionResult
 
@@ -105,3 +108,45 @@ def _show_errors_in_sibling_resources(context: Context, data_dict: DataDict) -> 
         )
     if errors:
         raise tk.ValidationError(errors)
+
+
+@tk.side_effect_free
+def datavic_list_incomplete_resources(context, data_dict):
+    """Retrieves a list of resources that are missing at least one required field."""
+    try:
+        pkg_type = data_dict.get("type", "dataset")
+        resource_schema = tk.h.scheming_get_dataset_schema(pkg_type)["resource_fields"]
+    except TypeError:
+        raise tk.ValidationError(f"No schema for {pkg_type} package type")
+
+    required_fields = [
+        field["field_name"]
+        for field in resource_schema
+        if tk.h.scheming_field_required(field)
+    ]
+
+    missing_conditions = []
+    for field in required_fields:
+        model_attr = getattr(model.Resource, field)
+        missing_conditions.append(or_(model_attr == None, model_attr == ""))
+
+    q = (
+        model.Session.query(model.Resource)
+        .join(model.Package)
+        .filter(model.Package.state == "active")
+        .filter(model.Resource.state == "active")
+        .filter(or_(*missing_conditions))
+    )
+
+    results = []
+    for resource in q:
+        results.append(
+            {
+                "id": resource.id,
+                "missing_fields": [
+                    field for field in required_fields if not getattr(resource, field)
+                ],
+            }
+        )
+
+    return {"count": q.count(), "results": results}
