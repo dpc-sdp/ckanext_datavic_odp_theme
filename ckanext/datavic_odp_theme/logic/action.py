@@ -115,7 +115,9 @@ def datavic_list_incomplete_resources(context, data_dict):
     """Retrieves a list of resources that are missing at least one required field."""
     try:
         pkg_type = data_dict.get("type", "dataset")
-        resource_schema = tk.h.scheming_get_dataset_schema(pkg_type)["resource_fields"]
+        resource_schema = tk.h.scheming_get_dataset_schema(pkg_type)[
+            "resource_fields"
+        ]
     except TypeError:
         raise tk.ValidationError(f"No schema for {pkg_type} package type")
 
@@ -138,15 +140,45 @@ def datavic_list_incomplete_resources(context, data_dict):
         .filter(or_(*missing_conditions))
     )
 
-    results = []
-    for resource in q:
-        results.append(
-            {
+    if data_dict.get("by_package", False):
+        grouped_resources = {}
+        for resource in q:
+            missing_fields = [
+                field
+                for field in required_fields
+                if not getattr(resource, field)
+            ]
+            resource_dict = {
+                "id": resource.id,
+                "missing_fields": missing_fields,
+            }
+
+            grouped_resources.setdefault(resource.package_id, []).append(
+                resource_dict
+            )
+
+        results = [
+            {"package_id": package_id, "resources": resources}
+            for package_id, resources in grouped_resources.items()
+        ]
+        num_packages = len(grouped_resources)
+    else:
+        results = []
+        package_ids = set()
+        for resource in q:
+            package_ids.add(resource.package_id)
+            results.append({
                 "id": resource.id,
                 "missing_fields": [
-                    field for field in required_fields if not getattr(resource, field)
+                    field
+                    for field in required_fields
+                    if not getattr(resource, field)
                 ],
-            }
-        )
+            })
+        num_packages = len(package_ids)
 
-    return {"count": q.count(), "results": results}
+    return {
+        "num_resources": q.count(),
+        "num_packages": num_packages,
+        "results": results,
+    }
