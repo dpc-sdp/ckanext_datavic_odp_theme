@@ -15,4 +15,7 @@ def actions():
         "organization_update": action.organization_update,
         "package_update": action.package_update,
         "package_delete": action.package_delete,
+        "resource_update": action.resource_update,
+        "resource_create": action.resource_create,
+        "datavic_list_incomplete_resources": action.datavic_list_incomplete_resources,
     }
