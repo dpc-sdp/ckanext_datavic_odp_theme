@@ -7,7 +7,7 @@ import ckan.plugins.toolkit as tk
 from ckanext.search_autocomplete.interfaces import ISearchAutocomplete
 from ckanext.xloader.plugin import xloaderPlugin
 
-from ckanext.datavic_odp_theme.logic import auth_functions, actions
+from ckanext.datavic_odp_theme.logic import auth_functions, actions, get_validators
 from ckanext.datavic_odp_theme.views import get_blueprints
 from ckanext.datavic_odp_theme.helpers import get_helpers
 
@@ -17,6 +17,7 @@ class DatavicODPTheme(p.SingletonPlugin):
     p.implements(p.ITemplateHelpers)
     p.implements(p.IActions)
     p.implements(p.IBlueprint)
+    p.implements(p.IValidators)
     p.implements(p.IPackageController, inherit=True)
     p.implements(ISearchAutocomplete)
 
@@ -41,6 +42,11 @@ class DatavicODPTheme(p.SingletonPlugin):
 
     def get_blueprint(self):
         return get_blueprints()
+
+    # IValidators
+
+    def get_validators(self):
+        return get_validators()
 
     # IPackageController
 
