@@ -12,6 +12,7 @@ datavic_odp_theme-js:
     - js/datavic-advanced-search.js
     - js/datavic-api-info.js
     - js/datavic-search-autocomplete.js
+    - js/datavicmain-image-upload-helptext.js
   extra:
     preload:
       - base/main
