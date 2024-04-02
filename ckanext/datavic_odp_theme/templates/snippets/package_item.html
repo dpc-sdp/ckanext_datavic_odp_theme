@@ -77,7 +77,34 @@ Example:
                 {% endblock %}
               </ul>
             {% endblock %}
+        {% endif %}
+        <ul class="list-unstyled dataset-api">
+          {% set digital_twin_resources = h.get_digital_twin_resources(package.id) %}
+          {% set featured_resource = h.featured_resource_preview(package) %}
+          {% if digital_twin_resources or featured_resource %}
+          <li class="preview">
+            {% if digital_twin_resources %}
+            <i class="fa-solid fa-map-location-dot"></i>
+            {% endif %}
+            {% if featured_resource %}
+            <i class="fa-solid fa-table"></i>
+            {% endif %}
+            {{ _('Preview') }}
+          </li>
           {% endif %}
+          {% set datastore_loaded_resources = h.datastore_loaded_resources(package) %}
+          {% if datastore_loaded_resources %}
+          <li class="api">
+            {% set loading_text = _('Loading...') %}
+            {% set api_info_url = h.url_for('api.snippet', ver=1, snippet_path='api_info.html',
+            resource_id=datastore_loaded_resources[0]) %}
+            <a class="" href="{{ api_info_url }}" data-module="datavic-odp-api-info"
+               data-module-template="{{ api_info_url }}" data-loading-text="{{ loading_text }}">
+              <i class="fa-solid fa-code"></i> {{ _("API") }}
+            </a>
+          </li>
+          {% endif %}
+        </ul>
         {% endblock %}
       </div>
     {% endblock %}

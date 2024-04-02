@@ -30,45 +30,51 @@
   {% block resource_item_description %}
   {% endblock %}
   {% block resource_item_explore %}
-  {% if not url_is_edit %}
-  <div class="dropdown btn-group">
-    <a href="#" class="btn btn-primary dropdown-toggle" id="dropdownExplorer" data-bs-toggle="dropdown" aria-expanded="false">
-      <i class="fa fa-share"></i>
-      {{ _('Explore') }}
-      <span class="caret"></span>
-    </a>
-    <ul class="dropdown-menu" aria-labelledby="dropdownExplorer">
-      {% block resource_item_explore_links %}
+{% if not url_is_edit %}
+  <ul class="list-unstyled buttons">
+    {% block resource_item_explore_links %}
+      {% if res.datastore_active %}
+        <li>
+          {% set loading_text = _('Loading...') %}
+          {% set api_info_url = h.url_for('api.snippet', ver=1, snippet_path='api_info.html', resource_id=res.id) %}
+          <a class="btn btn-primary btn-outline btn-api" href="{{ api_info_url }}" data-module="datavic-odp-api-info"
+             data-module-template="{{ api_info_url }}" data-loading-text="{{ loading_text }}">
+            <i class="fa-solid fa-code"></i>
+            {{ _('Data API') }}
+          </a>
+        </li>
+      {% endif %}
+      {% if can_edit %}
+        <li>
+          <a class="btn btn-primary btn-outline"
+             href="{{ h.url_for('dataset_resource.edit', id=pkg.name, resource_id=res.id) }}">
+            <i class="fa fa-pencil-square-o"></i>
+            {{ _('Edit') }}
+          </a>
+        </li>
+      {% endif %}
       <li>
-        <a class="dropdown-item" href="{{ url }}">
+        <a class="btn btn-primary btn-outline" href="{{ url }}">
           <i class="fa fa-info-circle"></i>
           {{ _('More information') }}
         </a>
       </li>
       {% if res.url and h.is_url(res.url) %}
-      <li>
-        <a href="{{ res.url }}" class="dropdown-item resource-url-analytics" target="_blank">
-          {% if h.is_resource_downloadable(res) %}
-            <i class="fa fa-arrow-circle-o-down"></i>
-            {{ _('Download') }}
-          {% else %}
-            <i class="fa fa-external-link"></i>
-            {{ _('Go to resource') }}
-          {% endif %}
-        </a>
-      </li>
+        <li>
+          <a href="{{ res.url }}" class="btn btn-primary" target="_blank">
+            {% if res.has_views or res.url_type == 'upload' %}
+              <i class="fa fa-arrow-circle-o-down"></i>
+              {{ _('Download data') }}
+            {% else %}
+              <i class="fa fa-external-link"></i>
+              {{ _('Go to Resource') }}
+            {% endif %}
+          </a>
+        </li>
       {% endif %}
-      {% if can_edit %}
-      <li>
-        <a class="dropdown-item" href="{{ h.url_for(controller='dataset_resource', action='edit', id=pkg.name, resource_id=res.id) }}">
-          <i class="fa fa-pencil-square-o"></i>
-          {{ _('Edit') }}
-        </a>
-      </li>
-      {% endif %}
-      {% endblock %}
-    </ul>
-  </div>
-  {% endif %}
-  {% endblock %}
+    {% endblock %}
+  </ul>
+{% endif %}
+{% endblock %}
 </li>
+

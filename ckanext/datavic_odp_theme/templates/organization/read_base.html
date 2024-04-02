@@ -1,9 +1,25 @@
-{% ckan_extends %}
+{% ckan_extends %}}
 
 {% block content_primary_nav %}
-  {{ h.build_nav_icon(group_type + '.read', _('Datasets'), id=group_dict.name, icon='sitemap') }}
-  {% if h.check_access('organization_activity_list', {'id':group_dict.name}) %}
-    {{ h.build_nav_icon('activity.group_activity', _('Activity Stream'), id=group_dict.name, offset=0, icon='clock') }}
-  {% endif %}
+  {{ h.build_nav_icon(group_type + '.read', h.humanize_entity_type('package', dataset_type, 'content tab') or _('Datasets'), id=group_dict.name, icon='sitemap') }}
   {{ h.build_nav_icon(group_type + '.about', _('About'), id=group_dict.name, icon='info-circle') }}
+  {% if h.check_access('organization_activity_list', {'id':group_dict.name}) %}
+    {{ h.build_nav_icon('activity.organization_activity', _('Activity Stream'), id=group_dict.name, offset=0, icon='clock') }}
+  {% endif %}
+{% endblock %}
+
+{% block secondary %}
+  <aside class="secondary col-sm-3">
+    {% block secondary_content %}
+      {% snippet 'snippets/organization.html', organization=group_dict, show_nums=true, group_type=group_type %}
+    {% endblock %}
+  </aside>
+{% endblock %}
+
+{% block primary %}
+  <div class="primary col-sm-9 col-xs-12">
+    {% block primary_content %}
+      {{ super() }}
+    {% endblock %}
+  </div>
 {% endblock %}

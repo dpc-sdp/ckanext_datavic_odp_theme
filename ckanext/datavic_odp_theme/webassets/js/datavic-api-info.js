@@ -8,7 +8,7 @@
  *   <a data-module="api-info" data-module-template="http://example.com/path/to/template">API</a>
  *
  */
-this.ckan.module('datavic-odp-api-info', function ($) {
+this.ckan.module('datavic-odp-api-info', function (jQuery) {
     return {
 
       /* holds the loaded lightbox */
@@ -23,7 +23,7 @@ this.ckan.module('datavic-odp-api-info', function ($) {
        * Returns nothing.
        */
       initialize: function () {
-        $.proxyAll(this, /_on/);
+        jQuery.proxyAll(this, /_on/);
 
         this.el.on('click', this._onClick);
         this.el.button();
@@ -72,6 +72,7 @@ this.ckan.module('datavic-odp-api-info', function ($) {
           module.modal.on('hidden.bs.modal', function () {
               $(module.el).focus();
           })
+            module.modal.modal("show")
         });
       },
 
