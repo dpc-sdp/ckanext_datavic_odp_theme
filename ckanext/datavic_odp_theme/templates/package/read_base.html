@@ -1,5 +1,25 @@
 {% ckan_extends %}
 
+{% block head_extras %}
+  {{ g.template_head_end | safe }}
+
+  {% if h.hotjar_tracking_enabled() %}
+    {% snippet "snippets/hotjar.html" %}
+  {% endif %}
+
+  {% if h.monsido_tracking_enabled() %}
+    {% snippet "snippets/monsido.html" %}
+  {% endif %}
+
+  {% if h.get_google_optimize_id() %}
+    {% snippet "snippets/google_optimize.html" %}
+  {% endif %}
+
+  {% set description = h.markdown_extract(pkg.extract, extract_length=200)|forceescape %}
+  <meta property="og:title" content="{{ h.dataset_display_name(pkg) }} - {{ g.site_title }}">
+  <meta property="og:description" content="{{ description|forceescape|trim }}">
+{% endblock %}
+
 {% block content_primary_nav %}
   {{ h.build_nav_icon('dataset.read', _('Dataset'), id=pkg.name, icon=None) }}
   {% if h.check_access('package_activity_list', {'id':pkg.id}) %}
