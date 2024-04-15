@@ -11,10 +11,6 @@
     {% snippet "snippets/monsido.html" %}
   {% endif %}
 
-  {% if h.get_google_optimize_id() %}
-    {% snippet "snippets/google_optimize.html" %}
-  {% endif %}
-
   {% set description = h.markdown_extract(pkg.extract, extract_length=200)|forceescape %}
   <meta property="og:title" content="{{ h.dataset_display_name(pkg) }} - {{ g.site_title }}">
   <meta property="og:description" content="{{ description|forceescape|trim }}">
