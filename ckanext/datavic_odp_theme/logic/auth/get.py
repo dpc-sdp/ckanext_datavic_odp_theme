@@ -37,7 +37,7 @@ def vic_activity_list(context, data_dict):
     # DataVIC modification
     if (
         data_dict["object_type"] in ["package", "organization"]
-        and not authz.auth_is_loggedin_user()
+        and authz.auth_is_anon_user(context)
     ):
         return {"success": False}
 
@@ -47,13 +47,14 @@ def vic_activity_list(context, data_dict):
 
 
 @tk.chained_auth_function
-def vic_package_activity_list(context, data_dict):
+def vic_package_activity_list(next_auth, context, data_dict):
     data_dict["object_type"] = "package"
     return vic_activity_list(context, data_dict)
 
+
 @tk.chained_auth_function
 def vic_organization_activity_list(
-    context: dict[str, Any], group_dict: dict[str, str]
+    next_auth, context: dict[str, Any], group_dict: dict[str, str]
 ) -> dict[bool, bool]:
     group_dict["object_type"] = "organization"
     return vic_activity_list(context, group_dict)
