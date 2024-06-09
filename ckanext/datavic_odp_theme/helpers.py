@@ -209,17 +209,3 @@ def is_resource_downloadable(resource: dict[str, Any]) -> bool:
         return True
 
     return False
-
-
-@helper
-def datavic_get_dtv_url() -> str:
-    """Return a URL for DTV map preview"""
-    url = conf.get_dtv_url()
-
-    if not url:
-        return url
-
-    if not url.endswith("/"):
-        url = url + "/"
-
-    return url
