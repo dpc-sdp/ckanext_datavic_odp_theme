@@ -224,6 +224,7 @@ def datavic_max_image_size():
     return toolkit.config["ckan.max_image_size"]
 
 
+@helper
 def datavic_get_dtv_url() -> str:
     """Return a URL for DTV map preview"""
     url = conf.get_dtv_url()
