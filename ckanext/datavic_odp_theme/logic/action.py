@@ -9,6 +9,9 @@ import ckan.plugins.toolkit as tk
 from ckan import model
 from ckan.types import Action, Context, DataDict
 from ckan.types.logic import ActionResult
+from ckan.logic import validate
+from ckan.model import ResourceView
+from ckanext.datavic_odp_theme.logic import scheme
 
 from ckanext.datavic_odp_theme import jobs
 
@@ -182,3 +185,57 @@ def datavic_list_incomplete_resources(context, data_dict):
         "num_packages": num_packages,
         "results": results,
     }
+
+
+@validate(scheme.datatables_view_prioritize)
+def datavic_datatables_view_prioritize(
+        context: Context, data_dict: DataDict
+) -> ActionResult:
+    """Check if the datatables view is prioritized over the recline view.
+    If not, swap their order.
+    """
+    tk.check_access("vic_datatables_view_prioritize", context, data_dict)
+
+    resource_id = data_dict["resource_id"]
+    res_views = sorted(
+        model.Session.query(ResourceView)
+        .filter(ResourceView.resource_id == resource_id)
+        .all(),
+        key=lambda x: x.order,
+    )
+    datatables_views = _filter_views(res_views, "datatables_view")
+    recline_views = _filter_views(res_views, "recline_view")
+
+    if not (
+        datatables_views
+        and recline_views
+        and datatables_views[0].order > recline_views[0].order
+    ):
+        return {"updated": False}
+
+    datatables_views[0].order, recline_views[0].order = (
+        recline_views[0].order,
+        datatables_views[0].order,
+    )
+    order = [view.id for view in sorted(res_views, key=lambda x: x.order)]
+    tk.get_action("resource_view_reorder")(
+        {"ignore_auth": True}, {"id": resource_id, "order": order}
+    )
+    return {"updated": True}
+
+
+@tk.chained_action
+def resource_view_create(next_, context, data_dict):
+    result = next_(context, data_dict)
+    if data_dict["view_type"] == "datatables_view":
+        tk.get_action("datavic_datatables_view_prioritize")(
+            {"ignore_auth": True}, {"resource_id": data_dict["resource_id"]}
+        )
+    return result
+
+
+def _filter_views(
+    res_views: list[ResourceView], view_type: str
+) -> list[ResourceView]:
+    """Return a list of views with the given view type."""
+    return [view for view in res_views if view.view_type == view_type]
