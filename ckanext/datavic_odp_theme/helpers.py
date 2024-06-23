@@ -225,9 +225,12 @@ def datavic_max_image_size():
 
 
 @helper
-def datavic_get_dtv_url() -> str:
+def datavic_get_dtv_url(ext_link: bool = False) -> str:
     """Return a URL for DTV map preview"""
-    url = conf.get_dtv_url()
+    if toolkit.asbool(ext_link):
+        url = conf.get_dtv_external_link()
+    else:
+        url = conf.get_dtv_url()
 
     if not url:
         return url
