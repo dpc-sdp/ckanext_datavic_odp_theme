@@ -218,7 +218,21 @@ def datastore_loaded_resources(pkg_dict: dict[str, Any]) -> list[str]:
         if resource["datastore_active"]
     ]
 
+
 @helper
 def datavic_max_image_size():
     """Return max size for image configurate for portal"""
     return toolkit.config["ckan.max_image_size"]
+
+
+def datavic_get_dtv_url() -> str:
+    """Return a URL for DTV map preview"""
+    url = conf.get_dtv_url()
+
+    if not url:
+        return url
+
+    if not url.endswith("/"):
+        url = url + "/"
+
+    return url
