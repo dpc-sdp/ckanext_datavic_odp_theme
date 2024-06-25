@@ -21,6 +21,7 @@ DEFAULT_DTV_FQ = [
     "csv-geo-au",
     "aus-geo-csv",
 ]
+CONFIG_DTV_MAX_SIZE_LIMIT = "ckanext.datavicmain.dtv.max_size_limit"
 
 CONFIG_PARENT_SITE_URL = "ckan.parent_site_url"
 DEFAULT_PARENT_SITE_URL = "https://www.data.vic.gov.au"
@@ -45,6 +46,10 @@ def get_dtv_supported_formats() -> set[str]:
     return {
         fmt.lower() for fmt in tk.aslist(tk.config.get(CONFIG_DTV_FQ)) or DEFAULT_DTV_FQ
     }
+
+
+def get_dtv_max_size_limit() -> str:
+    return tk.config.get(CONFIG_DTV_MAX_SIZE_LIMIT, "157286400")
 
 
 def get_parent_site_url() -> str:

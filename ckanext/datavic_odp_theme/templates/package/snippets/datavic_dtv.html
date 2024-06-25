@@ -1,7 +1,8 @@
 {% set dtv_resources = h.get_digital_twin_resources(pkg.id)|map(attribute="id")|list %}
 {% set dtv_preview = pkg.dtv_preview %}
+{% set dtv_exceeds_limit = h.dtv_exceeds_max_size_limit(dtv_resources[0]) %}
 
-{% if dtv_resources and dtv_preview is not sameas false %}
+{% if dtv_resources and not dtv_exceeds_limit and dtv_preview is not sameas false %}
     <section class="datapreview resource-preview">
         <div class="header-container">
             <h3>{{ _('Map preview') }}</h3>
