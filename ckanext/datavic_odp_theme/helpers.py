@@ -80,11 +80,6 @@ def get_monsido_domain_token() -> Optional[str]:
 
 
 @helper
-def get_google_optimize_id() -> Optional[str]:
-    return conf.get_google_optimize_id()
-
-
-@helper
 def get_parent_site_url() -> str:
     return conf.get_parent_site_url()
 
@@ -134,7 +129,7 @@ def featured_resource_preview(package: dict[str, Any]) -> Optional[dict[str, Any
             # ensure there are actually previews as some resources are marked as datastore active but they don't have a preview and it breaks the page
             if not len(resource_views) > 0:
                 continue
-                
+
             featured_preview = {"preview": resource_views[0], "resource": resource}
 
     return featured_preview
@@ -211,7 +206,24 @@ def is_resource_downloadable(resource: dict[str, Any]) -> bool:
     return False
 
 
+def datastore_loaded_resources(pkg_dict: dict[str, Any]) -> list[str]:
+    """Return a list of the dataset resources that are loaded to the datastore"""
+    if not pkg_dict.get("resources"):
+        return []
+
+    return [
+        resource["id"]
+        for resource in pkg_dict["resources"]
+        if resource["datastore_active"]
+    ]
+
+
 @helper
+def datavic_max_image_size():
+    """Return max size for image configurate for portal"""
+    return toolkit.config["ckan.max_image_size"]
+
+
 def datavic_get_dtv_url(ext_link: bool = False) -> str:
     """Return a URL for DTV map preview"""
     if toolkit.asbool(ext_link):

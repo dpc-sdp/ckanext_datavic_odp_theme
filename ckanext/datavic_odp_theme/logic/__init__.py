@@ -1,5 +1,6 @@
 from .auth import get
 from . import action
+from . import validators
 
 
 def auth_functions():
@@ -18,4 +19,10 @@ def actions():
         "resource_update": action.resource_update,
         "resource_create": action.resource_create,
         "datavic_list_incomplete_resources": action.datavic_list_incomplete_resources,
+    }
+
+
+def get_validators():
+    return {
+        "datavic_organization_upload": validators.datavic_organization_upload
     }

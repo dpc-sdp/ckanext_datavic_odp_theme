@@ -8,7 +8,7 @@ import ckan.model as model
 from ckanext.search_autocomplete.interfaces import ISearchAutocomplete
 from ckanext.xloader.plugin import xloaderPlugin
 
-from ckanext.datavic_odp_theme.logic import auth_functions, actions
+from ckanext.datavic_odp_theme.logic import auth_functions, actions, get_validators
 from ckanext.datavic_odp_theme.views import get_blueprints
 from ckanext.datavic_odp_theme.helpers import get_helpers
 
@@ -18,6 +18,7 @@ class DatavicODPTheme(p.SingletonPlugin):
     p.implements(p.ITemplateHelpers)
     p.implements(p.IActions)
     p.implements(p.IBlueprint)
+    p.implements(p.IValidators)
     p.implements(p.IPackageController, inherit=True)
     p.implements(ISearchAutocomplete)
 
@@ -43,14 +44,50 @@ class DatavicODPTheme(p.SingletonPlugin):
     def get_blueprint(self):
         return get_blueprints()
 
+    # IValidators
+
+    def get_validators(self):
+        return get_validators()
+
     # IPackageController
 
     def before_dataset_index(self, pkg_dict: dict[str, Any]) -> dict[str, Any]:
-        if pkg_dict.get('res_format'):
-            pkg_dict['res_format'] = [
-                format.upper().split('.')[-1] for format in pkg_dict['res_format']
+        if pkg_dict.get("res_format"):
+            pkg_dict["res_format"] = [
+                res_format.upper().split(".")[-1]
+                for res_format in pkg_dict["res_format"]
             ]
+
+        if pkg_dict.get("res_format") and self._is_all_api_format(pkg_dict):
+            pkg_dict.get("res_format").append("ALL_API")
         return pkg_dict
+
+    def _is_all_api_format(self, pkg_dict: dict[str, Any]) -> bool:
+        """Check if the dataset contains a resource in a format recognized as an API.
+        This involves determining if the format of the resource is CSV and if this resource exists in the datastore
+        or matches a format inside a predefined list.
+        """
+        for resource in tk.get_action("package_show")({"ignore_auth": True},
+                                                           {"id": pkg_dict["id"]}).get(
+                "resources", []):
+            if resource["format"].upper() == "CSV" and resource["datastore_active"]:
+                return True
+
+        if [
+            res_format
+            for res_format in pkg_dict["res_format"]
+            if res_format
+               in [
+                   "WMS",
+                   "WFS",
+                   "API",
+                   "ARCGIS GEOSERVICES REST API",
+                   "ESRI REST",
+                   "GEOJSON",
+               ]
+        ]:
+            return True
+        return False
 
     # ISearchAutocomplete
 

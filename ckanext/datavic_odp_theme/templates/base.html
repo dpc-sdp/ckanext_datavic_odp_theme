@@ -22,10 +22,6 @@
   {% if h.monsido_tracking_enabled() %}
     {% snippet "snippets/monsido.html" %}
   {% endif %}
-
-  {% if h.get_google_optimize_id() %}
-    {% snippet "snippets/google_optimize.html" %}
-  {% endif %}
 {% endblock %}
 
 {% block styles %}
