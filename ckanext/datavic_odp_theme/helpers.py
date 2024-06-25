@@ -218,6 +218,7 @@ def datastore_loaded_resources(pkg_dict: dict[str, Any]) -> list[str]:
         if resource["datastore_active"]
     ]
 
+
 @helper
 def datavic_max_image_size():
     """Return max size for image configurate for portal"""
