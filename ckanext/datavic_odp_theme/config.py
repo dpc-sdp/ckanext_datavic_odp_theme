@@ -23,6 +23,7 @@ DEFAULT_DTV_FQ = [
 ]
 CONFIG_DTV_URL = "ckanext.datavic_odp_theme.dtv.url"
 CONFIG_DTV_EXTERNAL_LINK = "ckanext.datavic_odp_theme.dtv.external_link"
+CONFIG_DTV_MAX_SIZE_LIMIT = "ckanext.datavicmain.dtv.max_size_limit"
 
 CONFIG_PARENT_SITE_URL = "ckan.parent_site_url"
 DEFAULT_PARENT_SITE_URL = "https://www.data.vic.gov.au"
@@ -55,6 +56,10 @@ def get_dtv_url() -> str:
 
 def get_dtv_external_link() -> str:
     return tk.config.get(CONFIG_DTV_EXTERNAL_LINK, "")
+
+
+def get_dtv_max_size_limit() -> str:
+    return tk.config.get(CONFIG_DTV_MAX_SIZE_LIMIT, "157286400")
 
 
 def get_parent_site_url() -> str:
