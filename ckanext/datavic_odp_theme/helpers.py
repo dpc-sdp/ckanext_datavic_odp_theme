@@ -206,6 +206,7 @@ def is_resource_downloadable(resource: dict[str, Any]) -> bool:
     return False
 
 
+@helper
 def datastore_loaded_resources(pkg_dict: dict[str, Any]) -> list[str]:
     """Return a list of the dataset resources that are loaded to the datastore"""
     if not pkg_dict.get("resources"):
@@ -224,6 +225,7 @@ def datavic_max_image_size():
     return toolkit.config["ckan.max_image_size"]
 
 
+@helper
 def datavic_get_dtv_url(ext_link: bool = False) -> str:
     """Return a URL for DTV map preview"""
     if toolkit.asbool(ext_link):
