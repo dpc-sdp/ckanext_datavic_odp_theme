@@ -1,0 +1,4 @@
+{% ckan_extends %}
+
+
+{% block bodytag %} data-site-root="{{ h.url_for('home.index', locale='default', qualified=true) }}" data-locale-root="{{ h.url_for('home.index', qualified=true) }}" {% endblock %}
