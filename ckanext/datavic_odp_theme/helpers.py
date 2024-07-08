@@ -266,7 +266,7 @@ def dtv_exceeds_max_size_limit(resource_id: str) -> bool:
 
 
 @helper
-def datastore_dictionary(resource_id: str, resource_view_id: str):
+def datavic_datastore_dictionary(resource_id: str, resource_view_id: str):
     """
     Return the data dictionary info for a resource
     """
