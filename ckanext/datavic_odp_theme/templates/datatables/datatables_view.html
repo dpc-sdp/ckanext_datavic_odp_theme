@@ -4,7 +4,7 @@
 {% block bodytag %} data-site-root="{{ h.url_for('home.index', locale='default', qualified=true) }}" data-locale-root="{{ h.url_for('home.index', qualified=true) }}" {% endblock %}
 
 {% block page %}
-    {% set datadictionary = h.vic_iar_datastore_dictionary(resource.id, resource_view.id) %}
+    {% set datadictionary = h.datavic_datastore_dictionary(resource.id, resource_view.id) %}
     {% set nbspval = "&nbsp;"|safe %}
     {% set languagefile = "/vendor/DataTables/i18n/en.json" if h.lang() in ["en", "en_AU"] else h.url_for_static('vendor/DataTables/i18n/' + h.lang() + '.json') %}
 
