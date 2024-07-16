@@ -1,5 +1,8 @@
 from __future__ import annotations
-from typing import Any
+
+from typing import Any, Optional
+
+from flask import Response, session
 
 import ckan.plugins as p
 import ckan.plugins.toolkit as tk
@@ -21,6 +24,7 @@ class DatavicODPTheme(p.SingletonPlugin):
     p.implements(p.IValidators)
     p.implements(p.IPackageController, inherit=True)
     p.implements(ISearchAutocomplete)
+    p.implements(p.IAuthenticator)
 
     # IConfigurer
 
@@ -166,3 +170,11 @@ class DatavicDatapusherPlugin(DatapusherPlugin):
 
         if resource_dict["url_type"] == "datavic_datapusher":
             resource_dict.pop("url_type")
+
+    # IAuthenticator
+
+    def login(self) -> Optional[Response]:
+        session.regenerate_id()
+
+    def logout(self) -> Optional[Response]:
+        session.regenerate_id()
