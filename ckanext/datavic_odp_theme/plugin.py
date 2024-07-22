@@ -24,7 +24,7 @@ class DatavicODPTheme(p.SingletonPlugin):
     p.implements(p.IValidators)
     p.implements(p.IPackageController, inherit=True)
     p.implements(ISearchAutocomplete)
-    p.implements(p.IAuthenticator)
+    p.implements(p.IAuthenticator, inherit=True)
 
     # IConfigurer
 
@@ -102,6 +102,13 @@ class DatavicODPTheme(p.SingletonPlugin):
             'groups': tk._('Categories'),
         }
 
+    # IAuthenticator
+
+    def login(self) -> Optional[Response]:
+        session.regenerate_id()
+
+    def logout(self) -> Optional[Response]:
+        session.regenerate_id()
 
 @tk.blanket.auth_functions(auth_functions)
 class DatavicODPThemeAuth(p.SingletonPlugin):
@@ -170,11 +177,3 @@ class DatavicDatapusherPlugin(DatapusherPlugin):
 
         if resource_dict["url_type"] == "datavic_datapusher":
             resource_dict.pop("url_type")
-
-    # IAuthenticator
-
-    def login(self) -> Optional[Response]:
-        session.regenerate_id()
-
-    def logout(self) -> Optional[Response]:
-        session.regenerate_id()
