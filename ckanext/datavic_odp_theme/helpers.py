@@ -250,7 +250,7 @@ def dtv_exceeds_max_size_limit(resource_id: str) -> bool:
     Returns:
         bool: return True if dtv resource exceeds maximum file size limit set
             in ckan config "ckanext.datavicmain.dtv.max_size_limit",
-            otherwise - False  
+            otherwise - False
     """
     try:
         resource = toolkit.get_action("resource_show")({}, {"id": resource_id})
@@ -294,3 +294,22 @@ def datavic_datastore_dictionary(resource_id: str, resource_view_id: str):
 
     except (toolkit.ObjectNotFound, toolkit.NotAuthorized):
         return []
+
+
+@helper
+def datavic_update_org_error_dict(
+    error_dict: dict[str, Any],
+) -> dict[str, Any]:
+    """Internal CKAN logic makes a validation for resource file size. We want
+    to show it as an error on the Logo field."""
+    if "upload" not in error_dict:
+        return error_dict
+
+    error_dict["Logo"] = error_dict.pop("upload")
+
+    if error_dict["Logo"] == ["File upload too large"]:
+        error_dict["Logo"] = [(
+            f"File size is too large. Select an image which is no larger than {datavic_max_image_size()}MB."
+        )]
+
+    return error_dict
