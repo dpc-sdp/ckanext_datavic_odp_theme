@@ -137,9 +137,6 @@ legend {
   .row {
     margin-left: 0;
     margin-right: 0;
-    @include rpl_breakpoint(l) {
-      flex-direction: row-reverse;
-    }
 
     .primary {
       &.span9 {
