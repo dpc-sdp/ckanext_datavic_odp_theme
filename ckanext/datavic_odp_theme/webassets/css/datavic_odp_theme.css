@@ -455,9 +455,6 @@ legend {
   [role="main"] .container .row {
     margin-left: 0;
     margin-right: 0; }
-    @media screen and (min-width: 992px) {
-      [role="main"] .container .row {
-        flex-direction: row-reverse; } }
     [role="main"] .container .row .primary.span9 {
       width: 700px; }
       [role="main"] .container .row .primary.span9 .page-header {
@@ -2164,6 +2161,17 @@ select.form-control {
   background: #0095ec; }
   .multiselect__option--highlight.multiselect__option--selected {
     background-color: #af272f; }
+
+.secondary .module.context-info img {
+  max-width: 200px;
+  width: -webkit-fill-available; }
+
+@media (max-width: 767.98px) {
+  .secondary {
+    -webkit-order: -1;
+    order: -1; }
+    .secondary .module.context-info img {
+      max-height: 150px; } }
 
 .rpl-fieldset legend {
   display: flex;

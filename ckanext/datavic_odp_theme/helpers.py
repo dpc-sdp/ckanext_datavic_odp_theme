@@ -240,3 +240,22 @@ def datavic_get_dtv_url(ext_link: bool = False) -> str:
         url = url + "/"
 
     return url
+
+
+@helper
+def datavic_update_org_error_dict(
+    error_dict: dict[str, Any],
+) -> dict[str, Any]:
+    """Internal CKAN logic makes a validation for resource file size. We want
+    to show it as an error on the Logo field."""
+    if "upload" not in error_dict:
+        return error_dict
+
+    error_dict["Logo"] = error_dict.pop("upload")
+
+    if error_dict["Logo"] == ["File upload too large"]:
+        error_dict["Logo"] = [(
+            f"File size is too large. Select an image which is no larger than {datavic_max_image_size()}MB."
+        )]
+
+    return error_dict
