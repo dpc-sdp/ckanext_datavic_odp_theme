@@ -248,14 +248,15 @@ def datavic_update_org_error_dict(
 ) -> dict[str, Any]:
     """Internal CKAN logic makes a validation for resource file size. We want
     to show it as an error on the Logo field."""
-    if "upload" not in error_dict:
-        return error_dict
-
-    error_dict["Logo"] = error_dict.pop("upload")
-
-    if error_dict["Logo"] == ["File upload too large"]:
+    if error_dict.pop("upload", "") == ["File upload too large"]:
         error_dict["Logo"] = [(
             f"File size is too large. Select an image which is no larger than {datavic_max_image_size()}MB."
+        )]
+    elif "Unsupported upload type" in error_dict.pop("image_upload", [""])[0]:
+        error_dict["Logo"] = [(
+            "Image format is not supported. "
+            "Select an image in one of the following formats: "
+            "JPG, JPEG, GIF, PNG, BMP, SVG."
         )]
 
     return error_dict
