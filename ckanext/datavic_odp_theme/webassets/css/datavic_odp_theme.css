@@ -1921,6 +1921,9 @@ select.form-control {
 .dataset-form .form-label[for="field-update_frequency"] {
   margin-bottom: 0; }
 
+.organization-edit .image-upload .btn[title*="Link to a URL"] {
+  display: none !important; }
+
 .rpl-form {
   font-family: "VIC-Regular", "Arial", "Helvetica", "sans-serif";
   font-size: 0.875rem;
