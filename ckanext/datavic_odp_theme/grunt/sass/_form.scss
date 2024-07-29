@@ -122,3 +122,13 @@ $rpl-form-textarea-height-m: rem(75px) !default;
 select.form-control {
     appearance: auto;
 }
+
+
+// hide URL button for upload widget
+.organization-edit {
+    .image-upload {
+        .btn[title*="Link to a URL"] {
+            display: none !important;
+        }
+    }
+}
