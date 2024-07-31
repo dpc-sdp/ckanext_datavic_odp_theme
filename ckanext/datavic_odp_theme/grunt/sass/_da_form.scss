@@ -178,3 +178,25 @@
     }
   }
 }
+
+.secondary {
+  .module.context-info {
+    img {
+      max-width: 200px;
+      width: -webkit-fill-available;
+    }
+  }
+}
+
+@media (max-width: 767.98px) {
+  .secondary {
+      -webkit-order: -1;
+      order: -1;
+
+      .module.context-info {
+        img {
+          max-height: 150px;
+        }
+      }
+  }
+}

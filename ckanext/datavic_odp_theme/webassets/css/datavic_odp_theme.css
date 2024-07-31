@@ -455,9 +455,6 @@ legend {
   [role="main"] .container .row {
     margin-left: 0;
     margin-right: 0; }
-    @media screen and (min-width: 992px) {
-      [role="main"] .container .row {
-        flex-direction: row-reverse; } }
     [role="main"] .container .row .primary.span9 {
       width: 700px; }
       [role="main"] .container .row .primary.span9 .page-header {
@@ -1657,8 +1654,7 @@ nav {
   padding: 0.625rem; }
   .resource-item .resource-summary {
     flex-grow: 2;
-    margin-right: 0.9375rem;
-    word-break: break-all; }
+    margin-right: 0.9375rem; }
   .resource-item .resource-icon {
     max-width: 2.8125rem;
     display: flex; }
@@ -1669,6 +1665,9 @@ nav {
       display: inline-block;
       width: 60px;
       height: 60px; }
+  @media (min-width: 767px) {
+    .resource-item .resource-summary {
+      width: 24%; } }
 
 .resource-list .resource-item {
   display: flex;
@@ -1677,19 +1676,27 @@ nav {
   align-items: flex-start; }
   .resource-list .resource-item:hover {
     background-color: transparent; }
-  .resource-list .resource-item .btn-group {
-    display: inline-block; }
-
-.resource-list .btn-group {
-  position: relative;
-  top: auto;
-  right: auto; }
+  .resource-list .resource-item .buttons {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 0.5rem; }
+  .resource-list .resource-item .btn {
+    border: 2px solid #0052c2;
+    padding: 0.75rem; }
+  .resource-list .resource-item .btn-outline {
+    border-width: 2px;
+    background-color: #FFFFFF;
+    color: #0052C2; }
+  .resource-list .resource-item .btn-api {
+    border-color: #3A833A;
+    color: #3A833A; }
 
 @media (max-width: 767px) {
   .resource-list .resource-item {
     display: inline; }
-    .resource-list .resource-item .btn-group {
-      display: block; } }
+  .resource-list .buttons {
+    flex-direction: column; } }
 
 .dropdown-menu {
   border-color: #0052c2; }
@@ -1697,23 +1704,48 @@ nav {
     background-image: none;
     background-color: #0052c2; }
 
-.dataset-resources .label {
-  background: none;
-  color: #465870;
-  font-size: 0.875rem;
-  padding: 0 0.25rem 0 0;
-  text-shadow: none;
-  text-transform: uppercase; }
-  .dataset-resources .label:hover, .dataset-resources .label:focus {
+.dataset-resources {
+  display: inline; }
+  .dataset-resources .label {
+    background: none;
     color: #465870;
-    text-decoration: underline; }
-  .dataset-resources .label:before {
-    content: "|";
-    padding-right: 0.625rem; }
+    font-size: 0.875rem;
+    padding: 0 0.25rem 0 0;
+    text-shadow: none;
+    text-transform: uppercase; }
+    .dataset-resources .label:hover, .dataset-resources .label:focus {
+      color: #465870;
+      text-decoration: underline; }
+    .dataset-resources .label:before {
+      content: "|";
+      padding-right: 0.625rem; }
+  .dataset-resources li:first-child .label:before {
+    content: "";
+    padding-right: 0; }
 
-.dataset-resources li:first-child .label:before {
-  content: "";
-  padding-right: 0; }
+.dataset-api {
+  display: inline;
+  float: right;
+  color: #465870;
+  font-size: 0.875rem; }
+  .dataset-api li {
+    display: inline;
+    padding-right: 50px; }
+    .dataset-api li:last-child {
+      padding-right: 0; }
+  .dataset-api i {
+    padding-right: 3px; }
+  .dataset-api .preview {
+    color: #011A3C; }
+  .dataset-api .api a {
+    color: #3A833A; }
+
+@media (max-width: 767px) {
+  .dataset-api, .dataset-resources {
+    display: block; }
+  .dataset-api {
+    margin-top: 0.75rem;
+    float: unset; } }
 
 .res_abstract_heading {
   font-family: "VIC-Bold", "Arial", "Helvetica", "sans-serif";
@@ -1750,6 +1782,25 @@ nav {
 
 .resource-read .table.table-striped p {
   margin-bottom: 0; }
+
+@media (min-width: 576px) {
+  .api-modal {
+    max-width: 80%; } }
+
+.format-label {
+  background: url("/datavic-sprite-resource-icons.png") no-repeat 0 0;
+  width: 60px;
+  height: 65px;
+  background-position: -1720px -220px;
+  transform: scale(0.53);
+  margin: -14px 0 0 -14px; }
+
+.format-label[data-format="data tool"] {
+  width: 60px;
+  height: 65px;
+  background-position: -2320px -220px;
+  transform: scale(0.53);
+  margin: -14px 0 0 -14px; }
 
 .dataset-resources {
   margin-top: 0.75rem;
@@ -1866,6 +1917,9 @@ nav {
 
 select.form-control {
   appearance: auto; }
+
+.organization-edit .image-upload .btn[title*="Link to a URL"] {
+  display: none !important; }
 
 .rpl-form {
   font-family: "VIC-Regular", "Arial", "Helvetica", "sans-serif";
@@ -2110,6 +2164,17 @@ select.form-control {
   background: #0095ec; }
   .multiselect__option--highlight.multiselect__option--selected {
     background-color: #af272f; }
+
+.secondary .module.context-info img {
+  max-width: 200px;
+  width: -webkit-fill-available; }
+
+@media (max-width: 767.98px) {
+  .secondary {
+    -webkit-order: -1;
+    order: -1; }
+    .secondary .module.context-info img {
+      max-height: 150px; } }
 
 .rpl-fieldset legend {
   display: flex;

@@ -2,11 +2,12 @@ ckan.module('datavic-search-autocomplete', function ($) {
     'use strict';
 
     function follow(suggestion) {
+        reportGA("search-autocomplete:follow", suggestion);
         window.location.href = suggestion.href;
     }
 
     function formatLabel(type, q, item) {
-        var text = $('<span>', {html: item.label}).text();
+        var text = $('<span>', { html: item.label }).text();
         switch (type) {
             case 'datasets':
                 return $('<span>', {
@@ -20,13 +21,17 @@ ckan.module('datavic-search-autocomplete', function ($) {
                 });
                 break;
             case 'categories':
-                return $('<span>', {text: text}).append(
-                    $('<span>', {text: '(' + item.type + ')'}).addClass('muted')
+                return $('<span>', { text: text }).append(
+                    $('<span>', { text: '(' + item.type + ')' }).addClass('muted')
                 );
                 break;
             default:
                 return item.label;
         }
+    }
+
+    function reportGA(event, payload = {}) {
+        gtag('event', event, payload)
     }
 
     return {
@@ -152,9 +157,10 @@ ckan.module('datavic-search-autocomplete', function ($) {
                 self.isPending = true;
                 self.el.addClass('pending-suggestions');
                 var q = self.queries.splice(0).pop();
+                reportGA("search-autocomplete:search", { q: q })
                 self.sandbox.client.call(
                     'POST',
-                    'search_autocomplete', {q: q, fq: self.options.fq},
+                    'search_autocomplete', { q: q, fq: self.options.fq },
                     function (data) {
                         self.isPending = false;
                         self.el.removeClass('pending-suggestions');
@@ -182,16 +188,22 @@ ckan.module('datavic-search-autocomplete', function ($) {
                 this.el.removeClass('active-suggestions');
             }
 
+            reportGA("search-autocomplete:result:datasets", { results: data.datasets.map((item) => item.href).join(", ") })
+            reportGA("search-autocomplete:result:categories", { results: data.categories.map((item) => item.href).join(", ") });
+
             for (var key in data) {
                 this.suggestionBox
                     .find('[data-section="' + key + '"] .suggestions')
                     .children()
                     .remove()
                     .prevObject.append(
-                        data[key].map(function (item) {
-                            return $('<li>').append(
-                                $('<a>', {html: formatLabel(key, q, item), href: item.href})
-                            );
+                        data[key].map((item) => {
+                            let suggestion_link = $('<a>', { html: formatLabel(key, q, item), href: item.href });
+                            suggestion_link.click((_) => {
+                                reportGA("search-autocomplete:follow", item);
+                            });
+
+                            return $('<li>').append(suggestion_link);
                         })
                     );
             }
@@ -201,6 +213,8 @@ ckan.module('datavic-search-autocomplete', function ($) {
             this.suggestions = [];
             this.suggestionBox.find('.suggestions').children().remove();
             this.el.removeClass('active-suggestions');
+
+            reportGA("search-autocomplete:drop");
         },
     };
 });

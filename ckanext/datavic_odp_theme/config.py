@@ -22,6 +22,7 @@ DEFAULT_DTV_FQ = [
     "aus-geo-csv",
 ]
 CONFIG_DTV_URL = "ckanext.datavic_odp_theme.dtv.url"
+CONFIG_DTV_EXTERNAL_LINK = "ckanext.datavic_odp_theme.dtv.external_link"
 
 CONFIG_PARENT_SITE_URL = "ckan.parent_site_url"
 DEFAULT_PARENT_SITE_URL = "https://www.data.vic.gov.au"
@@ -49,7 +50,11 @@ def get_dtv_supported_formats() -> set[str]:
 
 
 def get_dtv_url() -> str:
-    return tk.config.get("ckanext.datavic_odp_theme.dtv.url", "")
+    return tk.config.get(CONFIG_DTV_URL, "")
+
+
+def get_dtv_external_link() -> str:
+    return tk.config.get(CONFIG_DTV_EXTERNAL_LINK, "")
 
 
 def get_parent_site_url() -> str:
@@ -74,7 +79,3 @@ def get_hotjar_hjsv() -> Optional[str]:
 
 def get_monsido_domain_token() -> Optional[str]:
     return tk.config.get(CONFIG_MONSIDO_DOMAIN_TOKEN)
-
-
-def get_google_optimize_id() -> Optional[str]:
-    return tk.config.get(CONFIG_GOOGLE_OPTIMIZE_ID)
