@@ -105,10 +105,10 @@ class DatavicODPTheme(p.SingletonPlugin):
     # IAuthenticator
 
     def login(self) -> Optional[Response]:
-        session.regenerate_id()
+        session.regenerate_id() # type: ignore
 
     def logout(self) -> Optional[Response]:
-        session.regenerate_id()
+        session.regenerate_id() # type: ignore
 
 @tk.blanket.auth_functions(auth_functions)
 class DatavicODPThemeAuth(p.SingletonPlugin):
