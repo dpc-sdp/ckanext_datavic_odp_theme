@@ -27,3 +27,6 @@ datavic-session:
   output: datavic_odp_theme/%(version)s_datavic-session.js
   contents:
     - datavic-session.js
+  extra:
+    preload:
+      - vendor/jquery
