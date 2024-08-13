@@ -81,9 +81,26 @@ def resource_create(
         _show_errors_in_sibling_resources(context, data_dict)
 
 
+@tk.chained_action
+def resource_delete(
+    next_: Action, context: Context, data_dict: DataDict
+) -> ActionResult.ResourceDelete:
+    try:
+        result = next_(context, data_dict)
+        return result
+    except tk.ValidationError:
+        _show_errors_in_sibling_resources(context, data_dict)
+
+
 def _show_errors_in_sibling_resources(context: Context, data_dict: DataDict) -> Any:
     """Retrieves and raises validation errors for resources within the same package."""
-    pkg_dict = tk.get_action("package_show")(context, {"id": data_dict["package_id"]})
+    pkg_dict = tk.get_action("package_show")(
+        context,
+        {
+            "id": data_dict.get("package_id")
+            or model.Resource.get(data_dict["id"]).package_id  # type: ignore
+        },
+    )
 
     package_plugin = lib_plugins.lookup_package_plugin(pkg_dict["type"])
 
