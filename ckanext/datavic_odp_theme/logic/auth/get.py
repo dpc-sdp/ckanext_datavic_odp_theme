@@ -58,3 +58,7 @@ def vic_organization_activity_list(
 ) -> dict[bool, bool]:
     group_dict["object_type"] = "organization"
     return vic_activity_list(context, group_dict)
+
+
+def vic_datatables_view_prioritize(context, data_dict):
+    return {"success": False}
