@@ -14,23 +14,25 @@
     {% if res_attrs %}
       <div class="module-content">
         <h2>{{ _('Data Dictionary') }}</h2>
-        <table class="table table-bordered table-condensed" data-module="table-toggle-more">
+        <table class="table table-bordered table-condensed data-dictionary-table" data-module="table-toggle-more">
           <thead>
             {% block resouce_data_dictionary_headers %}
             <tr>
-              <th scope="col">{{ _('DB') }}</th>
-              <th scope="col">{{ _('Format') }}</th>
+              <th scope="col">{{ _('Column') }}</th>
               <th scope="col">{{ _('Name') }}</th>
-              <th scope="col">{{ _('Definition') }}</th>
+              <th scope="col">{{ _('Type') }}</th>
+              <th scope="col">{{ _('Description') }}</th>
+              <th scope="col">{{ _('Fixed Values') }}</th>
             </tr>
             {% endblock %}
           </thead>
           {% for attr in res_attrs %}
             <tr>
               <td>{{ attr.db_name }}</td>
-              <td>{{ attr.db_format }}</td>
               <td>{{ attr.name }}</td>
+              <td>{{ attr.db_format }}</td>
               <td>{{ attr.definition }}</td>
+              <td>{{ attr.fixed_values }}</td>
             </tr>
           {% endfor %}
         </table>

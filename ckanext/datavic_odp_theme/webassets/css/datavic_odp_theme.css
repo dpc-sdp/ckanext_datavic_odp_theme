@@ -1783,6 +1783,9 @@ nav {
 .resource-read .table.table-striped p {
   margin-bottom: 0; }
 
+.resource-read .data-dictionary-table thead {
+  background-color: #f2f2f2; }
+
 @media (min-width: 576px) {
   .api-modal {
     max-width: 80%; } }
