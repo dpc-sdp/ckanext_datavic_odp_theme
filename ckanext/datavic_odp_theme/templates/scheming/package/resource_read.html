@@ -31,7 +31,7 @@
               <td>{{ attr.db_name }}</td>
               <td>{{ attr.name }}</td>
               <td>{{ attr.db_format }}</td>
-              <td>{{ attr.definition }}</td>
+              <td>{{ attr.definition|safe }}</td>
               <td>{{ attr.fixed_values }}</td>
             </tr>
           {% endfor %}
