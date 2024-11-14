@@ -207,6 +207,11 @@ $primary-color: #0052C2;
             margin-bottom: 0;
         }
     }
+    .data-dictionary-table {
+        thead {
+            background-color: #f2f2f2;
+        }
+    }
 }
 
 @media (min-width: 576px) {

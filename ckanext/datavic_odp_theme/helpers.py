@@ -260,3 +260,12 @@ def datavic_update_org_error_dict(
         )]
 
     return error_dict
+
+@helper
+def resource_attributes(attrs):
+    try:
+        attrs = json.loads(attrs)
+    except ValueError:
+        return None
+
+    return attrs
