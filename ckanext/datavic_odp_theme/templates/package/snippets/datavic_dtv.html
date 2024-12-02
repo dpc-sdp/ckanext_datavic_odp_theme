@@ -1,19 +1,21 @@
 {% set dtv_resources = h.get_digital_twin_resources(pkg.id)|map(attribute="id")|list %}
 {% set dtv_preview = pkg.dtv_preview %}
 {% set dtv_exceeds_limit = h.dtv_exceeds_max_size_limit(dtv_resources[0]) %}
+{% set dtv_url = h.datavic_get_dtv_url() %}
+{% set dtv_external_link = h.datavic_get_dtv_url(ext_link=True) %}
 
 {% if dtv_resources and not dtv_exceeds_limit and dtv_preview is not sameas false %}
     <section class="datapreview resource-preview">
         <div class="header-container">
             <h3>{{ _('Map preview') }}</h3>
-            <a href="https://vic.digitaltwin.terria.io/?utm_source=DataVic&utm_medium=datarecordwebpage+&utm_campaign=DataVicDTVlink#{{ h.url_for_dtv_config(dtv_resources, false) }}" target="_blank" class="dtv-external-link">
+            <a href="{{ dtv_external_link }}?utm_source=DataVic&utm_medium=datarecordwebpage+&utm_campaign=DataVicDTVlink#{{ h.url_for_dtv_config(dtv_resources, false) }}" target="_blank" class="dtv-external-link">
                 {{ _("See this dataset in the Digital Twin Victoria") }}
                 {% snippet 'snippets/svg/external-link.svg' %}
             </a>
         </div>
         <div class="resource-view resource-view">
             <iframe frameborder="0"
-                    src="https://vic.digitaltwin.terria.io/#{{ h.url_for_dtv_config(dtv_resources) }}&hideWorkbench=1"
+                    src="{{ dtv_url }}#{{ h.url_for_dtv_config(dtv_resources) }}&hideWelcomeMessage=1&hideWorkbench=1&zoomOnEnable=1"
                     height="600px" width="100%"></iframe>
         </div>
     </section>

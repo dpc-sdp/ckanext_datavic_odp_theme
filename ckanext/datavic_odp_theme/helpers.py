@@ -80,11 +80,6 @@ def get_monsido_domain_token() -> Optional[str]:
 
 
 @helper
-def get_google_optimize_id() -> Optional[str]:
-    return conf.get_google_optimize_id()
-
-
-@helper
 def get_parent_site_url() -> str:
     return conf.get_parent_site_url()
 
@@ -134,7 +129,7 @@ def featured_resource_preview(package: dict[str, Any]) -> Optional[dict[str, Any
             # ensure there are actually previews as some resources are marked as datastore active but they don't have a preview and it breaks the page
             if not len(resource_views) > 0:
                 continue
-                
+
             featured_preview = {"preview": resource_views[0], "resource": resource}
 
     return featured_preview
@@ -219,7 +214,7 @@ def dtv_exceeds_max_size_limit(resource_id: str) -> bool:
     Returns:
         bool: return True if dtv resource exceeds maximum file size limit set
             in ckan config "ckanext.datavicmain.dtv.max_size_limit",
-            otherwise - False  
+            otherwise - False
     """
     try:
         resource = toolkit.get_action("resource_show")({}, {"id": resource_id})
@@ -232,3 +227,69 @@ def dtv_exceeds_max_size_limit(resource_id: str) -> bool:
         return True
 
     return False
+
+
+@helper
+def datastore_loaded_resources(pkg_dict: dict[str, Any]) -> list[str]:
+    """Return a list of the dataset resources that are loaded to the datastore"""
+    if not pkg_dict.get("resources"):
+        return []
+
+    return [
+        resource["id"]
+        for resource in pkg_dict["resources"]
+        if resource["datastore_active"]
+    ]
+
+
+@helper
+def datavic_max_image_size():
+    """Return max size for image configurate for portal"""
+    return toolkit.config["ckan.max_image_size"]
+
+
+@helper
+def datavic_get_dtv_url(ext_link: bool = False) -> str:
+    """Return a URL for DTV map preview"""
+    if toolkit.asbool(ext_link):
+        url = conf.get_dtv_external_link()
+    else:
+        url = conf.get_dtv_url()
+
+    if not url:
+        return url
+
+    if not url.endswith("/"):
+        url = url + "/"
+
+    return url
+
+
+@helper
+def datavic_update_org_error_dict(
+    error_dict: dict[str, Any],
+) -> dict[str, Any]:
+    """Internal CKAN logic makes a validation for resource file size. We want
+    to show it as an error on the Logo field."""
+    if error_dict.pop("upload", "") == ["File upload too large"]:
+        error_dict["Logo"] = [(
+            f"File size is too large. Select an image which is no larger than {datavic_max_image_size()}MB."
+        )]
+    elif "Unsupported upload type" in error_dict.pop("image_upload", [""])[0]:
+        error_dict["Logo"] = [(
+            "Image format is not supported. "
+            "Select an image in one of the following formats: "
+            "JPG, JPEG, GIF, PNG, BMP, SVG."
+        )]
+
+    return error_dict
+
+
+@helper
+def resource_attributes(attrs):
+    try:
+        attrs = json.loads(attrs)
+    except ValueError:
+        return None
+
+    return attrs

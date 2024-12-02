@@ -1,0 +1,30 @@
+// RESOURCE FORMAT ICONS
+
+$icon-position: (
+    "resourceIconX": 60px,
+    "resourceIconY": 65px,
+    "resourceIconOffsetX": -20px,
+    "resourceIconOffsetY": -220px,
+);
+
+@mixin ckan-resource-icon-bg-pos($offset, $size) {
+    $w: map-get($icon-position, "#{$size}X");
+    $h: map-get($icon-position, "#{$size}Y");
+    $x: map-get($icon-position, "#{$size}OffsetX");
+    $y: map-get($icon-position, "#{$size}OffsetY");
+    width: $w;
+    height: $h;
+    background-position: ($x + -100 * $offset) $y;
+    transform: scale(0.53);
+    margin: -14px 0 0 -14px;
+}
+
+.format-label {
+    background: url("/datavic-sprite-resource-icons.png") no-repeat 0 0;
+    // default "Data" icon
+    @include ckan-resource-icon-bg-pos(17, "resourceIcon");
+}
+
+.format-label[data-format="data tool"] {
+    @include ckan-resource-icon-bg-pos(23, "resourceIcon");
+}

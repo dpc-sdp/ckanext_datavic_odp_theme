@@ -12,7 +12,6 @@ $primary-color: #0052C2;
     .resource-summary {
         flex-grow: 2;
         margin-right: rem(15px);
-        word-break: break-all;
     }
 
     .resource-icon {
@@ -27,6 +26,12 @@ $primary-color: #0052C2;
             height: 60px;
         }
     }
+
+    @media (min-width: 767px) {
+        .resource-summary {
+            width: 24%;
+        }
+    }
 }
 
 .resource-list {
@@ -38,24 +43,39 @@ $primary-color: #0052C2;
         &:hover {
             background-color: transparent;
         }
-        .btn-group {
-            display: inline-block;
+
+        .buttons {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: flex-end;
+            gap: 0.5rem;
         }
-    }
-    .btn-group {
-        position: relative;
-        top: auto;
-        right: auto;
+
+        .btn {
+            border: 2px solid rpl_color('primary');
+            padding: 0.75rem;
+        }
+
+        .btn-outline {
+            border-width: 2px;
+            background-color: #FFFFFF;
+            color: $primary-color;
+        }
+
+        .btn-api {
+            border-color: #3A833A;
+            color: #3A833A;
+        }
     }
 
-    @media (max-width:767px) {
+    @media (max-width: 767px) {
         .resource-item {
             display: inline;
-            .btn-group {
-                display: block;
-            }
         }
-      }
+        .buttons {
+            flex-direction: column;
+        }
+    }
 }
 
 .dropdown-menu {
@@ -71,6 +91,8 @@ $primary-color: #0052C2;
 }
 
 .dataset-resources {
+    display: inline;
+
     .label {
         background: none;
         color: rpl_color('dark_neutral');
@@ -97,6 +119,43 @@ $primary-color: #0052C2;
                 }
             }
         }
+    }
+}
+
+.dataset-api {
+    li {
+        display: inline;
+        padding-right: 50px;
+        &:last-child {
+            padding-right: 0;
+        }
+    }
+
+    i {
+        padding-right: 3px;
+    }
+
+    display: inline;
+    float: right;
+    color: rpl_color('dark_neutral');
+    font-size: rem(14px);
+
+    .preview {
+        color: #011A3C;
+    }
+
+    .api a {
+        color: #3A833A;
+    }
+}
+
+@media (max-width: 767px) {
+    .dataset-api, .dataset-resources {
+        display: block;
+    }
+    .dataset-api {
+        margin-top: 0.75rem;
+        float: unset;
     }
 }
 
@@ -147,5 +206,16 @@ $primary-color: #0052C2;
         p {
             margin-bottom: 0;
         }
+    }
+    .data-dictionary-table {
+        thead {
+            background-color: #f2f2f2;
+        }
+    }
+}
+
+@media (min-width: 576px) {
+    .api-modal {
+        max-width: 80%;
     }
 }
