@@ -14,6 +14,8 @@
 
 {% block head_extras %}
   {{ super() }}
+    
+  {% snippet "snippets/gtm.html" %}  
 
   {% if h.hotjar_tracking_enabled() %}
     {% snippet "snippets/hotjar.html" %}

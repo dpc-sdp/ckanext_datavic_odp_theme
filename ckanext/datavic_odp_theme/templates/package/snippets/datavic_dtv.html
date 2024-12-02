@@ -4,6 +4,7 @@
 {% set dtv_external_link = h.datavic_get_dtv_url(ext_link=True) %}
 {% set dtv_exceeds_limit = h.dtv_exceeds_max_size_limit(dtv_resources[0]) %}
 
+
 {% if dtv_resources and not dtv_exceeds_limit and dtv_url and dtv_preview is not sameas false %}
     <section class="datapreview resource-preview">
         <div class="header-container">
