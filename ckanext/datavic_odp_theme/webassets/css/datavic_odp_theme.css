@@ -1921,6 +1921,9 @@ nav {
 select.form-control {
   appearance: auto; }
 
+.dataset-form .form-label[for="field-update_frequency"] {
+  margin-bottom: 0; }
+
 .organization-edit .image-upload .btn[title*="Link to a URL"] {
   display: none !important; }
 
