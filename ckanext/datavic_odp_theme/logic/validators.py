@@ -40,14 +40,14 @@ def datavic_organization_upload(key, data, errors, context):
             (
                 "Image format is not supported. "
                 "Select an image in one of the following formats: "
-                "JPG, JPEG, GIF, PNG, BMP, SVG."
+                "JPG, JPEG, GIF, PNG, WEBP."
             )
         )
 
 
 def _is_valid_image_extension(mimetype: str) -> bool:
     """Check if the mimetype corresponds to a valid image extension."""
-    valid_extensions = ["jpg", "png", "jpeg", "gif", "bmp", "svg"]
+    valid_extensions = ["jpg", "png", "jpeg", "gif", "webp"]
     extension = mimetypes.guess_extension(mimetype)
     return extension and extension.strip(".").lower() in valid_extensions
 
