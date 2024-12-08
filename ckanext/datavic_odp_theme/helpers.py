@@ -207,6 +207,29 @@ def is_resource_downloadable(resource: dict[str, Any]) -> bool:
 
 
 @helper
+def dtv_exceeds_max_size_limit(resource_id: str) -> bool:
+    """Check if DTV resource exceeds the maximum file size limit
+    Args:
+        resource_id (str): DTV resource id
+    Returns:
+        bool: return True if dtv resource exceeds maximum file size limit set
+            in ckan config "ckanext.datavicmain.dtv.max_size_limit",
+            otherwise - False
+    """
+    try:
+        resource = toolkit.get_action("resource_show")({}, {"id": resource_id})
+    except (toolkit.ObjectNotFound, toolkit.NotAuthorized):
+        return True
+
+    limit = conf.get_dtv_max_size_limit()
+    filesize = resource.get("filesize")
+    if filesize and int(filesize) >= int(limit):
+        return True
+
+    return False
+
+
+@helper
 def datastore_loaded_resources(pkg_dict: dict[str, Any]) -> list[str]:
     """Return a list of the dataset resources that are loaded to the datastore"""
     if not pkg_dict.get("resources"):
@@ -314,6 +337,7 @@ def datavic_update_org_error_dict(
         )]
 
     return error_dict
+
 
 @helper
 def resource_attributes(attrs):
