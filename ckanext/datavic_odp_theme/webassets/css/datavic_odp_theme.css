@@ -1728,9 +1728,13 @@ nav {
   float: right;
   color: #465870;
   font-size: 0.875rem; }
+  .dataset-api ul {
+    padding-right: 50px;
+    display: inline-flex; }
+    .dataset-api ul i {
+      margin-right: 3px; }
   .dataset-api li {
-    display: inline;
-    padding-right: 50px; }
+    display: inline; }
     .dataset-api li:last-child {
       padding-right: 0; }
   .dataset-api i {

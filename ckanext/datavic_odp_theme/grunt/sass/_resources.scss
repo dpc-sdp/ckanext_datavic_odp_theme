@@ -123,9 +123,17 @@ $primary-color: #0052C2;
 }
 
 .dataset-api {
+    ul {
+        padding-right: 50px;
+        display: inline-flex;
+
+        i {
+            margin-right: 3px;
+        }
+    }
+
     li {
         display: inline;
-        padding-right: 50px;
         &:last-child {
             padding-right: 0;
         }
