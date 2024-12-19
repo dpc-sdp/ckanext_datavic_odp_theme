@@ -101,7 +101,8 @@
             or not res.filesize or res.filesize == "0" %}
             {% else %}
               {%- if field.field_name not in exclude_fields
-                  and field.display_snippet is not none -%}
+                  and field.display_snippet is not none
+                  and res[field.field_name] -%}
                 <tr>
                   <th scope="row">
                     {{- h.scheming_language_text(field.label) -}}
