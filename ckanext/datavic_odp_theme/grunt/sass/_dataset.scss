@@ -1,0 +1,15 @@
+// Dataset Additional info styles
+.additional-info {
+    .dataset-details {
+        ul {
+            margin-bottom: 0;
+
+            li {
+                &:only-child {
+                    list-style-type: none;
+                    margin-left: -31px;
+                }
+            }
+        }
+    }
+}

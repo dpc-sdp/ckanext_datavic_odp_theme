@@ -123,6 +123,11 @@ select.form-control {
     appearance: auto;
 }
 
+.dataset-form {
+    .form-label[for="field-update_frequency"] {
+        margin-bottom: 0;
+    }
+}
 
 // hide URL button for upload widget
 .organization-edit {
