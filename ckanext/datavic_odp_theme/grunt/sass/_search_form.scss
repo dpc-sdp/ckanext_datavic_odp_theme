@@ -106,6 +106,7 @@ $rpl-search-form-search-text: $rpl-search-form-show-filters-ruleset !default;
     }
 
     svg {
+      fill: rpl-color('primary');
       width: $rpl-search-form-button-width;
       height: $rpl-search-form-button-width;
     }
@@ -207,6 +208,10 @@ $rpl-search-form-search-text: $rpl-search-form-show-filters-ruleset !default;
 
   &__filters {
     padding-top: $rpl-space * 12;
+  }
+
+  .rpl-icon--color_danger {
+    fill: #af272f;
   }
 
 }
