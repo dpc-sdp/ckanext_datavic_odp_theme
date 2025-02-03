@@ -278,7 +278,7 @@ $rpl-menu-gutter: rpl_grid_get_gutter($rpl-grid) !default;
 
 .rpl-menu--vertical,
 .rpl-menu--horizontal-floating-wrapper,
-.rpl-menu--horizontal .rpl-menu--subs, {
+.rpl-menu--horizontal .rpl-menu--subs {
   .rpl-menu__item {
     border-top: $rpl-menu-item-border;
 
@@ -349,10 +349,20 @@ $rpl-menu-gutter: rpl_grid_get_gutter($rpl-grid) !default;
       display: inline-block;
     }
   }
+  #btn-mobile-menu-open {
+    .rpl-icon--color_white {
+      fill: rpl-color("white");
+    }
+  }
 }
 #mobile-menu {
   z-index: 1040;
   .rpl-site-header__top {
     height: 3rem;
+  }
+  #btn-mobile-menu-close {
+    .rpl-icon--color_white {
+      fill: rpl-color("white");
+    }
   }
 }
