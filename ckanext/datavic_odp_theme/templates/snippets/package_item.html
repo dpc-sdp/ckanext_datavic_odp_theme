@@ -77,7 +77,42 @@ Example:
                 {% endblock %}
               </ul>
             {% endblock %}
+        {% endif %}
+        <ul class="list-unstyled dataset-api">
+          <ul>
+              {% set dtv_resources = h.get_digital_twin_resources(package.id)|map(attribute="id")|list %}
+              {% set featured_resource = h.featured_resource_preview(package) %}
+
+              {% if dtv_resources %}
+                  {% set dtv_preview_enabled = package.dtv_preview %}
+                  {% set dtv_exceeds_limit = h.dtv_exceeds_max_size_limit(dtv_resources[0]) %}
+
+                  <li class="preview {{ 'hidden' if dtv_exceeds_limit or not dtv_preview_enabled }}">
+                      <i class="fa-solid fa-map-location-dot"></i>
+                      <span class="{{ 'hidden' if featured_resource }}">{{ _('Preview') }}</span>
+                  </li>
+              {% endif %}
+
+              {% if featured_resource %}
+                  <li class="preview">
+                      <i class="fa-solid fa-table"></i> {{ _('Preview') }}
+                  </li>
+              {% endif %}
+          </ul>
+
+          {% set datastore_loaded_resources = h.datastore_loaded_resources(package) %}
+          {% if datastore_loaded_resources %}
+          <li class="api">
+            {% set loading_text = _('Loading...') %}
+            {% set api_info_url = h.url_for('api.snippet', ver=1, snippet_path='api_info.html',
+            resource_id=datastore_loaded_resources[0]) %}
+            <a class="" href="{{ api_info_url }}" data-module="datavic-odp-api-info"
+               data-module-template="{{ api_info_url }}" data-loading-text="{{ loading_text }}">
+              <i class="fa-solid fa-code"></i> {{ _("API") }}
+            </a>
+          </li>
           {% endif %}
+        </ul>
         {% endblock %}
       </div>
     {% endblock %}
