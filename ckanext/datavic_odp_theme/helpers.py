@@ -223,7 +223,7 @@ def dtv_exceeds_max_size_limit(resource_id: str) -> bool:
 
     limit = conf.get_dtv_max_size_limit()
     filesize = resource.get("filesize")
-    if filesize and int(filesize) >= int(limit):
+    if filesize and filesize.isdigit() and int(filesize) >= int(limit):
         return True
 
     return False
