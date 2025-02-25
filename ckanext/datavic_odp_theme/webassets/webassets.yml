@@ -22,3 +22,11 @@ datavic_recline_patch_css:
   output: datavic_odp_theme/%(version)s-datavic-recline.css
   contents:
     - css/datavic_recline.css
+
+datavic-session:
+  output: datavic_odp_theme/%(version)s_datavic-session.js
+  contents:
+    - js/datavic-session.js
+  extra:
+    preload:
+      - vendor/jquery

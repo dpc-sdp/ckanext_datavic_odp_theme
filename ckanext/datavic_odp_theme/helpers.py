@@ -223,7 +223,7 @@ def dtv_exceeds_max_size_limit(resource_id: str) -> bool:
 
     limit = conf.get_dtv_max_size_limit()
     filesize = resource.get("filesize")
-    if filesize and int(filesize) >= int(limit):
+    if filesize and filesize.isdigit() and int(filesize) >= int(limit):
         return True
 
     return False
@@ -263,6 +263,37 @@ def datavic_get_dtv_url(ext_link: bool = False) -> str:
         url = url + "/"
 
     return url
+
+
+@helper
+def datavic_datastore_dictionary(resource_id: str, resource_view_id: str):
+    """
+    Return the data dictionary info for a resource
+    """
+    try:
+        resource_view = toolkit.get_action("resource_view_show")(
+            {},
+            {"id": resource_view_id}
+        )
+        headers = [
+            f for f in toolkit.get_action("datastore_search")(
+                {},
+                {
+                    "resource_id": resource_id,
+                    "limit": 0,
+                    "include_total": False
+                }
+            )["fields"]
+            if not f["id"].startswith("_")
+        ]
+
+        if "show_fields" in resource_view:
+            headers = [c for c in headers if c["id"] in resource_view["show_fields"]]
+
+        return headers
+
+    except (toolkit.ObjectNotFound, toolkit.NotAuthorized):
+        return []
 
 
 @helper
