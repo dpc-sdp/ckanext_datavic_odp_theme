@@ -47,7 +47,7 @@ def format_list() -> list[str]:
     )
 
     formats = [
-        resource.format.upper().split('.')[-1] for resource in query if resource.format
+        resource.format.upper().split(".")[-1] for resource in query if resource.format
     ]
     unique_formats = set(formats)
 
@@ -99,15 +99,15 @@ def get_package_release_date(pkg_dict: dict[str, Any]) -> str:
 @helper
 def featured_resource_preview(package: dict[str, Any]) -> Optional[dict[str, Any]]:
     """Return a featured resource preview
-        - It takes only CSV resources with an existing preview
-        - Only resources uploaded to datastore
-        - Only not historical resources
+    - It takes only CSV resources with an existing preview
+    - Only resources uploaded to datastore
+    - Only not historical resources
     """
 
     featured_preview = None
 
-    resource_groups: list[list[dict[str, Any]]] = toolkit.h.group_resources_by_temporal_range(
-        package.get("resources", [])
+    resource_groups: list[list[dict[str, Any]]] = (
+        toolkit.h.group_resources_by_temporal_range(package.get("resources", []))
     )
 
     resources = resource_groups[0] if resource_groups else []
@@ -223,7 +223,15 @@ def dtv_exceeds_max_size_limit(resource_id: str) -> bool:
 
     limit = conf.get_dtv_max_size_limit()
     filesize = resource.get("filesize")
-    if filesize and filesize.isdigit() and int(filesize) >= int(limit):
+
+    if not filesize:
+        return False
+
+    file_size_int = (
+        int(filesize) if isinstance(filesize, str) and filesize.isdigit() else filesize
+    )
+
+    if isinstance(file_size_int, (int, float)) and file_size_int >= int(limit):
         return True
 
     return False
@@ -272,17 +280,12 @@ def datavic_datastore_dictionary(resource_id: str, resource_view_id: str):
     """
     try:
         resource_view = toolkit.get_action("resource_view_show")(
-            {},
-            {"id": resource_view_id}
+            {}, {"id": resource_view_id}
         )
         headers = [
-            f for f in toolkit.get_action("datastore_search")(
-                {},
-                {
-                    "resource_id": resource_id,
-                    "limit": 0,
-                    "include_total": False
-                }
+            f
+            for f in toolkit.get_action("datastore_search")(
+                {}, {"resource_id": resource_id, "limit": 0, "include_total": False}
             )["fields"]
             if not f["id"].startswith("_")
         ]
@@ -303,15 +306,19 @@ def datavic_update_org_error_dict(
     """Internal CKAN logic makes a validation for resource file size. We want
     to show it as an error on the Logo field."""
     if error_dict.pop("upload", "") == ["File upload too large"]:
-        error_dict["Logo"] = [(
-            f"File size is too large. Select an image which is no larger than {datavic_max_image_size()}MB."
-        )]
+        error_dict["Logo"] = [
+            (
+                f"File size is too large. Select an image which is no larger than {datavic_max_image_size()}MB."
+            )
+        ]
     elif "Unsupported upload type" in error_dict.pop("image_upload", [""])[0]:
-        error_dict["Logo"] = [(
-            "Image format is not supported. "
-            "Select an image in one of the following formats: "
-            "JPG, JPEG, GIF, PNG, WEBP."
-        )]
+        error_dict["Logo"] = [
+            (
+                "Image format is not supported. "
+                "Select an image in one of the following formats: "
+                "JPG, JPEG, GIF, PNG, WEBP."
+            )
+        ]
 
     return error_dict
 
