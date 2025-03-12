@@ -16,10 +16,10 @@
     {{ h.csrf_input() }}
     {{ form.errors(errors=error_summary) }}
 
-    <div id="error-container" class="alert alert-error" style="display: none;">
+    <div id="mfa-error-container" class="alert alert-error" style="display: none;">
         <p>{{ _('The form contains invalid entries:') }}</p>
         <ul>
-            <li id="error-message"></li>
+            <li class="mfa-error-message"></li>
         </ul>
     </div>
 
