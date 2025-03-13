@@ -71,9 +71,10 @@ class DatavicODPTheme(p.SingletonPlugin):
         This involves determining if the format of the resource is CSV and if this resource exists in the datastore
         or matches a format inside a predefined list.
         """
-        for resource in tk.get_action("package_show")({"ignore_auth": True},
-                                                           {"id": pkg_dict["id"]}).get(
-                "resources", []):
+        for resource in tk.get_action("package_show")(
+            {"ignore_auth": True},
+            {"id": pkg_dict["id"]}
+        ).get("resources", []):
             if resource["format"].upper() == "CSV" and resource["datastore_active"]:
                 return True
 
@@ -81,14 +82,14 @@ class DatavicODPTheme(p.SingletonPlugin):
             res_format
             for res_format in pkg_dict["res_format"]
             if res_format
-               in [
-                   "WMS",
-                   "WFS",
-                   "API",
-                   "ARCGIS GEOSERVICES REST API",
-                   "ESRI REST",
-                   "GEOJSON",
-               ]
+                in [
+                    "WMS",
+                    "WFS",
+                    "API",
+                    "ARCGIS GEOSERVICES REST API",
+                    "ESRI REST",
+                    "GEOJSON",
+                ]
         ]:
             return True
         return False
@@ -116,7 +117,7 @@ class DatavicODPThemeAuth(p.SingletonPlugin):
 
     We are chaining auth functions from activity and overriding its templates
     at the same time. The former requires us to put our plugin after the
-    activty, while the latter will work only if we put our plugin before the
+    activity, while the latter will work only if we put our plugin before the
     activity. The only way to solve this puzzle is to split the logic between
     two sub-plugins.
 
@@ -124,7 +125,7 @@ class DatavicODPThemeAuth(p.SingletonPlugin):
     pass
 
 
-class DatavicDatapusherPlugin(DatapusherPlugin):
+class DatavicDatapusherPlugin(DatapusherPlugin, p.SingletonPlugin):
     p.implements(p.IPackageController, inherit=True)
 
     # IPackageController
