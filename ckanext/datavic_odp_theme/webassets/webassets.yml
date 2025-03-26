@@ -12,6 +12,7 @@ datavic_odp_theme-js:
     - js/datavic-advanced-search.js
     - js/datavic-api-info.js
     - js/datavic-search-autocomplete.js
+    - js/datavic-2fa-error-messages.js
   extra:
     preload:
       - base/main
@@ -22,3 +23,11 @@ datavic_recline_patch_css:
   output: datavic_odp_theme/%(version)s-datavic-recline.css
   contents:
     - css/datavic_recline.css
+
+datavic-session:
+  output: datavic_odp_theme/%(version)s_datavic-session.js
+  contents:
+    - js/datavic-session.js
+  extra:
+    preload:
+      - vendor/jquery

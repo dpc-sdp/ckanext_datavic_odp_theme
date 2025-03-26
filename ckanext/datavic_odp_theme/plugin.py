@@ -1,5 +1,8 @@
 from __future__ import annotations
-from typing import Any
+
+from typing import Any, Optional
+
+from flask import Response, session
 
 import ckan.plugins as p
 import ckan.plugins.toolkit as tk
@@ -21,6 +24,7 @@ class DatavicODPTheme(p.SingletonPlugin):
     p.implements(p.IValidators)
     p.implements(p.IPackageController, inherit=True)
     p.implements(ISearchAutocomplete)
+    p.implements(p.IAuthenticator, inherit=True)
 
     # IConfigurer
 
@@ -98,6 +102,13 @@ class DatavicODPTheme(p.SingletonPlugin):
             'groups': tk._('Categories'),
         }
 
+    # IAuthenticator
+
+    def login(self) -> Optional[Response]:
+        session.regenerate_id() # type: ignore
+
+    def logout(self) -> Optional[Response]:
+        session.regenerate_id() # type: ignore
 
 @tk.blanket.auth_functions(auth_functions)
 class DatavicODPThemeAuth(p.SingletonPlugin):
