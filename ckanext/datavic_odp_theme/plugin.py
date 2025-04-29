@@ -6,7 +6,7 @@ from flask import Response, session
 
 import ckan.plugins as p
 import ckan.plugins.toolkit as tk
-import ckan.model as model
+from ckan import model, types
 
 from ckanext.search_autocomplete.interfaces import ISearchAutocomplete
 from ckanext.xloader.plugin import xloaderPlugin
@@ -25,6 +25,7 @@ class DatavicODPTheme(p.SingletonPlugin):
     p.implements(p.IPackageController, inherit=True)
     p.implements(ISearchAutocomplete)
     p.implements(p.IAuthenticator, inherit=True)
+    p.implements(p.ISignal)
 
     # IConfigurer
 
@@ -109,6 +110,56 @@ class DatavicODPTheme(p.SingletonPlugin):
 
     def logout(self) -> Optional[Response]:
         session.regenerate_id() # type: ignore
+
+    # ISignal
+
+    def get_signal_subscriptions(self) -> types.SignalMapping:
+        return {
+            tk.signals.action_succeeded: [
+                {
+                    "receiver": clear_group_list_cache,
+                    "sender": "group_create",
+                },
+                {
+                    "receiver": clear_group_list_cache,
+                    "sender": "group_update",
+                },
+                {
+                    "receiver": clear_group_list_cache,
+                    "sender": "group_delete",
+                },
+                {
+                    "receiver": clear_group_list_cache,
+                    "sender": "organization_create",
+                },
+                {
+                    "receiver": clear_group_list_cache,
+                    "sender": "organization_update",
+                },
+                {
+                    "receiver": clear_group_list_cache,
+                    "sender": "organization_delete",
+                },
+            ]
+        }
+
+
+def clear_group_list_cache(
+    action_name: str,
+    context: types.Context,
+    data_dict: dict[str, Any],
+    result: dict[str, Any],
+):
+    """Invalidates the cached group or organization list after
+    create, update, or delete actions."""
+    from ckanext.datavic_odp_theme.helpers import group_list
+
+    is_organization = (
+        action_name.startswith("organization")
+        or data_dict.get("type") == "organization"
+    )
+    group_list.reset(is_organization=is_organization)
+
 
 @tk.blanket.auth_functions(auth_functions)
 class DatavicODPThemeAuth(p.SingletonPlugin):
