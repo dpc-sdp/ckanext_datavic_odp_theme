@@ -10,7 +10,7 @@ from sqlalchemy import func
 import ckan.plugins.toolkit as toolkit
 import ckan.model as model
 
-from ckanext.toolbelt.decorators import Collector
+from ckanext.toolbelt.decorators import Collector, Cache
 
 from ckanext.datavic_odp_theme import config as conf, const
 
@@ -20,38 +20,40 @@ helper, get_helpers = Collector().split()
 
 
 @helper
-def organization_list():
-    org_list = toolkit.get_action("organization_list")({}, {})
-    organizations = []
-    for org in org_list:
-        org_dict = toolkit.get_action("organization_show")({}, {"id": org})
-        organizations.append(org_dict)
+@Cache()
+def group_list(is_organization: bool) -> list[dict[str, str]]:
+    """Returns a list of active groups or organizations.
 
-    return organizations
+    Results are cached separately for groups and organizations.
+    Cache is invalidated on create, update, or delete actions
+    (see `clear_group_list_cache` in plugins.py).
+    """
+    groups = (
+        model.Session.query(model.Group.id, model.Group.title, model.Group.name)
+        .filter(model.Group.is_organization.is_(is_organization))
+        .filter(model.Group.state == "active")
+        .all()
+    )
 
-
-@helper
-def group_list():
-    return toolkit.get_action("group_list")({}, {"all_fields": True})
+    return [
+        {"id": g.id, "display_name": g.title or g.name, "name": g.name} for g in groups
+    ]
 
 
 @helper
 def format_list() -> list[str]:
-    """Return a list of all available resources on portal"""
+    """Return a sorted list of unique resource formats."""
 
     query = (
-        model.Session.query(model.Resource.format)
+        model.Session.query(
+            func.distinct(model.Resource.format), func.lower(model.Resource.format)
+        )
         .filter(model.Resource.state == model.State.ACTIVE)
-        .group_by(model.Resource.format)
+        .filter(model.Resource.format.isnot(None))
+        .filter(model.Resource.format != "")
         .order_by(func.lower(model.Resource.format))
     )
-
-    formats = [
-        resource.format.upper().split(".")[-1] for resource in query if resource.format
-    ]
-    unique_formats = set(formats)
-
-    return sorted(list(unique_formats))
+    return [fmt.upper().split(".")[-1] for fmt, _ in query]
 
 
 @helper
@@ -136,18 +138,13 @@ def featured_resource_preview(package: dict[str, Any]) -> Optional[dict[str, Any
 
 
 @helper
-def get_digital_twin_resources(pkg_id: str) -> list[dict[str, Any]]:
+def get_digital_twin_resources(pkg: dict[str, Any]) -> list[dict[str, Any]]:
     """Select resource suitable for DTV(Digital Twin Visualization).
 
     Additional info:
     https://gist.github.com/steve9164/b9781b517c99486624c02fdc7af0f186
     """
     supported_formats: set[str] = conf.get_dtv_supported_formats()
-
-    try:
-        pkg = toolkit.get_action("package_show")({}, {"id": pkg_id})
-    except (toolkit.ObjectNotFound, toolkit.NotAuthorized):
-        return []
 
     # Additional info #2
     if pkg["state"] != "active":
@@ -307,9 +304,7 @@ def datavic_update_org_error_dict(
     to show it as an error on the Logo field."""
     if error_dict.pop("upload", "") == ["File upload too large"]:
         error_dict["Logo"] = [
-            (
-                f"File size is too large. Select an image which is no larger than {datavic_max_image_size()}MB."
-            )
+            f"File size is too large. Select an image which is no larger than {datavic_max_image_size()}MB."
         ]
     elif "Unsupported upload type" in error_dict.pop("image_upload", [""])[0]:
         error_dict["Logo"] = [
