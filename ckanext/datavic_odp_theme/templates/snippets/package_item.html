@@ -80,7 +80,7 @@ Example:
         {% endif %}
         <ul class="list-unstyled dataset-api">
           <ul>
-              {% set dtv_resources = h.get_digital_twin_resources(package.id)|map(attribute="id")|list %}
+              {% set dtv_resources = h.get_digital_twin_resources(package)|map(attribute="id")|list %}
               {% set featured_resource = h.featured_resource_preview(package) %}
 
               {% if dtv_resources %}

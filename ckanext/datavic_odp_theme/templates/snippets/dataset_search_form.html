@@ -63,7 +63,8 @@
             {% endblock %}
           </div>
           {% if facets %}
-            {% set organization_list = h.organization_list() %}
+            {% set organization_list = h.group_list(is_organization=True) %}
+            {% set group_list = h.group_list(is_organization=False) %}
 
             <button class="rpl-search-form__show-filters rpl-search-form__show-filters--expanded" aria-expanded="true">
               <span>Advanced search</span>
@@ -138,7 +139,7 @@
                               <div class="rpl-checklist__main-row">
                                 <button type="button" class="rpl-checklist__info" data-checklist="checklist-group">
                                   {% if group %}
-                                    {% for item in h.group_list() %}
+                                    {% for item in group_list %}
                                       {% if item.name == group %}
                                         <span>{{ item.display_name }}</span>
                                       {% endif %}
@@ -152,7 +153,7 @@
                                   </svg>
                                 </button>
                               </div>
-                              {% with items = h.group_list() %}
+                              {% with items = group_list %}
                                 {% if items %}
                                   <div aria-hidden="true" class="rpl-checklist__list rpl-checklist__list--dropdown" style="display: none;">
                                     <div class="rpl-checklist__list-row rpl-checklist__list-row--single">
