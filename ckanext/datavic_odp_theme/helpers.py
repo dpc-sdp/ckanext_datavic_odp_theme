@@ -32,6 +32,7 @@ def group_list(is_organization: bool) -> list[dict[str, str]]:
         model.Session.query(model.Group.id, model.Group.title, model.Group.name)
         .filter(model.Group.is_organization.is_(is_organization))
         .filter(model.Group.state == "active")
+        .order_by(func.coalesce(model.Group.title, model.Group.name).asc())
         .all()
     )
 
@@ -44,16 +45,16 @@ def group_list(is_organization: bool) -> list[dict[str, str]]:
 def format_list() -> list[str]:
     """Return a sorted list of unique resource formats."""
 
+    # Clean format: lower-case and trimmed
+    cleaned_format = func.lower(func.trim(model.Resource.format))
+
     query = (
-        model.Session.query(
-            func.distinct(model.Resource.format), func.lower(model.Resource.format)
-        )
+        model.Session.query(func.distinct(cleaned_format))
         .filter(model.Resource.state == model.State.ACTIVE)
         .filter(model.Resource.format.isnot(None))
         .filter(model.Resource.format != "")
-        .order_by(func.lower(model.Resource.format))
     )
-    return [fmt.upper().split(".")[-1] for fmt, _ in query]
+    return sorted({fmt.upper().split(".")[-1] for (fmt,) in query})
 
 
 @helper
