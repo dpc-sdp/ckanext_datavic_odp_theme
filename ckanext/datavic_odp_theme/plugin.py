@@ -13,7 +13,7 @@ from ckanext.xloader.plugin import xloaderPlugin
 
 from ckanext.datavic_odp_theme.logic import auth_functions, actions, get_validators
 from ckanext.datavic_odp_theme.views import get_blueprints
-from ckanext.datavic_odp_theme.helpers import get_helpers
+from ckanext.datavic_odp_theme.helpers import get_helpers, group_list
 
 
 class DatavicODPTheme(p.SingletonPlugin):
@@ -33,6 +33,10 @@ class DatavicODPTheme(p.SingletonPlugin):
         tk.add_template_directory(config_, "templates")
         tk.add_public_directory(config_, "public")
         tk.add_resource("webassets", "datavic_odp_theme")
+
+        # Reset group/organization cache on server restart
+        group_list.reset(is_organization=False)
+        group_list.reset(is_organization=True)
 
     # ITemplateHelpers
 
@@ -152,7 +156,6 @@ def clear_group_list_cache(
 ):
     """Invalidates the cached group or organization list after
     create, update, or delete actions."""
-    from ckanext.datavic_odp_theme.helpers import group_list
 
     is_organization = (
         action_name.startswith("organization")
