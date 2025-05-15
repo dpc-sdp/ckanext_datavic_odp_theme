@@ -13,7 +13,7 @@ sections = "FUTURE,STDLIB,FIRSTPARTY,THIRDPARTY,CKAN,CKANEXT,SELF,LOCALFOLDER"
 profile = "black"
 
 [tool.pytest.ini_options]
-addopts = "--ckan-ini test.ini"
+addopts = "--ckan-ini test_config/test.ini -m 'not benchmark and not playwright'"
 filterwarnings = [
                "ignore::sqlalchemy.exc.SADeprecationWarning",
                "ignore::sqlalchemy.exc.SAWarning",

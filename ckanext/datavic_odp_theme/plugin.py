@@ -73,8 +73,8 @@ class DatavicODPTheme(p.SingletonPlugin):
 
     def _is_all_api_format(self, pkg_dict: dict[str, Any]) -> bool:
         """Check if the dataset contains a resource in a format recognized as an API.
-        This involves determining if the format of the resource is CSV and if this resource exists in the datastore
-        or matches a format inside a predefined list.
+        This involves determining if the format of the resource is CSV and if this
+        resource exists in the datastore or matches a format inside a predefined list.
         """
         for resource in tk.get_action("package_show")(
             {"ignore_auth": True},
