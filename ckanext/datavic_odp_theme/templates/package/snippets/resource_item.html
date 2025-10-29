@@ -48,7 +48,7 @@
         <li>
           <a class="btn btn-primary btn-outline"
              href="{{ h.url_for('dataset_resource.edit', id=pkg.name, resource_id=res.id) }}">
-            <i class="fa fa-pencil-square-o"></i>
+            <i class="fa fa-pencil-square"></i>
             {{ _('Edit') }}
           </a>
         </li>
@@ -63,7 +63,7 @@
         <li>
           <a href="{{ res.url }}" class="btn btn-primary" target="_blank">
             {% if res.has_views or res.url_type == 'upload' %}
-              <i class="fa fa-arrow-circle-o-down"></i>
+              <i class="fa fa-download"></i>
               {{ _('Download data') }}
             {% else %}
               <i class="fa fa-external-link"></i>
