@@ -3,6 +3,7 @@ from __future__ import annotations
 import json
 import base64
 from typing import Any
+from urllib.parse import unquote_to_bytes
 
 from flask import Blueprint, jsonify
 
@@ -36,6 +37,7 @@ def vic_organization_activity(id: str, offset: int = 0):
 
 
 def dtv_config(encoded: str, embedded: bool):
+    encoded = unquote_to_bytes(encoded)
     try:
         ids: list[str] = json.loads(base64.urlsafe_b64decode(encoded))
     except ValueError:

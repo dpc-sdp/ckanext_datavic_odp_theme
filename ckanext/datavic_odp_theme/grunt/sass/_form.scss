@@ -117,6 +117,9 @@ $rpl-form-textarea-height-m: rem(75px) !default;
 
 .form-actions {
     overflow: hidden;
+    align-items: center;
+    flex-wrap: nowrap;
+    gap: 10px;
 }
 
 select.form-control {
