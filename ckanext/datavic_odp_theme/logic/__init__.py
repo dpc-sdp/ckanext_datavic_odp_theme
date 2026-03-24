@@ -13,6 +13,7 @@ def auth_functions():
 
 def actions():
     return {
+        "user_update": action.user_update,
         "organization_update": action.organization_update,
         "package_update": action.package_update,
         "package_delete": action.package_delete,

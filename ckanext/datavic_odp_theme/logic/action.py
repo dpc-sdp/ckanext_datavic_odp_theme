@@ -17,6 +17,18 @@ from ckanext.datavic_odp_theme import jobs
 
 
 @tk.chained_action
+def user_update(next_, context, data_dict):
+    """Non-sysadmins cannot change email via API or tampered forms; keep stored value."""
+    if not context.get("ignore_auth"):
+        cu = tk.current_user
+        if cu.is_authenticated and not getattr(cu, "sysadmin", False):
+            target = model.User.get(data_dict["id"])
+            if target is not None:
+                data_dict["email"] = target.email
+    return next_(context, data_dict)
+
+
+@tk.chained_action
 def organization_update(next_, context, data_dict):
     result = next_(context, data_dict)
     tk.enqueue_job(jobs.reindex_organization, [result["id"]])
