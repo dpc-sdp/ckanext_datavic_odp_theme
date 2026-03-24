@@ -18,13 +18,19 @@ from ckanext.datavic_odp_theme import jobs
 
 @tk.chained_action
 def user_update(next_, context, data_dict):
-    """Non-sysadmins cannot change email via API or tampered forms; keep stored value."""
-    if not context.get("ignore_auth"):
-        cu = tk.current_user
-        if cu.is_authenticated and not getattr(cu, "sysadmin", False):
-            target = model.User.get(data_dict["id"])
-            if target is not None:
-                data_dict["email"] = target.email
+    """Lock email to the stored value for non-sysadmins (including reset-key)."""
+    # Sysadmins may set email from the request; leave data_dict unchanged.
+    if tk.current_user.is_authenticated and tk.current_user.sysadmin:
+        return next_(context, data_dict)
+
+    # Target user missing: defer to core (e.g. NotFound).
+    user_obj = model.User.get(data_dict.get("id"))
+    if user_obj is None:
+        return next_(context, data_dict)
+
+    # Ignore submitted email, keep the address already on the user row.
+    data_dict["email"] = user_obj.email
+
     return next_(context, data_dict)
 
 
@@ -161,7 +167,7 @@ def datavic_list_incomplete_resources(context, data_dict):
     missing_conditions = []
     for field in required_fields:
         model_attr = getattr(model.Resource, field)
-        missing_conditions.append(or_(model_attr == None, model_attr == ""))
+        missing_conditions.append(or_(model_attr.is_(None), model_attr == ""))
 
     q = (
         model.Session.query(model.Resource)
