@@ -1,0 +1,7 @@
+{% ckan_extends %}
+
+{% block primary_content_inner %}
+  <a href="{{ h.url_for(pkg.type ~ '_resource.new', id=pkg.name) }}" class="btn btn-primary">{{ _('Add resource') }}</a>
+
+  {{ super() }}
+{% endblock %}
