@@ -36,6 +36,11 @@ def vic_organization_activity(id: str, offset: int = 0):
         tk.abort(const.FORBIDDEN_ACCESS, tk._("Unauthorized Access"))
 
 
+def redirect_dashboard():
+    """Keep the Datavic dashboard landing page focused on datasets."""
+    return tk.redirect_to("dashboard.datasets")
+
+
 def dtv_config(encoded: str, embedded: bool):
     encoded = unquote_to_bytes(encoded)
     try:
@@ -112,6 +117,7 @@ vic_odp.add_url_rule(
     "/organization/activity/<id>/<int:offset>", view_func=vic_organization_activity
 )
 vic_odp.add_url_rule("/ajax/session", view_func=session_extension)
+vic_odp.add_url_rule("/dashboard/", view_func=redirect_dashboard)
 
 def get_blueprints():
     return [vic_odp]
