@@ -84,8 +84,8 @@ def resource_update(
     try:
         result = next_(context, data_dict)
         return result
-    except tk.ValidationError:
-        _show_errors_in_sibling_resources(context, data_dict)
+    except tk.ValidationError as e:
+        _show_errors_in_sibling_resources(context, data_dict, e, "update")
 
 
 @tk.chained_action
@@ -95,8 +95,8 @@ def resource_create(
     try:
         result = next_(context, data_dict)
         return result
-    except tk.ValidationError:
-        _show_errors_in_sibling_resources(context, data_dict)
+    except tk.ValidationError as e:
+        _show_errors_in_sibling_resources(context, data_dict, e, "create")
 
 
 @tk.chained_action
@@ -106,45 +106,80 @@ def resource_delete(
     try:
         result = next_(context, data_dict)
         return result
-    except tk.ValidationError:
-        _show_errors_in_sibling_resources(context, data_dict)
+    except tk.ValidationError as e:
+        _show_errors_in_sibling_resources(context, data_dict, e, "delete")
 
 
-def _show_errors_in_sibling_resources(context: Context, data_dict: DataDict) -> Any:
-    """Retrieves and raises validation errors for resources within the same package."""
+def _show_errors_in_sibling_resources(
+    context: Context,
+    data_dict: DataDict,
+    original_error: tk.ValidationError,
+    action: str,
+) -> Any:
+    """Raise the original resource errors plus any package-level sibling errors."""
+    validation_context = tk.fresh_context(context)
+    validation_context["ignore_auth"] = True
+    validation_context["for_update"] = True
+
+    resource_id = data_dict.get("id")
+    package_id = data_dict.get("package_id")
+    if not package_id and resource_id:
+        resource = model.Resource.get(resource_id)
+        package_id = resource.package_id if resource else None
+
+    if not package_id:
+        raise original_error
+
     pkg_dict = tk.get_action("package_show")(
-        context,
-        {
-            "id": data_dict.get("package_id")
-            or model.Resource.get(data_dict["id"]).package_id  # type: ignore
-        },
+        validation_context,
+        {"id": package_id},
     )
+
+    current_resource_index = None
+    if action == "create":
+        pkg_dict.setdefault("resources", []).append(data_dict)
+        current_resource_index = len(pkg_dict["resources"]) - 1
+    elif action == "update":
+        for i, resource in enumerate(pkg_dict.get("resources", [])):
+            if resource["id"] == resource_id:
+                pkg_dict["resources"][i] = data_dict
+                current_resource_index = i
+                break
+    elif action == "delete":
+        pkg_dict["resources"] = [
+            resource
+            for resource in pkg_dict.get("resources", [])
+            if resource["id"] != resource_id
+        ]
 
     package_plugin = lib_plugins.lookup_package_plugin(pkg_dict["type"])
 
-    _, errors = lib_plugins.plugin_validate(
+    _, package_errors = lib_plugins.plugin_validate(
         package_plugin,
-        context,
+        validation_context,
         pkg_dict,
-        context.get("schema") or package_plugin.update_package_schema(),
+        validation_context.get("schema") or package_plugin.update_package_schema(),
         "package_update",
     )
 
-    resources_errors = errors.get("resources", [])
+    errors = dict(original_error.error_dict)
+    for field, field_errors in package_errors.items():
+        if field != "resources" and field not in errors:
+            errors[field] = field_errors
+
+    resources_errors = package_errors.get("resources", [])
 
     for i, resource_error in enumerate(resources_errors):
-        if not resource_error:
+        if not resource_error or i == current_resource_index:
             continue
+        resource_name = pkg_dict["resources"][i].get("name") or pkg_dict["resources"][i].get("id")
         errors.update(
             {
-                f"Field '{field}' in the resource '{pkg_dict['resources'][i]['name']}'": (
-                    error
-                )
+                f"Field '{field}' in the resource '{resource_name}'": error
                 for field, error in resource_error.items()
             }
         )
-    if errors:
-        raise tk.ValidationError(errors)
+    raise tk.ValidationError(errors)
 
 
 @tk.side_effect_free
