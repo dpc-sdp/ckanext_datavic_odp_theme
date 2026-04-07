@@ -145,6 +145,6 @@ input[data-module="datavic-slug-visible"] {
     flex: 1;
 }
 
-#field-name + .error-block {
-    width: 100%;
+.input-group .error-block {
+    flex-basis: 100%;
 }

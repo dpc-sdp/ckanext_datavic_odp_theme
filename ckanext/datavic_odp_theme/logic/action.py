@@ -179,8 +179,7 @@ def _show_errors_in_sibling_resources(
                 for field, error in resource_error.items()
             }
         )
-    if errors:
-        raise tk.ValidationError(errors)
+    raise tk.ValidationError(errors)
 
 
 @tk.side_effect_free
