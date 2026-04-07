@@ -1,3 +1,19 @@
 .rpl-text-icon--before {
   margin: auto .5rem auto auto;
 }
+
+.scheming-fieldset-alias {
+  .info-block {
+    &::before {
+      position: relative;
+      font-family: FontAwesome;
+      font-size: 11px;
+      content: '\f05a';
+      display: inline-block;
+      width: 11px;
+      height: 12px;
+      top: 0;
+      vertical-align: text-top;
+    }
+  }
+}
