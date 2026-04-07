@@ -38,6 +38,10 @@ def vic_organization_activity(id: str, offset: int = 0):
 
 def redirect_dashboard():
     """Keep the Datavic dashboard landing page focused on datasets."""
+    if tk.current_user.is_anonymous:
+        tk.h.flash_error(tk._(u'Not authorized to see this page'))
+        return tk.redirect_to(u'user.login')
+
     return tk.redirect_to("dashboard.datasets")
 
 
