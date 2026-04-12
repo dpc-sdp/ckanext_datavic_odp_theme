@@ -329,3 +329,93 @@ def resource_attributes(attrs):
         return None
 
     return attrs
+
+
+@helper
+def get_header_structure(userobj: model.User | None) -> list[dict[str, Any]]:
+    is_logged_in: bool = bool(userobj)
+    is_sysadmin: bool = bool(userobj) and userobj.sysadmin
+
+    print("User object:", userobj)
+
+    try:
+        can_create_packages = (
+            bool(userobj)
+            and toolkit.check_access("package_create", {"user": userobj.name}, {})
+            and True
+        )
+    except toolkit.NotAuthorized:
+        can_create_packages = False
+
+    return [
+        {
+            "title": toolkit._("My account"),
+            "subtitle": toolkit._("""My account"""),
+            "url": "#",
+            "hide": not is_logged_in,
+            "child": [
+                {
+                    "title": toolkit._("Dashboard"),
+                    "url": toolkit.h.url_for('dashboard.datasets'),
+                    "hide": not is_logged_in or not can_create_packages,
+                },
+                {
+                    "title": toolkit._("Profile"),
+                    "url": toolkit.h.url_for("user.read", id=userobj.name)
+                        if is_logged_in
+                        else "#",
+                    "hide": not is_logged_in,
+                },
+                {
+                    "title": toolkit._("Sysadmin settings"),
+                    "url": toolkit.h.url_for('admin.index'),
+                    "hide": not is_sysadmin,
+                },
+            ],
+        },
+        {
+            "title": toolkit._("User guide"),
+            "url": "#",
+        },
+        {
+            "title": toolkit._("Search data"),
+            "url": toolkit.h.url_for('search'),
+        },
+        {
+            "title": toolkit._("About DataVic"),
+            "subtitle": toolkit._("""About DataVic"""),
+            "url": "#",
+            "child": [
+                {
+                    "title": toolkit._("About DataVic"),
+                    "url": "https://www.data.vic.gov.au/about-datavic",
+                },
+                {
+                    "title": toolkit._("DataVic Access Policy"),
+                    "url": "https://www.data.vic.gov.au/datavic-access-policy",
+                },
+                {
+                    "title": toolkit._("DataVic Access Policy guidelines"),
+                    "url": "https://www.data.vic.gov.au/datavic-access-policy-guidelines",
+                },
+                {
+                    "title": toolkit._("DataVic Access Policy Dataset Publishing Manual"),
+                    "url": "https://www.data.vic.gov.au/datavic-access-policy-dataset-publishing-manual",
+                },
+                {
+                    "title": toolkit._("Publish an open data set - digital guide"),
+                    "url": "https://www.vic.gov.au/publish-open-data-set",
+                },
+            ],
+        },
+        {
+            "title": toolkit._("Log in"),
+            "url": toolkit.h.url_for('user.login'),
+            "hide": is_logged_in,
+        },
+        {
+            "title": toolkit._("Log out"),
+            "url": toolkit.h.url_for('user.logout'),
+            "hide": not is_logged_in,
+        },
+    ]
