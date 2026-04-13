@@ -134,15 +134,21 @@ def _show_errors_in_sibling_resources(
         validation_context,
         {"id": package_id},
     )
+    # Strip non-JSON-serializable upload artefacts; scheming's extras_valid_json
+    # validator calls json.dumps on resource fields and chokes on FileStorage,
+    # which masks the real ValidationError (e.g. ClamAV) with a 500.
+    resource_for_validation = {
+        k: v for k, v in data_dict.items() if k not in ("upload", "clear_upload")
+    }
 
     current_resource_index = None
     if action == "create":
-        pkg_dict.setdefault("resources", []).append(data_dict)
+        pkg_dict.setdefault("resources", []).append(resource_for_validation)
         current_resource_index = len(pkg_dict["resources"]) - 1
     elif action == "update":
         for i, resource in enumerate(pkg_dict.get("resources", [])):
             if resource["id"] == resource_id:
-                pkg_dict["resources"][i] = data_dict
+                pkg_dict["resources"][i] = resource_for_validation
                 current_resource_index = i
                 break
     elif action == "delete":
