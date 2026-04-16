@@ -341,8 +341,6 @@ def get_header_structure(userobj: model.User | None) -> list[dict[str, Any]]:
     is_logged_in: bool = bool(userobj)
     is_sysadmin: bool = bool(userobj) and userobj.sysadmin
 
-    print("User object:", userobj)
-
     try:
         can_create_packages = (
             bool(userobj)
@@ -412,6 +410,10 @@ def get_header_structure(userobj: model.User | None) -> list[dict[str, Any]]:
                     "url": "https://www.vic.gov.au/publish-open-data-set",
                 },
             ],
+        },
+        {
+            "title": toolkit._("Contact us"),
+            "url": f"{toolkit.h.get_parent_site_url()}/contact-us",
         },
         {
             "title": toolkit._("Log in"),
