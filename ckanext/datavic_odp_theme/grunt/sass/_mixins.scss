@@ -6,3 +6,17 @@
   margin-left: -50vw;
   margin-right: -50vw;
 }
+
+@mixin underline-bottom() {
+  content: '';
+  width: 100%;
+  position: absolute;
+  display: inline-block;
+  bottom: rem(-5px);
+  border-radius: $rpl-menu-horizontal-items-root-active-thickness;
+  left: 0;
+  right: 0;
+  height: $rpl-menu-horizontal-items-root-active-thickness;
+  background-color: $rpl-menu-horizontal-items-root-active-hover-line-color;
+  background-image: none;
+}

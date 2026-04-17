@@ -30,7 +30,8 @@ def group_list(is_organization: bool) -> list[dict[str, str]]:
     (see `clear_group_list_cache` in plugins.py).
     """
     groups = (
-        model.Session.query(model.Group.id, model.Group.title, model.Group.name)
+        model.Session.query(
+            model.Group.id, model.Group.title, model.Group.name)
         .filter(model.Group.is_organization.is_(is_organization))
         .filter(model.Group.state == "active")
         .order_by(func.coalesce(model.Group.title, model.Group.name).asc())
@@ -111,7 +112,8 @@ def featured_resource_preview(package: dict[str, Any]) -> Optional[dict[str, Any
     featured_preview = None
 
     resource_groups: list[list[dict[str, Any]]] = (
-        toolkit.h.group_resources_by_temporal_range(package.get("resources", []))
+        toolkit.h.group_resources_by_temporal_range(
+            package.get("resources", []))
     )
 
     resources = resource_groups[0] if resource_groups else []
@@ -134,7 +136,8 @@ def featured_resource_preview(package: dict[str, Any]) -> Optional[dict[str, Any
             if not len(resource_views) > 0:
                 continue
 
-            featured_preview = {"preview": resource_views[0], "resource": resource}
+            featured_preview = {
+                "preview": resource_views[0], "resource": resource}
 
     return featured_preview
 
@@ -228,7 +231,8 @@ def dtv_exceeds_max_size_limit(resource_id: str) -> bool:
         return False
 
     file_size_int = (
-        int(filesize) if isinstance(filesize, str) and filesize.isdigit() else filesize
+        int(filesize) if isinstance(
+            filesize, str) and filesize.isdigit() else filesize
     )
 
     if isinstance(file_size_int, (int, float)) and file_size_int >= int(limit):
@@ -291,7 +295,8 @@ def datavic_datastore_dictionary(resource_id: str, resource_view_id: str):
         ]
 
         if "show_fields" in resource_view:
-            headers = [c for c in headers if c["id"] in resource_view["show_fields"]]
+            headers = [c for c in headers if c["id"]
+                       in resource_view["show_fields"]]
 
         return headers
 
@@ -329,3 +334,95 @@ def resource_attributes(attrs):
         return None
 
     return attrs
+
+
+@helper
+def get_header_structure(userobj: model.User | None) -> list[dict[str, Any]]:
+    is_logged_in: bool = bool(userobj)
+    is_sysadmin: bool = bool(userobj) and userobj.sysadmin
+
+    try:
+        can_create_packages = (
+            bool(userobj)
+            and toolkit.check_access("package_create", {"user": userobj.name}, {})
+            and True
+        )
+    except toolkit.NotAuthorized:
+        can_create_packages = False
+
+    return [
+        {
+            "title": toolkit._("My account"),
+            "subtitle": toolkit._("""My account"""),
+            "url": "#",
+            "hide": not is_logged_in,
+            "child": [
+                {
+                    "title": toolkit._("Dashboard"),
+                    "url": toolkit.h.url_for('dashboard.datasets'),
+                    "hide": not is_logged_in or not can_create_packages,
+                },
+                {
+                    "title": toolkit._("Profile"),
+                    "url": toolkit.h.url_for("user.read", id=userobj.name)
+                    if is_logged_in
+                    else "#",
+                    "hide": not is_logged_in,
+                },
+                {
+                    "title": toolkit._("Sysadmin settings"),
+                    "url": toolkit.h.url_for('admin.index'),
+                    "hide": not is_sysadmin,
+                },
+            ],
+        },
+        {
+            "title": toolkit._("User guide"),
+            "url": "/pages/user-guides",
+        },
+        {
+            "title": toolkit._("Search data"),
+            "url": toolkit.h.url_for('search'),
+        },
+        {
+            "title": toolkit._("About DataVic"),
+            "subtitle": toolkit._("""About DataVic"""),
+            "url": "#",
+            "child": [
+                {
+                    "title": toolkit._("About DataVic"),
+                    "url": "https://www.data.vic.gov.au/about-datavic",
+                },
+                {
+                    "title": toolkit._("DataVic Access Policy"),
+                    "url": "https://www.data.vic.gov.au/datavic-access-policy",
+                },
+                {
+                    "title": toolkit._("DataVic Access Policy guidelines"),
+                    "url": "https://www.data.vic.gov.au/datavic-access-policy-guidelines",
+                },
+                {
+                    "title": toolkit._("DataVic Access Policy Dataset Publishing Manual"),
+                    "url": "https://www.data.vic.gov.au/datavic-access-policy-dataset-publishing-manual",
+                },
+                {
+                    "title": toolkit._("Publish an open data set - digital guide"),
+                    "url": "https://www.vic.gov.au/publish-open-data-set",
+                },
+            ],
+        },
+        {
+            "title": toolkit._("Contact us"),
+            "url": f"{toolkit.h.get_parent_site_url()}/contact-us",
+        },
+        {
+            "title": toolkit._("Log in"),
+            "url": toolkit.h.url_for('user.login'),
+            "hide": is_logged_in,
+        },
+        {
+            "title": toolkit._("Log out"),
+            "url": toolkit.h.url_for('user.logout'),
+            "hide": not is_logged_in,
+        },
+    ]
