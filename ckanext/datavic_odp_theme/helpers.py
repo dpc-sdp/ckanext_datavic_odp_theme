@@ -424,5 +424,6 @@ def get_header_structure(userobj: model.User | None) -> list[dict[str, Any]]:
             "title": toolkit._("Log out"),
             "url": toolkit.h.url_for('user.logout'),
             "hide": not is_logged_in,
+            "type": "logout",
         },
     ]
