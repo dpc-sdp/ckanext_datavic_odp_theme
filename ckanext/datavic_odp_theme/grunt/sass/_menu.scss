@@ -151,7 +151,7 @@ $rpl-menu-gutter: rpl_grid_get_gutter($rpl-grid) !default;
       }
     }
 
-    & > .rpl-menu__item > .rpl-menu__item-link {
+    & > .rpl-menu__item > .rpl-menu__item-link, & > .rpl-menu__item > form > .rpl-menu__item-link {
       @include rpl_typography_font('xs', 1em, 'bold');
       text-decoration: none;
       background-color: transparent;
@@ -167,6 +167,12 @@ $rpl-menu-gutter: rpl_grid_get_gutter($rpl-grid) !default;
         &::after {
           @include underline-bottom;
         }
+      }
+
+      &:focus {
+        box-shadow: unset;
+        outline: 1px solid $rpl-menu-text-color;
+        outline-offset: 1px;
       }
 
       .rpl-icon {
@@ -190,6 +196,7 @@ $rpl-menu-gutter: rpl_grid_get_gutter($rpl-grid) !default;
         }
       }
     }
+
   }
 
   .rpl-menu__items:not(.rpl-menu__items--root) {

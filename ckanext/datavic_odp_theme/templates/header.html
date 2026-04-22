@@ -2,13 +2,30 @@
 
   {% block header_account %}{% endblock %}
 
+  {% macro logout_form(menu_item) %}
+    <form action="{{ menu_item.url }}" method="post">
+      {{ h.csrf_input() }}
+      <button class="rpl-link rpl-menu__item-link rpl-menu__item-link--logout" type="submit" title="{{ menu_item.title }}">
+        {{ menu_item.title }}
+      </button>
+    </form>
+  {% endmacro %}
+
+  {% macro render_menu_item(menu_item) %}
+    {% if menu_item.type == "logout" %}
+      {{ logout_form(menu_item) }}
+    {% else %}
+    <a href="{{ menu_item.url }}" class="rpl-link rpl-menu__item-link">{{ menu_item.title }}</a>
+    {% endif %}
+  {% endmacro %}
+
   {% macro header_menu(items, mobile=false) %}
     {% for menu_item in items if not menu_item.hide %}
     <li class="vic-dropdown-menu rpl-menu__item">
       {% if menu_item.child is defined %}
       <a href="{{ menu_item.url }}" class="rpl-link {% if mobile %}rpl-menu__item-link{% endif %} dropdown-toggle"><span>{{ menu_item.title }}</span></a>
       {% else %}
-      <a href="{{ menu_item.url }}" class="rpl-link rpl-menu__item-link">{{ menu_item.title }}</a>
+      {{ render_menu_item(menu_item) }}
       {% endif %}
       
       <div class="dropdown" style="display: none;">
