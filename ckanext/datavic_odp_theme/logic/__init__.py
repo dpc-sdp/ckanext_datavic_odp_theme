@@ -9,6 +9,7 @@ def auth_functions():
         package_activity_list=get.vic_package_activity_list,
         organization_activity_list=get.vic_organization_activity_list,
         user_activity_list=get.vic_user_activity_list,
+        organization_member_create=get.organization_member_create,
     )
 
 

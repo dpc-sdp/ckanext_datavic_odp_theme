@@ -104,3 +104,15 @@ def vic_organization_activity_list(
 
 def vic_datatables_view_prioritize(context, data_dict):
     return {"success": False}
+
+@tk.chained_auth_function
+def organization_member_create(next_auth, context, data_dict):
+    user_obj = context.get('auth_user_obj')
+
+    if not user_obj or not user_obj.sysadmin:
+        return {
+            'success': False,
+            'msg': 'Only sysadmins can manage organization members'
+        }
+
+    return next_auth(context, data_dict)
