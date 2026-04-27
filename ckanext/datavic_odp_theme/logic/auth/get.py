@@ -104,3 +104,12 @@ def vic_organization_activity_list(
 
 def vic_datatables_view_prioritize(context, data_dict):
     return {"success": False}
+
+
+@tk.chained_auth_function
+def organization_member_create(next_auth, context, data_dict):
+    """Only sysadmins may add organisation members (core allows org admins)."""
+    return {
+        "success": False,
+        "msg": "Only sysadmins can manage organisation members",
+    }
