@@ -118,8 +118,21 @@ $rpl-form-textarea-height-m: rem(75px) !default;
 .form-actions {
     overflow: hidden;
     align-items: center;
-    flex-wrap: nowrap;
+    flex-wrap: wrap;
     gap: 10px;
+    color: #707070;
+
+    .package-form-disclaimer {
+        text-align: left;
+        flex-basis: 100%;
+        margin-right: auto;
+        margin-top: rem(20px);
+        font-size: rem(14px);
+
+        a {
+            text-decoration: underline;
+        }
+    }
 }
 
 select.form-control {

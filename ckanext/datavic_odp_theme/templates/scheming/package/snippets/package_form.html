@@ -4,3 +4,32 @@
     {% asset "datavic_odp_theme/datavic-session" %}
     {{ super() }}
 {% endblock %}
+
+{% block disclaimer %}
+    <div class="package-form-disclaimer">
+        <p>
+            <strong>Disclaimer</strong><br/>
+            Your organisation is responsible for all data and metadata you publish on DataVic.<br/>
+            You organisation is bound by:
+        </p>
+        <ul>
+            <li>
+                <a href="https://www.legislation.vic.gov.au/in-force/acts/public-records-act-1973" target="_blank">Public Records Act 1973</a>
+            </li>
+            <li>
+                <a href="https://www.legislation.vic.gov.au/in-force/acts/privacy-and-data-protection-act-2014" target="_blank">Privacy and Data Protection Act 2014</a>
+            </li>
+            <li>
+                <a href="https://www.legislation.vic.gov.au/in-force/acts/health-records-act-2001" target="_blank">Health Records Act 2001</a>
+            </li>
+            <li>
+                <a href="https://ovic.vic.gov.au/information-security/framework-vpdsf" target="_blank">Victorian Protective Data Security Framework</a> and <a href="https://ovic.vic.gov.au/information-security/standards" target="_blank">Standards</a>
+            </li>
+            <li>
+                your organisation's own data governance policies
+            </li>
+        </ul>
+        <p>DataVic does not check your organisation's compliance with these obligations.</p>
+    </div>
+    {{ super() }}
+{% endblock %}}
