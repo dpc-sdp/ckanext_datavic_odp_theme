@@ -377,8 +377,8 @@ def get_header_structure(userobj: model.User | None) -> list[dict[str, Any]]:
             ],
         },
         {
-            "title": toolkit._("User guide"),
-            "url": "/pages/user-guides",
+            "title": toolkit._("Data publishing guide"),
+            "url": "https://www.data.vic.gov.au/data-publishing-guide",
         },
         {
             "title": toolkit._("Search data"),
