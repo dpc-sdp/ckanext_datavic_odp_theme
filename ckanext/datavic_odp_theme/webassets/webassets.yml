@@ -13,6 +13,8 @@ datavic_odp_theme-js:
     - js/datavic-api-info.js
     - js/datavic-search-autocomplete.js
     - js/datavic-2fa-error-messages.js
+    - js/datavic-slug-visible.js
+    - js/datavic-dropdown.js
   extra:
     preload:
       - base/main

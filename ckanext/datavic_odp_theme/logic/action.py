@@ -17,6 +17,24 @@ from ckanext.datavic_odp_theme import jobs
 
 
 @tk.chained_action
+def user_update(next_, context, data_dict):
+    """Lock email to the stored value for non-sysadmins (including reset-key)."""
+    # Sysadmins may set email from the request; leave data_dict unchanged.
+    if tk.current_user.is_authenticated and tk.current_user.sysadmin:
+        return next_(context, data_dict)
+
+    # Target user missing: defer to core (e.g. NotFound).
+    user_obj = model.User.get(data_dict.get("id"))
+    if user_obj is None:
+        return next_(context, data_dict)
+
+    # Ignore submitted email, keep the address already on the user row.
+    data_dict["email"] = user_obj.email
+
+    return next_(context, data_dict)
+
+
+@tk.chained_action
 def organization_update(next_, context, data_dict):
     result = next_(context, data_dict)
     tk.enqueue_job(jobs.reindex_organization, [result["id"]])
@@ -66,8 +84,8 @@ def resource_update(
     try:
         result = next_(context, data_dict)
         return result
-    except tk.ValidationError:
-        _show_errors_in_sibling_resources(context, data_dict)
+    except tk.ValidationError as e:
+        _show_errors_in_sibling_resources(context, data_dict, e, "update")
 
 
 @tk.chained_action
@@ -77,8 +95,8 @@ def resource_create(
     try:
         result = next_(context, data_dict)
         return result
-    except tk.ValidationError:
-        _show_errors_in_sibling_resources(context, data_dict)
+    except tk.ValidationError as e:
+        _show_errors_in_sibling_resources(context, data_dict, e, "create")
 
 
 @tk.chained_action
@@ -88,45 +106,86 @@ def resource_delete(
     try:
         result = next_(context, data_dict)
         return result
-    except tk.ValidationError:
-        _show_errors_in_sibling_resources(context, data_dict)
+    except tk.ValidationError as e:
+        _show_errors_in_sibling_resources(context, data_dict, e, "delete")
 
 
-def _show_errors_in_sibling_resources(context: Context, data_dict: DataDict) -> Any:
-    """Retrieves and raises validation errors for resources within the same package."""
+def _show_errors_in_sibling_resources(
+    context: Context,
+    data_dict: DataDict,
+    original_error: tk.ValidationError,
+    action: str,
+) -> Any:
+    """Raise the original resource errors plus any package-level sibling errors."""
+    validation_context = tk.fresh_context(context)
+    validation_context["ignore_auth"] = True
+    validation_context["for_update"] = True
+
+    resource_id = data_dict.get("id")
+    package_id = data_dict.get("package_id")
+    if not package_id and resource_id:
+        resource = model.Resource.get(resource_id)
+        package_id = resource.package_id if resource else None
+
+    if not package_id:
+        raise original_error
+
     pkg_dict = tk.get_action("package_show")(
-        context,
-        {
-            "id": data_dict.get("package_id")
-            or model.Resource.get(data_dict["id"]).package_id  # type: ignore
-        },
+        validation_context,
+        {"id": package_id},
     )
+    # Strip non-JSON-serializable upload artefacts; scheming's extras_valid_json
+    # validator calls json.dumps on resource fields and chokes on FileStorage,
+    # which masks the real ValidationError (e.g. ClamAV) with a 500.
+    resource_for_validation = {
+        k: v for k, v in data_dict.items() if k not in ("upload", "clear_upload")
+    }
+
+    current_resource_index = None
+    if action == "create":
+        pkg_dict.setdefault("resources", []).append(resource_for_validation)
+        current_resource_index = len(pkg_dict["resources"]) - 1
+    elif action == "update":
+        for i, resource in enumerate(pkg_dict.get("resources", [])):
+            if resource["id"] == resource_id:
+                pkg_dict["resources"][i] = resource_for_validation
+                current_resource_index = i
+                break
+    elif action == "delete":
+        pkg_dict["resources"] = [
+            resource
+            for resource in pkg_dict.get("resources", [])
+            if resource["id"] != resource_id
+        ]
 
     package_plugin = lib_plugins.lookup_package_plugin(pkg_dict["type"])
 
-    _, errors = lib_plugins.plugin_validate(
+    _, package_errors = lib_plugins.plugin_validate(
         package_plugin,
-        context,
+        validation_context,
         pkg_dict,
-        context.get("schema") or package_plugin.update_package_schema(),
+        validation_context.get("schema") or package_plugin.update_package_schema(),
         "package_update",
     )
 
-    resources_errors = errors.get("resources", [])
+    errors = dict(original_error.error_dict)
+    for field, field_errors in package_errors.items():
+        if field != "resources" and field not in errors:
+            errors[field] = field_errors
+
+    resources_errors = package_errors.get("resources", [])
 
     for i, resource_error in enumerate(resources_errors):
-        if not resource_error:
+        if not resource_error or i == current_resource_index:
             continue
+        resource_name = pkg_dict["resources"][i].get("name") or pkg_dict["resources"][i].get("id")
         errors.update(
             {
-                f"Field '{field}' in the resource '{pkg_dict['resources'][i]['name']}'": (
-                    error
-                )
+                f"Field '{field}' in the resource '{resource_name}'": error
                 for field, error in resource_error.items()
             }
         )
-    if errors:
-        raise tk.ValidationError(errors)
+    raise tk.ValidationError(errors)
 
 
 @tk.side_effect_free
@@ -149,7 +208,7 @@ def datavic_list_incomplete_resources(context, data_dict):
     missing_conditions = []
     for field in required_fields:
         model_attr = getattr(model.Resource, field)
-        missing_conditions.append(or_(model_attr == None, model_attr == ""))
+        missing_conditions.append(or_(model_attr.is_(None), model_attr == ""))
 
     q = (
         model.Session.query(model.Resource)

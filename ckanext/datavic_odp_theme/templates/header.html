@@ -1,164 +1,131 @@
 {% block header_wrapper %}
 
-{% block header_account %}
-  {% if g.userobj %}
-  <nav id="account-menu" class="account-masthead">
-    <div class="container">
-      {% block header_account_container_content %}
-        {% if g.userobj %}
-          <div class="account avatar authed" data-module="me" data-me="{{ g.userobj.id }}">
-            <ul class="unstyled">
-              {% block header_account_logged %}
-              {% if g.userobj.sysadmin %}
-                <li>
-                  <a href="{{ h.url_for('admin.index') }}" title="{{ _('Sysadmin settings') }}">
-                    <i class="fa fa-gavel" aria-hidden="true"></i>
-                    <span class="text">{{ _('Admin') }}</span>
-                  </a>
-                </li>
-              {% endif %}
-              <li>
-                <a href="{{ h.url_for('user.read', id=g.userobj.name) }}" class="image" title="{{ _('View profile') }}">
-                  {{ h.gravatar((g.userobj.email_hash if g and g.userobj else ''), size=22) }}
-                  <span class="username">{{ g.userobj.display_name }}</span>
-                </a>
-              </li>
-              {% set new_activities = h.new_activities() %}
-              <li class="notifications {% if new_activities > 0 %}notifications-important{% endif %}">
-                {% set notifications_tooltip = ngettext('Dashboard (%(num)d new item)', 'Dashboard (%(num)d new items)', new_activities) %}
-                <a href="{{ h.url_for('activity.dashboard') }}" title="{{ notifications_tooltip }}">
-                  <i class="fa fa-tachometer" aria-hidden="true"></i>
-                  <span class="text">{{ _('Dashboard') }}</span>
-                  <span class="badge">{{ new_activities }}</span>
-                </a>
-              </li>
-              {% block header_account_settings_link %}
-                <li>
-                  <a href="{{ h.url_for('user.edit', id=g.userobj.name) }}" title="{{ _('Edit settings') }}">
-                    <i class="fa fa-cog" aria-hidden="true"></i>
-                    <span class="text">{{ _('Settings') }}</span>
-                  </a>
-                </li>
-              {% endblock %}
-              {% block header_account_log_out_link %}
-                <li>
-                  <a href="{{ h.url_for('/user/_logout') }}" title="{{ _('Log out') }}">
-                    <i class="fa fa-sign-out" aria-hidden="true"></i>
-                    <span class="text">{{ _('Log out') }}</span>
-                  </a>
-                </li>
-              {% endblock %}
-              {% endblock %}
-            </ul>
-          </div>
-        {% else %}
-          <nav class="account not-authed">
-            <ul class="unstyled">
-              {% block header_account_notlogged %}
-              <li>{% link_for _('Log in'), named_route='user.login' %}</li>
-              {% if h.check_access('user_create') %}
-                <li>{% link_for _('Register'), named_route='user.register', class_='sub' %}</li>
-              {% endif %}
-              {% endblock %}
-            </ul>
-          </nav>
-        {% endif %}
-      {% endblock %}
-    </div>
-  </nav>
-  {% endif %}
-{% endblock %}
+  {% block header_account %}{% endblock %}
 
-<nav id="mobile-menu" class="rpl-site-header hidden" data-module="datavic-odp-header datavic-odp-breadcrumb">
-  <div class="rpl-site-header__inner">
-    <div class="rpl-site-header__top">
-      <div class="rpl-site-header__logo-container">
-        <button id="btn-mobile-menu-close" aria-expanded="true" class="rpl-site-header__btn rpl-site-header__btn--menu rpl-site-header__btn--menu-open">
+  {% macro logout_form(menu_item) %}
+    <form action="{{ menu_item.url }}" method="post">
+      {{ h.csrf_input() }}
+      <button class="rpl-link rpl-menu__item-link rpl-menu__item-link--logout" type="submit" title="{{ menu_item.title }}">
+        {{ menu_item.title }}
+      </button>
+    </form>
+  {% endmacro %}
+
+  {% macro render_menu_item(menu_item) %}
+    {% if menu_item.type == "logout" %}
+      {{ logout_form(menu_item) }}
+    {% else %}
+    <a href="{{ menu_item.url }}" class="rpl-link rpl-menu__item-link">{{ menu_item.title }}</a>
+    {% endif %}
+  {% endmacro %}
+
+  {% macro header_menu(items, mobile=false) %}
+    {% for menu_item in items if not menu_item.hide %}
+    <li class="vic-dropdown-menu rpl-menu__item">
+      {% if menu_item.child is defined %}
+      <a href="{{ menu_item.url }}" class="rpl-link {% if mobile %}rpl-menu__item-link{% endif %} dropdown-toggle"><span>{{ menu_item.title }}</span></a>
+      {% else %}
+      {{ render_menu_item(menu_item) }}
+      {% endif %}
+      
+      <div class="dropdown" style="display: none;">
+        <div class="container">
+          <div class="dropdown-header">
+            <h3>{{ menu_item.subtitle or menu_item.title }}</h3>
+          </div>
+          <ul class="dropdown-items">
+            {% for menu_item in menu_item.child if not menu_item.hide %}
+            <li>
+              <a href="{{ menu_item.url }}" class="dropdown-item">
+                <span>{{ menu_item.title }}</span>
+              </a>
+            </li>
+            {% else %}
+            <li><p>{{ _("No child items was created yet") }}</p></li>
+            {% endfor %}
+          </ul>
+        </div>
+      </div>
+    </li>
+    {% endfor %}
+  {% endmacro %}
+
+  {% set menu_items = h.get_header_structure(g.userobj) %}
+
+  <nav id="mobile-menu" class="rpl-site-header hidden" data-module="datavic-odp-header datavic-odp-breadcrumb">
+    <div class="rpl-site-header__inner">
+      <div class="rpl-site-header__top">
+        <div class="rpl-site-header__logo-container">
+          <button id="btn-mobile-menu-close" aria-expanded="true" class="rpl-site-header__btn rpl-site-header__btn--menu rpl-site-header__btn--menu-open">
             {% snippet 'snippets/svg/close.svg' %}
             <span>{{ _('Close menu') }}</span>
-        </button>
-      </div>
-      <div class="rpl-site-header__menu-container rpl-site-header__menu-container--vertical">
-        <div class="rpl-site-header__menu">
-          <div data-vpos="0" data-visibledepth="0" class="rpl-menu rpl-menu--open rpl-menu--root rpl-menu--vertical">
-            <div class="rpl-menu__inner">
-              <div class="rpl-menu__inner_root">
-                <div class="rpl-menu__column">
-                  <div class="rpl-menu__header"><!----> <!----></div>
-                  <ul class="rpl-menu__items rpl-menu__items--root">
-                    <li class="rpl-menu__item">
-                      <a href="{{ h.url_for('search') }}" class="rpl-link rpl-menu__item-link">{{ _('Data') }}</a>
-                    </li>
-                    <li class="rpl-menu__item">
-                      <a href="{{ h.get_parent_site_url() }}/about-datavic" class="rpl-link rpl-menu__item-link">{{ _('About us') }}</a>
-                    </li>
-                    <li class="rpl-menu__item">
-                      <a href="{{ h.get_parent_site_url() }}/contact-us" class="rpl-link rpl-menu__item-link">{{ _('Contact us') }}</a>
-                    </li>
-                  </ul>
+          </button>
+        </div>
+        <div class="rpl-site-header__menu-container rpl-site-header__menu-container--vertical">
+          <div class="rpl-site-header__menu">
+            <div data-vpos="0" data-visibledepth="0" class="rpl-menu rpl-menu--open rpl-menu--root rpl-menu--vertical">
+              <div class="rpl-menu__inner">
+                <div class="rpl-menu__inner_root">
+                  <div class="rpl-menu__column">
+                    <div class="rpl-menu__header"><!----> <!----></div>
+                    <ul class="rpl-menu__items rpl-menu__items--root" data-module="datavic-dropdown" data-module-is-mobile="true">
+                      {{ header_menu(menu_items, mobile=true) }}
+                    </ul>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
-      <div class="rpl-site-header__btn-container"><!----> <!----></div>
-    </div> <!---->
-  </div>
-</nav>
+        <div class="rpl-site-header__btn-container"><!----> <!----></div>
+      </div> <!---->
+    </div>
+  </nav>
 
-<nav id="main-menu" class="rpl-site-header">
-  <div class="rpl-site-header__inner">
-    <div class="rpl-site-header__top">
-      <div class="rpl-site-header__logo-container">
-        <button id="btn-mobile-menu-open" aria-expanded="false" class="rpl-site-header__btn rpl-site-header__btn--menu">
+  <nav id="main-menu" class="rpl-site-header">
+    <div class="rpl-site-header__inner">
+      <div class="rpl-site-header__top">
+        <div class="rpl-site-header__logo-container">
+          <button id="btn-mobile-menu-open" aria-expanded="false" class="rpl-site-header__btn rpl-site-header__btn--menu">
             {% snippet 'snippets/svg/burger.svg' %}
             <span>{{ _('Menu') }}</span>
-        </button>
-
-        <div class="rpl-site-header__title rpl-site-header__logo-container--vic-logo-primary rpl-site-header__logo-container--vic-logo-primary--cobrand">
-          <a href="https://www.vic.gov.au/" class="rpl-link" target="_blank">
-            <img src="/images/vic-header-logo.png" alt="vic_logo">
-          </a>
+          </button>
+          
+          <div class="rpl-site-header__title rpl-site-header__logo-container--vic-logo-primary rpl-site-header__logo-container--vic-logo-primary--cobrand">
+            <a href="https://www.vic.gov.au/" class="rpl-link" target="_blank">
+              <img src="/images/vic-header-logo.png" alt="vic_logo">
+            </a>
+          </div>
+          
+          <div class="rpl-site-header__title cobrand">
+            <a href="{{ h.get_parent_site_url() }}" class="rpl-link">
+              <img src="/images/data-vic-logo-x3.png" alt="Data.Vic logo">
+            </a>
+          </div>
         </div>
-
-        <div class="rpl-site-header__title cobrand">
-          <a href="{{ h.get_parent_site_url() }}" class="rpl-link">
-            <img src="/images/data-vic-logo-x3.png" alt="Data.Vic logo">
-          </a>
-        </div>
-      </div>
-
-      <div class="rpl-site-header__menu-container rpl-site-header__menu-container--horizontal">
-        <div class="rpl-site-header__menu">
-          <div data-vpos="0" data-visibledepth="0" class="rpl-menu rpl-menu--root rpl-menu--horizontal">
-            <div class="rpl-menu__inner">
-              <div class="rpl-menu__inner_root">
-                <div class="rpl-menu__column">
-                  <div class="rpl-menu__header">
-                    <!----> <!---->
+        
+        <div class="rpl-site-header__menu-container rpl-site-header__menu-container--horizontal">
+          <div class="rpl-site-header__menu">
+            <div data-vpos="0" data-visibledepth="0" class="rpl-menu rpl-menu--root rpl-menu--horizontal">
+              <div class="rpl-menu__inner">
+                <div class="rpl-menu__inner_root">
+                  <div class="rpl-menu__column">
+                    <div class="rpl-menu__header">
+                      
+                    </div>
+                    <ul class="rpl-menu__items rpl-menu__items--root" data-module="datavic-dropdown">
+                      {{ header_menu(menu_items) }}
+                    </ul>
                   </div>
-                  <ul class="rpl-menu__items rpl-menu__items--root">
-                    <li class="rpl-menu__item">
-                      <a href="{{ h.url_for('search') }}" class="rpl-link rpl-menu__item-link">{{ _('Data') }}</a>
-                    </li>
-                    <li class="rpl-menu__item">
-                      <a href="{{ h.get_parent_site_url() }}/about-datavic" class="rpl-link rpl-menu__item-link">{{ _('About us') }}</a>
-                    </li>
-                    <li class="rpl-menu__item">
-                      <a href="{{ h.get_parent_site_url() }}/contact-us" class="rpl-link rpl-menu__item-link">{{ _('Contact us') }}</a>
-                    </li>
-                  </ul>
                 </div>
               </div>
             </div>
           </div>
         </div>
+        <div class="rpl-site-header__btn-container">
+        </div>
       </div>
-      <div class="rpl-site-header__btn-container"><!----> <!---->
-      </div>
-    </div> <!---->
-  </div>
-</nav>
+    </div>
+  </nav>
 
 {% endblock %}
