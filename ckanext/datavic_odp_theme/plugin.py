@@ -202,7 +202,7 @@ class DatavicXLoaderPlugin(xloaderPlugin, p.SingletonPlugin):
                 group.add_package_by_name(pkg_dict.get('name', None))
 
     def after_dataset_update(self, context, pkg_dict):
-        self._submit_new_resources_only(pkg_dict)
+        self._submit_resources_needing_ingest(pkg_dict)
 
         group_id = pkg_dict.get('category', None)
         if group_id:
@@ -211,12 +211,16 @@ class DatavicXLoaderPlugin(xloaderPlugin, p.SingletonPlugin):
             if group not in groups:
                 group.add_package_by_name(pkg_dict.get('name'))
 
-    def _submit_new_resources_only(self, pkg_dict):
-        """Submit only newly added resources to xloader during dataset update.
+    def _submit_resources_needing_ingest(self, pkg_dict):
+        """Submit resources to xloader during dataset update.
 
-        Compares current resource IDs against the previous activity snapshot
-        to detect new resources. URL changes for existing resources are
-        handled by the parent xloaderPlugin via ``notify()``.
+        Submits resources that are newly added, or whose hash was cleared
+        (the syndication portal clears hash='' and datastore_active=False on
+        every sync as an explicit signal that the receiving portal should
+        re-ingest the resource into the datastore).
+
+        URL changes for existing resources with a non-empty hash are handled
+        by the parent xloaderPlugin via ``notify()``.
 
         Falls back to submitting all resources if no activity data is
         available (e.g. activity plugin disabled, data migration).
@@ -241,18 +245,21 @@ class DatavicXLoaderPlugin(xloaderPlugin, p.SingletonPlugin):
 
         new_res_ids = current_res_ids - previous_res_ids
 
-        if not new_res_ids:
-            return
-
-        log.info(
-            "Detected %d new resource(s) for package %s: %s",
-            len(new_res_ids),
-            pkg_dict.get("id"),
-            new_res_ids,
-        )
-
         for resource in current_resources:
-            if resource.get("id") in new_res_ids:
+            res_id = resource.get("id")
+            if res_id in new_res_ids:
+                log.info(
+                    "New resource %s in package %s — submitting",
+                    res_id,
+                    pkg_dict.get("id"),
+                )
+                self._infer_format_and_submit(resource)
+            elif not resource.get("hash") and not resource.get("datastore_active"):
+                log.info(
+                    "Resource %s has cleared hash/datastore_active — "
+                    "submitting for datastore re-ingestion",
+                    res_id,
+                )
                 self._infer_format_and_submit(resource)
 
     def _get_previous_resource_ids(self, pkg_id):
