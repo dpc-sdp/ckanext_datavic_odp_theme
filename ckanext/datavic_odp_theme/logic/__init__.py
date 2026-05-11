@@ -8,11 +8,14 @@ def auth_functions():
         activity_list=get.vic_activity_list,
         package_activity_list=get.vic_package_activity_list,
         organization_activity_list=get.vic_organization_activity_list,
+        user_activity_list=get.vic_user_activity_list,
+        organization_member_create=get.organization_member_create,
     )
 
 
 def actions():
     return {
+        "user_update": action.user_update,
         "organization_update": action.organization_update,
         "package_update": action.package_update,
         "package_delete": action.package_delete,

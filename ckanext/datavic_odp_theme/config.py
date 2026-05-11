@@ -6,7 +6,7 @@ import ckan.plugins.toolkit as tk
 
 
 CONFIG_BASE_MAP = "ckanext.datavicmain.dtv.base_map_id"
-DEFAULT_BASE_MAP = "basemap-positron"
+DEFAULT_BASE_MAP = "basemap-vic-topographic"
 
 CONFIG_BASE_URL = "ckanext.datavicmain.odp.public_url"
 
