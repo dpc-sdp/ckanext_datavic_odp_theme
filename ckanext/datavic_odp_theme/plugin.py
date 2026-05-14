@@ -287,11 +287,14 @@ class DatavicDatapusherPlugin(DatapusherPlugin, p.SingletonPlugin):
         ``after_resource_create``, so we handle it here.
         """
         for resource in pkg_dict.get("resources", []):
-            if resource and not resource.get("format"):
-                if not resource["url_type"]:
-                    url_without_params = resource["url"].split('?')[0]
-                    resource["format"] = url_without_params.split('.')[-1].lower()
-            self._submit_to_datapusher(resource)
+            self._infer_format_and_submit(resource)
+
+    def _infer_format_and_submit(self, resource):
+        if resource and not resource.get("format"):
+            if not resource["url_type"]:
+                url_without_params = resource["url"].split('?')[0]
+                resource["format"] = url_without_params.split('.')[-1].lower()
+        self._submit_to_datapusher(resource)
 
     def _submit_to_datapusher(self, resource_dict):
         """The original method doesn't check if `url_type` is here. Seems like
