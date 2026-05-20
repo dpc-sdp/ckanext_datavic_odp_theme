@@ -202,7 +202,7 @@ class DatavicXLoaderPlugin(xloaderPlugin, p.SingletonPlugin):
                 group.add_package_by_name(pkg_dict.get('name', None))
 
     def after_dataset_update(self, context, pkg_dict):
-        self._submit_new_resources_only(pkg_dict)
+        self._submit_resources_needing_ingest(pkg_dict)
 
         group_id = pkg_dict.get('category', None)
         if group_id:
@@ -253,6 +253,21 @@ class DatavicXLoaderPlugin(xloaderPlugin, p.SingletonPlugin):
 
         for resource in current_resources:
             if resource.get("id") in new_res_ids:
+                self._infer_format_and_submit(resource)
+
+    def _submit_resources_needing_ingest(self, pkg_dict):
+        """Submit resources which hash = '' and datastore_active = False.
+        """
+        current_resources = pkg_dict.get("resources", [])
+
+        for resource in current_resources:
+            if resource.get("hash") == "" and not resource.get("datastore_active"):
+                log.info(
+                    "Resource %s in package %s has empty hash and inactive"
+                    " datastore — submitting to xloader",
+                    resource.get("id"),
+                    pkg_dict.get("id"),
+                )
                 self._infer_format_and_submit(resource)
 
     def _get_previous_resource_ids(self, pkg_id):
