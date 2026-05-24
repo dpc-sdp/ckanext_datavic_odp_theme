@@ -280,6 +280,15 @@ class DatavicDatapusherPlusPlugin(DatapusherPlusPlugin, p.SingletonPlugin):
         prev_resources = prev_pkg.get("resources", [])
         return {r.get("id") for r in prev_resources if r.get("id")}
 
+    def _trigger_after_resource_create(self, pkg_dict):
+        """Submit all resources after dataset creation.
+
+        Syndication via ``package_create`` does not trigger
+        ``after_resource_create``, so we handle it here.
+        """
+        for resource in pkg_dict.get("resources", []):
+            self._infer_format_and_submit(resource)
+
     def _infer_format_and_submit(self, resource):
         """Infer the resource format from its URL if missing, then submit."""
         if resource and not resource.get("format"):
@@ -289,15 +298,6 @@ class DatavicDatapusherPlusPlugin(DatapusherPlusPlugin, p.SingletonPlugin):
                     url_without_params.split(".")[-1].lower()
                 )
         self._submit_to_datapusher(resource)
-
-    def _trigger_after_resource_create(self, pkg_dict):
-        """Submit all resources after dataset creation.
-
-        Syndication via ``package_create`` does not trigger
-        ``after_resource_create``, so we handle it here.
-        """
-        for resource in pkg_dict.get("resources", []):
-            self._infer_format_and_submit(resource)
 
     def _submit_to_datapusher(self, resource_dict):
         """Wrapper that ensures ``url_type`` and ``format`` are present
