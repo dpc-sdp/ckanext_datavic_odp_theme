@@ -10,7 +10,7 @@ import ckan.plugins.toolkit as tk
 from ckan import model, types
 
 from ckanext.search_autocomplete.interfaces import ISearchAutocomplete
-from ckanext.datapusher.plugin import DatapusherPlugin
+from ckanext.datapusher_plus.plugin import DatapusherPlusPlugin
 
 from ckanext.datavic_odp_theme.logic import auth_functions, actions, get_validators
 from ckanext.datavic_odp_theme.views import get_blueprints
@@ -182,7 +182,7 @@ class DatavicODPThemeAuth(p.SingletonPlugin):
     pass
 
 
-class DatavicDatapusherPlugin(DatapusherPlugin, p.SingletonPlugin):
+class DatavicDatapusherPlusPlugin(DatapusherPlusPlugin, p.SingletonPlugin):
     p.implements(p.IPackageController, inherit=True)
 
     # IPackageController
@@ -211,11 +211,11 @@ class DatavicDatapusherPlugin(DatapusherPlugin, p.SingletonPlugin):
                 group.add_package_by_name(pkg_dict.get('name'))
 
     def _submit_new_resources_only(self, pkg_dict):
-        """Submit only newly added resources to xloader during dataset update.
+        """Submit only newly added resources to datapusher during dataset update.
 
         Compares current resource IDs against the previous activity snapshot
         to detect new resources. URL changes for existing resources are
-        handled by the parent xloaderPlugin via ``notify()``.
+        handled by the parent DatapusherPlusPlugin via ``notify()``.
 
         Falls back to submitting all resources if no activity data is
         available (e.g. activity plugin disabled, data migration).
@@ -290,20 +290,20 @@ class DatavicDatapusherPlugin(DatapusherPlugin, p.SingletonPlugin):
             self._infer_format_and_submit(resource)
 
     def _infer_format_and_submit(self, resource):
+        """Infer the resource format from its URL if missing, then submit."""
         if resource and not resource.get("format"):
-            if not resource["url_type"]:
-                url_without_params = resource["url"].split('?')[0]
-                resource["format"] = url_without_params.split('.')[-1].lower()
+            if not resource.get("url_type"):
+                url_without_params = resource.get("url", "").split("?")[0]
+                resource["format"] = (
+                    url_without_params.split(".")[-1].lower()
+                )
         self._submit_to_datapusher(resource)
 
     def _submit_to_datapusher(self, resource_dict):
-        """The original method doesn't check if `url_type` is here. Seems like
-        it's not here if we are calling it from the `after_dataset_create`.
-        Just set a default url_type and delete after to be sure, that it doesn't break
-        some core logic.
-
-        Do not touch proper values, because it will definitely break something."""
-
+        """Wrapper that ensures ``url_type`` and ``format`` are present
+        before calling the parent, as they may be missing for resources
+        created inline via ``package_create``/``package_update``.
+        """
         resource_dict.setdefault("url_type", "datavic_datapusher")
         resource_dict.setdefault("format", "")
 
