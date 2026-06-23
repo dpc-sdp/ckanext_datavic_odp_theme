@@ -353,7 +353,7 @@ def get_header_structure(userobj: model.User | None) -> list[dict[str, Any]]:
     return [
         {
             "title": toolkit._("My account"),
-            "subtitle": toolkit._("""My account"""),
+            "subtitle": toolkit._("My account"),
             "url": "#",
             "hide": not is_logged_in,
             "child": [
@@ -378,6 +378,7 @@ def get_header_structure(userobj: model.User | None) -> list[dict[str, Any]]:
         },
         {
             "title": toolkit._("Data publishing"),
+            "subtitle": toolkit._("Data publishing"),
             "url": "#",
             "child": [
                 {
@@ -400,7 +401,7 @@ def get_header_structure(userobj: model.User | None) -> list[dict[str, Any]]:
         },
         {
             "title": toolkit._("About DataVic"),
-            "subtitle": toolkit._("""About DataVic"""),
+            "subtitle": toolkit._("About DataVic"),
             "url": "#",
             "child": [
                 {
