@@ -377,8 +377,22 @@ def get_header_structure(userobj: model.User | None) -> list[dict[str, Any]]:
             ],
         },
         {
-            "title": toolkit._("Data publishing guide"),
-            "url": "https://www.data.vic.gov.au/data-publishing-guide",
+            "title": toolkit._("Data publishing"),
+            "url": "#",
+            "child": [
+                {
+                    "title": toolkit._("Data publishing"),
+                    "url": "https://www.data.vic.gov.au/data-publishing",
+                },
+                {
+                    "title": toolkit._("Data publishing for the Victorian Public Service (VPS)"),
+                    "url": "https://www.data.vic.gov.au/data-publishing-victorian-public-service",
+                },
+                {
+                    "title": toolkit._("Open data publishing for the Victorian public sector"),
+                    "url": "https://www.data.vic.gov.au/open-data-publishing-victorian-public-sector",
+                },
+            ],
         },
         {
             "title": toolkit._("Search data"),
@@ -400,14 +414,6 @@ def get_header_structure(userobj: model.User | None) -> list[dict[str, Any]]:
                 {
                     "title": toolkit._("DataVic Access Policy guidelines"),
                     "url": "https://www.data.vic.gov.au/datavic-access-policy-guidelines",
-                },
-                {
-                    "title": toolkit._("DataVic Access Policy Dataset Publishing Manual"),
-                    "url": "https://www.data.vic.gov.au/datavic-access-policy-dataset-publishing-manual",
-                },
-                {
-                    "title": toolkit._("Publish an open data set - digital guide"),
-                    "url": "https://www.vic.gov.au/publish-open-data-set",
                 },
             ],
         },
