@@ -2,12 +2,12 @@
 
 {% block primary_content %}
   {{ super() }}
-  
+
   <section class="module">
     <div class="module-content">
       <p>
-        {{ _('DataVic login access is limited to local councils and water authorities.') }}</br>
-        {{ _('If you\'re part of the Victorian Public Service (VPS), please manage your data through the <a href="https://directory.data.vic.gov.au/" target="_blank">VPS Data Directory</a>.') }}
+        {{ _('DataVic login access is limited to local councils and water authorities.') }}<br>
+        {% trans %}If you're part of the Victorian Public Service (VPS), please manage your data through the <a href="https://directory.data.vic.gov.au/" target="_blank">VPS Data Directory</a>.{% endtrans %}
       </p>
     </div>
   </section>
