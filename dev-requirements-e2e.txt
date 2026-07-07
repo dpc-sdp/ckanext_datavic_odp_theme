@@ -1,0 +1,5 @@
+# Playwright publishes manylinux (glibc) wheels only — not installable in the
+# Alpine-based CLI container (musllinux). Install on the host or a glibc image:
+#   pip install -r dev-requirements-e2e.txt
+#   playwright install
+pytest-playwright
