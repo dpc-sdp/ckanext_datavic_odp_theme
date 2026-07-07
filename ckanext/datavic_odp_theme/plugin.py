@@ -76,8 +76,10 @@ class DatavicODPTheme(p.SingletonPlugin):
     def after_dataset_create(self, context, pkg_dict):
         # Only add packages to groups when being created via the CKAN UI
         # (i.e. not during harvesting)
-        if repr(tk.request) != '<LocalProxy unbound>' \
-            and tk.get_endpoint()[0] in ['dataset', 'package', "datavic_dataset"]:
+        if (
+            repr(tk.request) != '<LocalProxy unbound>'
+            and tk.get_endpoint()[0] in ['dataset', 'package', "datavic_dataset"]
+        ):
             # Add the package to the group ("category")
             pkg_group = pkg_dict.get('category', None)
             if pkg_group and pkg_dict.get('type', None) in ['dataset', 'package']:
@@ -198,4 +200,3 @@ class DatavicODPThemeAuth(p.SingletonPlugin):
 
     """
     pass
-
