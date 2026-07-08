@@ -1,13 +1,9 @@
-"""Unit tests for :class:`DatavicDatapusherPlusPlugin` and related theme hooks.
+"""Unit tests for :class:`DatavicODPDatapusherPlusPlugin` and theme hooks.
 
-These tests exercise dispatch logic in ``notify``, the syndication re-ingest
-path via Package ``changed``, format inference, and the ``url_type`` sentinel.
-``_submit_to_datapusher`` is patched on the instance so tests do not need a
-loaded DataPusher+ or CKAN DB for the datapusher plugin paths.
-
-DV-T1 (P1) and DV-T2 (P2) are covered by the parent ``DatapusherPlusPlugin``
-and are not duplicated here. DV-T9 (P7 idempotency) is delegated to the
-parent ``task_status`` guard and is not unit-tested in isolation.
+Dispatch, re-ingest, and format inference are tested with
+``_submit_to_datapusher`` patched. Parent-plugin paths
+(``resource_create``, ``IResourceUrlChange``, ``task_status`` idempotency)
+are not duplicated here.
 """
 from __future__ import annotations
 
@@ -20,9 +16,8 @@ from ckan.model.package import Package
 from ckan.model.resource import Resource
 from ckan.plugins import toolkit
 
-from ckanext.datapusher_plus.plugin import DatapusherPlusPlugin
 from ckanext.datavic_odp_theme.datapusher_plus_plugin import (
-    DatavicDatapusherPlusPlugin,
+    DatavicODPDatapusherPlusPlugin,
 )
 from ckanext.datavic_odp_theme.plugin import DatavicODPTheme
 
@@ -32,7 +27,7 @@ THEME_MODULE = "ckanext.datavic_odp_theme.plugin"
 
 @pytest.fixture
 def plugin(mocker):
-    instance = DatavicDatapusherPlusPlugin()
+    instance = DatavicODPDatapusherPlusPlugin()
     mocker.patch.object(instance, "_submit_to_datapusher")
     return instance
 
@@ -57,7 +52,7 @@ def odp_package_entity():
 
 
 class TestNotifyDispatch:
-    """Resource ``new`` and ignored operations (DV-T3/T4 dispatch, DD-T7 analogue)."""
+    """``notify`` dispatch for ``Resource`` and ``Package`` operations."""
 
     def test_ignores_non_resource_non_package_entities(self, plugin, mocker):
         get_action = mocker.patch(f"{PLUGIN_MODULE}.toolkit.get_action")
@@ -87,7 +82,7 @@ class TestNotifyDispatch:
     def test_new_resource_submits_with_resource_dict(
         self, plugin, resource_entity, mocker
     ):
-        """DV-T3 / DV-T4 / DV-T6: inline resource via ``notify(Resource, new)``."""
+        """Inline resource via ``notify(Resource, new)``."""
         resource_dict = {
             "id": "res-1",
             "url": "https://example.com/data.csv",
@@ -137,12 +132,12 @@ class TestNotifyDispatch:
 
 
 class TestPackageChangedReingest:
-    """Package ``changed`` syndication re-ingest path (DV-T5, DV-T7, DV-T11)."""
+    """``Package`` + ``changed`` re-ingest path."""
 
     def test_package_changed_submits_resources_needing_ingest(
         self, plugin, odp_package_entity, mocker
     ):
-        """DV-T5: in-place data change with empty hash and inactive datastore."""
+        """Resource with empty hash and inactive datastore."""
         pkg_dict = {
             "id": "pkg-1",
             "resources": [
@@ -172,7 +167,7 @@ class TestPackageChangedReingest:
     def test_package_changed_skips_already_ingested_resources(
         self, plugin, odp_package_entity, mocker
     ):
-        """DV-T7: populated hash + active datastore → no submit."""
+        """Populated hash and active datastore — no submit."""
         pkg_dict = {
             "id": "pkg-1",
             "resources": [
@@ -195,7 +190,7 @@ class TestPackageChangedReingest:
     def test_package_changed_submits_only_resources_needing_reingest(
         self, plugin, odp_package_entity, mocker
     ):
-        """DV-T11: mixed resources — only the empty-hash one is submitted."""
+        """Mixed resources — only the un-ingested one is submitted."""
         needs_reingest = {
             "id": "res-needs",
             "url": "https://example.com/new.csv",
@@ -232,6 +227,30 @@ class TestPackageChangedReingest:
         plugin.notify(odp_package_entity, DomainObjectOperation.changed)
 
         plugin._submit_to_datapusher.assert_not_called()
+
+
+class TestShouldReingest:
+    def test_true_when_hash_empty_and_datastore_inactive(self, plugin):
+        assert plugin._should_reingest({"hash": "", "datastore_active": False})
+
+    def test_true_when_hash_missing_and_datastore_inactive(self, plugin):
+        assert plugin._should_reingest({"datastore_active": False}) is True
+
+    def test_false_when_already_ingested(self, plugin):
+        assert plugin._should_reingest(
+            {"hash": "abc", "datastore_active": True}
+        ) is False
+
+    def test_false_when_only_hash_set(self, plugin):
+        assert plugin._should_reingest(
+            {"hash": "abc", "datastore_active": False}
+        ) is False
+
+
+    def test_false_when_only_datastore_active(self, plugin):
+        assert plugin._should_reingest(
+            {"hash": "", "datastore_active": True}
+        ) is False
 
 
 class TestInferFormatAndSubmit:
@@ -297,43 +316,8 @@ class TestInferFormatAndSubmit:
 
         plugin._submit_to_datapusher.assert_called_once_with(resource)
 
-
-class TestSubmitToDatapusherSentinel:
-    """``url_type`` sentinel for inline resources (plan §5a item 3)."""
-
-    def test_sentinel_added_then_stripped_on_submit(self, mocker):
-        instance = DatavicDatapusherPlusPlugin()
-        resource_dict = {"id": "res-1", "url": "https://example.com/data.csv"}
-        seen = {}
-
-        def capture(submitted_dict):
-            seen["url_type"] = submitted_dict.get("url_type")
-
-        mocker.patch.object(
-            DatapusherPlusPlugin, "_submit_to_datapusher", side_effect=capture
-        )
-        instance._submit_to_datapusher(resource_dict)
-
-        assert seen["url_type"] == "datavic_datapusher"
-        assert "url_type" not in resource_dict
-
-    def test_sentinel_stripped_even_when_parent_raises(self, mocker):
-        instance = DatavicDatapusherPlusPlugin()
-        resource_dict = {"id": "res-1"}
-
-        def raising(_submitted_dict):
-            raise RuntimeError("submit failed")
-
-        mocker.patch.object(
-            DatapusherPlusPlugin, "_submit_to_datapusher", side_effect=raising
-        )
-        with pytest.raises(RuntimeError, match="submit failed"):
-            instance._submit_to_datapusher(resource_dict)
-
-        assert "url_type" not in resource_dict
-
-    def test_non_ingestible_resource_still_invokes_submit(self, plugin):
-        """DV-T8: format gate is the parent's job; we still call through."""
+    def test_non_ingestible_format_still_calls_submit(self, plugin):
+        """Format gate is the parent's job; we still call through."""
         resource = {
             "id": "r",
             "url": "https://example.com/page.html",
@@ -346,7 +330,7 @@ class TestSubmitToDatapusherSentinel:
 
 
 class TestCombinedNotifySignals:
-    """DV-T12: both Resource ``new`` and Package ``changed`` may fire per commit."""
+    """Resource ``new`` and Package ``changed`` may both fire per commit."""
 
     def test_both_signals_invoke_submit_for_same_resource(
         self, plugin, resource_entity, odp_package_entity, mocker
@@ -399,7 +383,7 @@ class TestNotifyEndToEnd:
 
 
 class TestDatavicODPThemeGroupAssignment:
-    """DV-T10: category/group logic remains on ``DatavicODPTheme``."""
+    """Category/group logic on ``DatavicODPTheme``."""
 
     def test_after_dataset_create_assigns_category_group(self, theme_plugin, mocker):
         group = MagicMock()
