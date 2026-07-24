@@ -3,6 +3,8 @@ from __future__ import annotations
 from typing import Any, Callable
 
 import pytest
+
+pytest.importorskip("playwright")
 from playwright.sync_api import Page, expect
 
 import ckan.plugins.toolkit as tk
