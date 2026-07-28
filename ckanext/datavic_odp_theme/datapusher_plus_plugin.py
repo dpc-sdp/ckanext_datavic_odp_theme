@@ -1,18 +1,14 @@
-# Fills the trigger gap in ckanext-datapusher-plus for resources that arrive
-# via ``package_create``/``package_update`` (e.g. API imports, UI package
-# saves, bulk dataset updates).
+# Fills the trigger gap in ckanext-datapusher-plus for inline resources
+# (DD syndication, API imports, UI package saves) that never reach
+# after_resource_create.
 #
-# CKAN core does not call ``after_resource_create`` for inline resources, and
-# ``IResourceUrlChange.notify`` only fires for changed URLs, not new ones.
-#
-# ``IDomainObjectModification.notify`` handles:
-#
-#   * ``Resource`` + ``new`` — submit inline resources the parent misses
-#   * ``Package`` + ``changed`` — submit resources that still need ingest
-#     (empty ``hash`` and inactive datastore) after a ``package_update``
-#
-# Per-resource ``changed`` is ignored (URL edits use ``IResourceUrlChange``).
-# The parent's ``task_status`` guard prevents duplicate submissions.
+# Deliberately not a DatapusherPlusPlugin subclass: that plugin's
+# IResourceUrlChange/IResourceController hooks and this one's
+# IDomainObjectModification hook all dispatch through a method literally
+# named notify, and a subclass only ever gets one. datapusher_plus must
+# therefore be enabled separately in ckan.plugins (configure() below
+# enforces this); submission is delegated to its live instance via
+# ckan.plugins.get_plugin rather than duplicated here.
 from __future__ import annotations
 
 import logging
@@ -23,16 +19,24 @@ from ckan.model.domain_object import DomainObjectOperation
 from ckan.model.package import Package
 from ckan.model.resource import Resource
 
-from ckanext.datapusher_plus.plugin import DatapusherPlusPlugin
-
 log = logging.getLogger(__name__)
 
+REQUIRED_PLUGIN = "datapusher_plus"
 
-class DatavicODPDatapusherPlusPlugin(DatapusherPlusPlugin, p.SingletonPlugin):
+
+class DatavicDatapusherPlusPlugin(p.SingletonPlugin):
     p.implements(p.IDomainObjectModification)
+    p.implements(p.IConfigurable)
+
+    def configure(self, config):
+        if not p.plugin_loaded(REQUIRED_PLUGIN):
+            raise Exception(
+                "datavic_datapusher_plus requires the "
+                f"'{REQUIRED_PLUGIN}' plugin to also be enabled in "
+                "ckan.plugins"
+            )
 
     def notify(self, entity, operation):
-        """Submit resources to DataPusher+ that the parent plugin misses."""
         if isinstance(entity, Resource) and operation == DomainObjectOperation.new:
             self._notify_new_resource(entity)
         elif isinstance(entity, Package) and operation == DomainObjectOperation.changed:
@@ -78,5 +82,7 @@ class DatavicODPDatapusherPlusPlugin(DatapusherPlusPlugin, p.SingletonPlugin):
         if resource and not resource.get("format"):
             if not resource.get("url_type"):
                 url_without_params = resource.get("url", "").split("?")[0]
-                resource["format"] = url_without_params.split(".")[-1].lower()
-        self._submit_to_datapusher(resource)
+                resource["format"] = (
+                    url_without_params.split(".")[-1].lower()
+                )
+        p.get_plugin(REQUIRED_PLUGIN)._submit_to_datapusher(resource)
