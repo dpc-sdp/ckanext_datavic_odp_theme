@@ -12,6 +12,7 @@ import ckan.plugins.toolkit as toolkit
 import ckan.model as model
 
 from ckanext.toolbelt.decorators import Collector, Cache
+from ckanext.auth import config as auth_config
 
 from ckanext.datavic_odp_theme import config as conf, const
 
@@ -87,6 +88,17 @@ def get_monsido_domain_token() -> Optional[str]:
 @helper
 def get_parent_site_url() -> str:
     return conf.get_parent_site_url()
+
+
+@helper
+def get_2fa_email_interval_minutes() -> int:
+    """Return the 2FA email verification code TTL, in whole minutes.
+
+    Reads ``ckanext.auth.2fa_email_interval`` (seconds, default 600) so the
+    verification code email always reflects the configured expiry instead of
+    a hardcoded value.
+    """
+    return auth_config.get_2fa_email_interval() // 60
 
 
 @helper

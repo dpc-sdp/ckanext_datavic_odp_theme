@@ -44,14 +44,6 @@ def send_invite(
     ckan_mailer.create_reset_key(user)
     extra_vars = _base_vars(user)
 
-    if role:
-        extra_vars["role_name"] = tk.h.roles_translated().get(role, tk._(role))
-    if group_dict:
-        extra_vars["group_type"] = (
-            tk._("organization") if group_dict["is_organization"] else tk._("group")
-        )
-        extra_vars["group_title"] = group_dict.get("title")
-
     ckan_mailer.mail_user(
         user,
         _subject("emails/invite_user_subject.txt", extra_vars["site_title"]),
