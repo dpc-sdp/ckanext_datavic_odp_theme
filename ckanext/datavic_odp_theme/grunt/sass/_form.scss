@@ -161,3 +161,24 @@ input[data-module="datavic-slug-visible"] {
 .input-group .error-block {
     flex-basis: 100%;
 }
+
+form.add-member-form {
+    .form-label, .control-label {
+        float: none; 
+        width: auto; 
+        padding-top: 0; 
+        text-align: left;
+    }
+    .controls { 
+        margin-left: 0; 
+
+        input {
+            width: 100%;
+        }
+    }
+
+    .form-group.control-select, .form-actions  {
+        padding-left: calc(var(--bs-gutter-x) * 0.5);
+        padding-right: calc(var(--bs-gutter-x) * 0.5);
+    }
+}
