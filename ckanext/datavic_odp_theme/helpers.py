@@ -4,7 +4,7 @@ import logging
 import json
 import base64
 from typing import Any, Optional
-from urllib.parse import quote
+from urllib.parse import quote, urljoin
 
 from sqlalchemy import func
 
@@ -188,12 +188,23 @@ def get_digital_twin_resources(pkg: dict[str, Any]) -> list[dict[str, Any]]:
 
 @helper
 def url_for_dtv_config(ids: list[str], embedded: bool = True) -> str:
-    """Build URL where DigitalTwin can get map configuration for the preview."""
+    """Build URL where DigitalTwin can get map configuration for the preview.
+    
+    site_base_url can hold basic auth for lower env.
+    """
+
+    base_url: str = (
+        conf.get_dtv_site_base_url()
+        or toolkit.config["ckan.site_url"]
+    )
 
     encoded = base64.urlsafe_b64encode(bytes(json.dumps(ids), "utf8"))
     encoded_string = quote(encoded, safe='')
-    return toolkit.url_for(
-        "vic_odp.dtv_config", encoded=encoded_string, embedded=embedded, _external=True
+    return urljoin(
+        base_url,
+        toolkit.url_for(
+            "vic_odp.dtv_config", encoded=encoded_string, embedded=embedded
+        ),
     )
 
 

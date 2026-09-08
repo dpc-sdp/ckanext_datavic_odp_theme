@@ -22,6 +22,7 @@ DEFAULT_DTV_FQ = [
     "aus-geo-csv",
 ]
 CONFIG_DTV_MAX_SIZE_LIMIT = "ckanext.datavicmain.dtv.max_size_limit"
+CONFIG_DTV_SITE_BASE_URL = "ckanext.datavic_odp_theme.dtv.site_base_url"
 CONFIG_DTV_URL = "ckanext.datavic_odp_theme.dtv.url"
 CONFIG_DTV_EXTERNAL_LINK = "ckanext.datavic_odp_theme.dtv.external_link"
 
@@ -56,6 +57,10 @@ def get_dtv_max_size_limit() -> str:
 
 def get_dtv_url() -> str:
     return tk.config.get(CONFIG_DTV_URL, "")
+
+
+def get_dtv_site_base_url() -> str:
+    return tk.config.get(CONFIG_DTV_SITE_BASE_URL, "")
 
 
 def get_dtv_external_link() -> str:
