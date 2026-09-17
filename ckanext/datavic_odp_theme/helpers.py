@@ -4,7 +4,7 @@ import logging
 import json
 import base64
 from typing import Any, Optional
-from urllib.parse import quote
+from urllib.parse import quote, urljoin
 
 from sqlalchemy import func
 
@@ -12,6 +12,7 @@ import ckan.plugins.toolkit as toolkit
 import ckan.model as model
 
 from ckanext.toolbelt.decorators import Collector, Cache
+from ckanext.auth import config as auth_config
 
 from ckanext.datavic_odp_theme import config as conf, const
 
@@ -87,6 +88,17 @@ def get_monsido_domain_token() -> Optional[str]:
 @helper
 def get_parent_site_url() -> str:
     return conf.get_parent_site_url()
+
+
+@helper
+def get_2fa_email_interval_minutes() -> int:
+    """Return the 2FA email verification code TTL, in whole minutes.
+
+    Reads ``ckanext.auth.2fa_email_interval`` (seconds, default 600) so the
+    verification code email always reflects the configured expiry instead of
+    a hardcoded value.
+    """
+    return auth_config.get_2fa_email_interval() // 60
 
 
 @helper
@@ -188,12 +200,23 @@ def get_digital_twin_resources(pkg: dict[str, Any]) -> list[dict[str, Any]]:
 
 @helper
 def url_for_dtv_config(ids: list[str], embedded: bool = True) -> str:
-    """Build URL where DigitalTwin can get map configuration for the preview."""
+    """Build URL where DigitalTwin can get map configuration for the preview.
+    
+    site_base_url can hold basic auth for lower env.
+    """
+
+    base_url: str = (
+        conf.get_dtv_site_base_url()
+        or toolkit.config["ckan.site_url"]
+    )
 
     encoded = base64.urlsafe_b64encode(bytes(json.dumps(ids), "utf8"))
     encoded_string = quote(encoded, safe='')
-    return toolkit.url_for(
-        "vic_odp.dtv_config", encoded=encoded_string, embedded=embedded, _external=True
+    return urljoin(
+        base_url,
+        toolkit.url_for(
+            "vic_odp.dtv_config", encoded=encoded_string, embedded=embedded
+        ),
     )
 
 

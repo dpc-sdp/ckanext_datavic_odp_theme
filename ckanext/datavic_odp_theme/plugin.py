@@ -5,6 +5,7 @@ from typing import Any, Optional
 
 from flask import Response, session
 
+import ckan.lib.mailer as ckan_mailer
 import ckan.plugins as p
 import ckan.plugins.toolkit as tk
 from ckan import model, types
@@ -13,6 +14,7 @@ from ckanext.search_autocomplete.interfaces import ISearchAutocomplete
 from ckanext.xloader.plugin import xloaderPlugin
 
 from ckanext.datavic_odp_theme.logic import auth_functions, actions, get_validators
+from ckanext.datavic_odp_theme.mailer import send_invite, send_reset_link
 from ckanext.datavic_odp_theme.views import get_blueprints
 from ckanext.datavic_odp_theme.helpers import get_helpers, group_list
 
@@ -40,6 +42,15 @@ class DatavicODPTheme(p.SingletonPlugin):
         # Reset group/organization cache on server restart
         group_list.reset(is_organization=False)
         group_list.reset(is_organization=True)
+
+        # CKAN core's send_reset_link/send_invite send plain text only. Patch
+        # them to also send an HTML alternative. Acceptable here because core
+        # calls these as module attributes (`mailer.send_reset_link(...)` in
+        # ckan/views/user.py:744 and ckan/logic/action/create.py:1114),
+        # resolved at call time rather than bound at import. Re-verify on
+        # CKAN upgrade.
+        ckan_mailer.send_reset_link = send_reset_link
+        ckan_mailer.send_invite = send_invite
 
     # ITemplateHelpers
 

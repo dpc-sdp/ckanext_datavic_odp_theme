@@ -1,0 +1,11 @@
+{% extends "emails/base.html" %}
+{% block content %}
+  {% set expiry_minutes = h.get_2fa_email_interval_minutes() %}
+  {% set expiry_label = ungettext('{num} minute', '{num} minutes', expiry_minutes).format(num=expiry_minutes) %}
+  {% trans %}
+    <p>Hi {{ user_name }}</p>
+    <p>Your verification code is <strong>{{ verification_code }}</strong>.</p>
+    <p>This one-time code expires in {{ expiry_label }}.</p>
+    <p>If you did not request this, please <a href="mailto:datavic@dpc.vic.gov.au">contact us</a> immediately.</p>
+  {% endtrans %}
+{% endblock %}
