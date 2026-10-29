@@ -1,7 +1,8 @@
 {% ckan_extends %}
 
 {% block head_extras %}
-  {{ super() }}
+  {# Skip core package/read_base.html, which adds og tags from notes; DV builds them from extract. #}
+  {{ super.super() }}
 
   {% set description = h.markdown_extract(pkg.extract, extract_length=200)|forceescape %}
   <meta property="og:title" content="{{ h.dataset_display_name(pkg) }} - {{ g.site_title }}">
