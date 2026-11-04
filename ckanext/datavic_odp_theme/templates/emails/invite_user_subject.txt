@@ -1,0 +1,3 @@
+{% trans %}
+Invitation to join {{ site_title }}
+{% endtrans %}

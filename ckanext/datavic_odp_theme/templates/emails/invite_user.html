@@ -1,0 +1,10 @@
+{% extends "emails/base.html" %}
+{% block content %}
+  {% trans %}
+    <p>Hi</p>
+    <p>You've been invited to publish open data on {{ site_title }}.</p>
+    <p>Your username is {{ user_name }}.<br/>To activate your account, please <a href="{{ reset_link }}">set your password</a>.</p>
+    <p><a href="https://www.data.vic.gov.au/open-data-publishing-victorian-public-sector">Learn more about open data publishing for the Victorian public sector.</a></p>
+    <p>If you require any assistance, please <a href="mailto:datavic@dpc.vic.gov.au">contact us</a>.</p>
+  {% endtrans %}
+{% endblock %}

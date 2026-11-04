@@ -1,0 +1,13 @@
+{% extends "emails/base.txt" %}
+{% block content %}
+{% trans %}Hi{% endtrans %}
+
+{% trans %}You've been invited to publish open data on {{ site_title }}.{% endtrans %}
+
+{% trans %}Your username is {{ user_name }}.{% endtrans %}
+{% trans %}To activate your account, please set your password here: {{ reset_link }}{% endtrans %}
+
+{% trans %}Learn more about open data publishing for the Victorian public sector here: https://www.data.vic.gov.au/open-data-publishing-victorian-public-sector{% endtrans %}
+
+{% trans %}If you require any assistance, please contact us at datavic@dpc.vic.gov.au.{% endtrans %}
+{% endblock %}

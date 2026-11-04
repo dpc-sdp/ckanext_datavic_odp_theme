@@ -1,6 +1,7 @@
 import pytest
 from faker import Faker
 
+import ckan.model as model
 import ckan.plugins.toolkit as tk
 
 from ckanext.datavic_odp_theme.const import NOT_DOWNLOADABLE_FORMATS
@@ -27,14 +28,19 @@ def resource_data():
 class TestHelpers:
     @pytest.mark.usefixtures("clean_db")
     def test_resource_formats_list(self, dataset_factory, resource_data):
-        dataset_factory(
+        dataset = dataset_factory(
             resources=[
                 resource_data(),
                 resource_data(),
                 resource_data(format="xml"),
-                resource_data(format=""),
             ]
         )
+        # The schema rejects an empty format, so blank it in the DB to cover
+        # resources saved without one.
+        model.Session.query(model.Resource).filter_by(
+            id=dataset["resources"][0]["id"]
+        ).update({"format": ""})
+        model.Session.commit()
 
         format_list: list[str] = tk.h.format_list()
         assert format_list == ["CSV", "XML"]
@@ -56,11 +62,11 @@ class TestHelpers:
             assert not tk.h.is_resource_downloadable(resource_data(format=res_format))
 
     def test_organization_list_no_orgs(self):
-        assert not tk.h.organization_list()
+        assert not tk.h.group_list(is_organization=True)
 
     @pytest.mark.usefixtures("clean_db")
     def test_organization_list_with_org(self, organization):
-        org_list = tk.h.organization_list()
+        org_list = tk.h.group_list(is_organization=True)
 
         assert org_list
         assert isinstance(org_list, list)
@@ -68,15 +74,15 @@ class TestHelpers:
         assert len(org_list) == 1
 
     def test_organization_list_no_groups(self):
-        assert not tk.h.group_list()
+        assert not tk.h.group_list(is_organization=False)
 
     @pytest.mark.usefixtures("clean_db")
     def test_organization_list_no_groups_org(self, organization):
-        assert not tk.h.group_list()
+        assert not tk.h.group_list(is_organization=False)
 
     @pytest.mark.usefixtures("clean_db")
     def test_organization_list_with_group(self, group):
-        group_list = tk.h.group_list()
+        group_list = tk.h.group_list(is_organization=False)
 
         assert group_list
         assert isinstance(group_list, list)

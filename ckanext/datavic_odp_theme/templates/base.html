@@ -12,6 +12,10 @@
   {% if h.monsido_tracking_enabled() %}
     {% snippet "snippets/monsido.html" %}
   {% endif %}
+
+  {% if not (request.endpoint or '').endswith('_resource.view') %}
+    {% snippet "snippets/caretaker-message.html" %}
+  {% endif %}
 {% endblock %}
 
 {% block styles %}

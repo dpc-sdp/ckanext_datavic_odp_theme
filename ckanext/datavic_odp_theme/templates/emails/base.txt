@@ -1,0 +1,5 @@
+{% block content %}{% endblock %}
+{% block regards %}
+{% trans %}Regards,{% endtrans %}
+{% trans %}{{ site_title }}{% endtrans %}
+{% endblock %}
