@@ -13,7 +13,9 @@
     {% snippet "snippets/monsido.html" %}
   {% endif %}
 
-  {% snippet "snippets/caretaker-message.html" %}
+  {% if not (request.endpoint or '').endswith('_resource.view') %}
+    {% snippet "snippets/caretaker-message.html" %}
+  {% endif %}
 {% endblock %}
 
 {% block styles %}
