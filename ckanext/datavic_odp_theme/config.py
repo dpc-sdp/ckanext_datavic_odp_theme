@@ -34,7 +34,6 @@ CONFIG_MONSIDO_TRACKING_ENABLED = "ckan.tracking.monsido_enabled"
 CONFIG_HOTJAR_HJID = "ckan.tracking.hotjar.hjid"
 CONFIG_HOTJAR_HJSV = "ckan.tracking.hotjar.hjsv"
 CONFIG_MONSIDO_DOMAIN_TOKEN = "ckan.tracking.monsido.domain_token"
-CONFIG_GOOGLE_OPTIMIZE_ID = "ckan.google_optimize.id"
 
 
 def get_default_base_map() -> str:
